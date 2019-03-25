@@ -1,4 +1,6 @@
 import { assert } from './util'
+import Track from './track'
+import Tact from './tact'
 
 class Composition {
     constructor(props) {
@@ -6,6 +8,11 @@ class Composition {
         this.name = props.name;
         this._tracks = [];
         this._tacts = [];
+    }
+
+    refreshTracks() {
+        for (let track of this._tracks)
+            track.refresh(this);
     }
 
     get tacts() {
@@ -25,12 +32,12 @@ class Composition {
     }
 
     getTact(index) {
-        assert(() => index <= this.tactCount());
+        assert(() => index >= 0 && index <= this.tactCount());
         return this._tacts[index];
     }
 
     getTrack(index) {
-        assert(() => index <= this.trackCount());
+        assert(() => index >= 0 && index <= this.trackCount());
         return this._tracks[index];
     }
 
@@ -39,17 +46,26 @@ class Composition {
     }
 
     addTact(tact, position = -1) {
-
+        assert(() => position === -1 || position === 0 || (position >= 0 && position < this.tactCount));
+        let newTact = Tact.Create(tact);
+        if (position == -1)
+            this._tacts.push(newTact);
+        else
+            this._tacts.splice(position, 0, newTact);
+        this.refreshTracks();
     }
 
     deleteTact(tact) {
         let index = this.getTactNum(tact);
         if (index !== -1)
             this._tacts.splice(index, 1);
+        this.refreshTracks();
     }
 
     addTrack(track) {
-
+        newTrack = Track.Create(track);
+        this.tracks.push(newTrack);
+        track.refresh(this);
     }
 
     deleteTrack(track) {
