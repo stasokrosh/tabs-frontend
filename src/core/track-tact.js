@@ -15,6 +15,10 @@ class TrackTact {
         this._chordGenerator = props.chordGenerator; 
     }
 
+    static Create(trackTact) {
+        return new TrackTact(trackTact);
+    }
+
     get chordCount() {
         return this._chords.length;
     }

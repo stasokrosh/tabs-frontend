@@ -10,6 +10,10 @@ class Composition {
         this._tacts = [];
     }
 
+    static Create(props) {
+        return new Composition(props);
+    }
+
     refreshTracks() {
         for (let track of this._tracks)
             track.refresh(this);
