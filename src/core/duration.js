@@ -25,9 +25,11 @@ class Duration {
     }
 
     equal(duration) {
+        if (!duration) 
+            return false;
         return this.fraction === duration.fraction &&
             this.quaterIs === duration.quaterIs &&
-            this.dot == duration.dot;
+            this.dot === duration.dot;
     }
 
     get fraction() {

@@ -52,12 +52,14 @@ export function getChordGeneratorByInstrumentCode(code) {
             return props => Chord.CreateGuitarChord(props);
         case INSTRUMENT_VIEWS.BASS:
             return props => Chord.CreateBassChord(props);
+        default: 
+            return props => Chord.Create(props);
     }
 }
 
 //develop only
 export function validateInstrumentCode(code) {
-    assert(() => INSTRUMENT_CODES.indexOf(code) != -1);
+    assert(() => Object.values(INSTRUMENT_CODES).indexOf(code) !== -1);
 }
 
 
@@ -65,7 +67,7 @@ class Instrument {
     constructor(props) {
         assert(() => props);
         validateInstrumentCode(props.code);
-        this._code = code;
+        this._code = props.code;
     }
 
     static Create(props) {
@@ -74,6 +76,10 @@ class Instrument {
 
     getChordGenerator() {
         return getChordGeneratorByInstrumentCode(this._code);
+    }
+
+    get code() {
+        return this._code;
     }
 }
 

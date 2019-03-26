@@ -15,7 +15,7 @@ export function validateFret(fret, maxFret) {
 class Note {
     constructor(props) {
         assert(() => props);
-        this._maxFret = props.maxFret || DEFAULT_FRET_COUNT;
+        this.maxFret = props.maxFret || DEFAULT_FRET_COUNT;
         this.duration = props.duration;
         this.fret = props.fret;
     }
@@ -25,6 +25,8 @@ class Note {
     }
 
     equal(note) {
+        if (!note)
+            return false;
         return this.fret === note.fret &&
             this.duration.equal(note.duration);
     }
@@ -45,6 +47,14 @@ class Note {
     set duration(value) {
         this._duration = Duration.Create(value);
     }
+
+    get maxFret() {
+        return this._maxFret;
+    }
+
+    set maxFret(value) {
+        this._maxFret = value;
+    } 
 }
 
 export default Note

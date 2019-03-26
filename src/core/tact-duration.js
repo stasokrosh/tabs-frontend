@@ -30,7 +30,7 @@ class TactDuration {
     }
 
     set count(value) {
-        validateTactDurationCount(value, this._fraction);
+        validateTactDurationCount(value, this.fraction);
         this._count = value;
     }
 }

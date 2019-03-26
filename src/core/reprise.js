@@ -1,4 +1,4 @@
-import { assert } from './utils'
+import { assert } from './util'
 
 export function validateRepriseCount(count) {
     assert(() => count > 0);

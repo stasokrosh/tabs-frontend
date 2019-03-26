@@ -14,9 +14,9 @@ class Chord {
     constructor(props) {
         assert(() => props);
         assert(() => props.stringNum);
-        this._stringNum = props.stringNum;
+        this.stringNum = props.stringNum;
         assert(() => props.fretNum);
-        this._fretNum = props.fretNum;
+        this.fretNum = props.fretNum;
         this._notes = new Array(props.stringNum);
         if (props.notes)
             this.notes = props.notes;
@@ -24,6 +24,29 @@ class Chord {
 
     static CreateChord(props) {
         return new Chord(props);
+    }
+
+    equal(chord) {
+        if (!chord)
+            return false;
+        if (this.stringNum === chord.stringNum && this.fretNum === chord.fretNum) {
+            let equal = true;
+            for (let index = 0; index < this.stringNum && equal; index++) { 
+                let ownNote = this.getNote(index);
+                let chordNote = chord.getNote(index);
+                
+                if (!ownNote && !chordNote)
+                    continue;
+
+                if (ownNote && chordNote) 
+                    equal = ownNote.equal(chordNote);
+                else 
+                    equal = false;
+            }
+            return equal;
+        } else {
+            return false;
+        }
     }
 
     static CreateGuitarChord(props) {
@@ -67,6 +90,22 @@ class Chord {
             item.maxFret = this._fretNum;
             this._notes[index] = Note.Create(item);
         }
+    }
+
+    get stringNum() {
+        return this._stringNum;
+    }
+
+    set stringNum(value) {
+        this._stringNum = value;
+    }
+
+    get fretNum() {
+        return this._fretNum;
+    }
+
+    set fretNum(value) {
+        this._fretNum = value;
     }
 }
 

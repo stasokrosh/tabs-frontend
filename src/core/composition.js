@@ -52,7 +52,7 @@ class Composition {
     addTact(tact, position = -1) {
         assert(() => position === -1 || position === 0 || (position >= 0 && position < this.tactCount));
         let newTact = Tact.Create(tact);
-        if (position == -1)
+        if (position === -1)
             this._tacts.push(newTact);
         else
             this._tacts.splice(position, 0, newTact);
@@ -67,7 +67,7 @@ class Composition {
     }
 
     addTrack(track) {
-        newTrack = Track.Create(track);
+        let newTrack = Track.Create(track);
         this.tracks.push(newTrack);
         track.refresh(this);
     }

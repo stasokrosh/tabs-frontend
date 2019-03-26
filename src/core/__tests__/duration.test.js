@@ -13,3 +13,11 @@ it('Fraction is validated', () => {
     expect(() => { duration.fraction = 3 }).toThrow();
     expect(() => { duration.quaterIs = 4 }).toThrow();
 });
+
+it('Durations are equal', () => {
+    let duration1 = Duration.Create({fraction : 1});
+    let duration2 = Duration.Create({fraction : 1});
+    expect(duration1.equal(duration2)).toBe(true);
+    duration2.fraction = 2;
+    expect(duration1.equal(duration2)).toBe(false);
+})

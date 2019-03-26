@@ -31,3 +31,20 @@ it('Chord is validated', () => {
     expect(() => chord.getNote(7)).toThrow();
     expect(() => chord.setNote(7, {})).toThrow();
 })
+
+it('Chords are equal', () => {
+    let chord1 = Chord.CreateGuitarChord({});
+    let chord2 = Chord.CreateBassChord({});
+    expect(chord1.equal(chord2)).toBe(false);
+    chord2 = Chord.CreateGuitarChord({});
+    expect(chord1.equal(chord2)).toBe(true);
+    let note = Note.Create({
+        duration: Duration.Create({ fraction: 1 }),
+        fret: 3
+    });
+    chord1.setNote(2, note);
+    chord2.setNote(2, note);
+    expect(chord1.equal(chord2)).toBe(true);
+    chord2.getNote(2).fret = 4;
+    expect(chord1.equal(chord2)).toBe(false);
+})

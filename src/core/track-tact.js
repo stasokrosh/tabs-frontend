@@ -6,7 +6,7 @@ class TrackTact {
     constructor(props) {
         assert(() => props);
         assert(() => props.tact instanceof Tact);
-        this._tact = tact;
+        this._tact = props.tact;
         if (!props.chords)
             this._chords = [];
         else  
@@ -34,7 +34,7 @@ class TrackTact {
     set chords(value) {
         this._chords.length = 0;
         for (let chord of value) {
-            this._chords.push(Chord.Create(value));
+            this._chords.push(Chord.Create(chord));
         }
     }
 
@@ -44,7 +44,7 @@ class TrackTact {
 
     deleteChord(chord) {
         let index = this.getChordNum(chord);
-        if (index != -1)
+        if (index !== -1)
             this._chords.splice(index, 1);
     }
 
@@ -57,6 +57,9 @@ class TrackTact {
             this._chords.splice(position, 0, newChord);
     }
 
+    get chordGenerator() {
+        return this.chordGenerator;
+    }
 }
 
 export default TrackTact;
