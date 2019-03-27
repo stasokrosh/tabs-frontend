@@ -9,10 +9,10 @@ class TrackTact {
         this._tact = props.tact;
         if (!props.chords)
             this._chords = [];
-        else  
+        else
             this.chords = props.chords;
         assert(() => props.chordGenerator);
-        this._chordGenerator = props.chordGenerator; 
+        this._chordGenerator = props.chordGenerator;
     }
 
     static Create(trackTact) {
@@ -30,7 +30,7 @@ class TrackTact {
     get chords() {
         return [...this._chords];
     }
-    
+
     set chords(value) {
         this._chords.length = 0;
         for (let chord of value) {
@@ -48,8 +48,13 @@ class TrackTact {
             this._chords.splice(index, 1);
     }
 
+    getChord(index) {
+        assert(() => index >= 0 && index < this.chordCount);
+        return this._chords.length;
+    }
+
     addChord(chord, position = -1) {
-        assert(() => position === -1 || position === 0 || (position >= 0 && position < this.chordCount ));
+        assert(() => position === -1 || position === 0 || (position >= 0 && position < this.chordCount));
         let newChord = this._chordGenerator(chord);
         if (position === -1)
             this._chords.push(newChord);
