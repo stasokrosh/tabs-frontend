@@ -1,16 +1,17 @@
 import Composition from '../composition'
 import {INSTRUMENT_CODES, getChordGeneratorByInstrumentCode} from '../instrument'
+import Track from '../track'
 
 it('Composition is created', () => {
     expect(Composition.Create({name : 'test composition'})).toBeDefined();
 });
 
 it('Composition is validated', () => {
-    expect(Composition.Create()).toThrow();
+    expect(() => Composition.Create()).toThrow();
 });
 
 it('Add tracks to composition', () => {
-    let composition = composition.Create({name : 'test composition'});
+    let composition = Composition.Create({name : 'test composition'});
     composition.addTrack({
         name : 'testTrack',
         instrument : {
@@ -18,13 +19,13 @@ it('Add tracks to composition', () => {
         }
     });
     let track = composition.getTrack(0);
-    expect(track.name).toBe('test composition');
+    expect(track.name).toBe('testTrack');
     composition.deleteTrack(track);
     expect(composition.trackCount).toBe(0);
 });
 
 it('Add tacts to composition', () => {
-    let composition = composition.Create({name : 'test composition'});
+    let composition = Composition.Create({name : 'test composition'});
     composition.addTrack({
         name : 'testTrack',
         instrument : {

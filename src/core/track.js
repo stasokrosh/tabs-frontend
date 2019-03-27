@@ -12,6 +12,10 @@ class Track {
         this.refresh(props.composition);
     }
 
+    static Create(props) {
+        return new Track(props);
+    }
+
     getTrackTactByTact(tact) {
         return this._tactsToTrackTacts.get(tact);
     }
@@ -40,9 +44,18 @@ class Track {
         this.refreshTactsToTrackTacts();            
     }
 
+    get tactCount() {
+        return this._tacts.length;
+    }
+
     get tacts() {
         return [...this._tacts];
     }
+
+    getTact(index) {
+        assert(() => index >= 0 && index < this.tactCount);
+        return this._tacts[index];
+    } 
 }
 
 export default Track;

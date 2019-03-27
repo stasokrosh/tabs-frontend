@@ -32,16 +32,16 @@ class Composition {
     }
 
     get trackCount() {
-        return this._tracks.count;
+        return this._tracks.length;
     }
 
     getTact(index) {
-        assert(() => index >= 0 && index <= this.tactCount);
+        assert(() => index >= 0 && index < this.tactCount);
         return this._tacts[index];
     }
 
     getTrack(index) {
-        assert(() => index >= 0 && index <= this.trackCount);
+        assert(() => index >= 0 && index < this.trackCount);
         return this._tracks[index];
     }
 
@@ -69,8 +69,8 @@ class Composition {
     addTrack(track) {
         track.composition = this;
         let newTrack = Track.Create(track);
-        this.tracks.push(newTrack);
-        track.refresh(this);
+        this._tracks.push(newTrack);
+        newTrack.refresh(this);
     }
 
     deleteTrack(track) {

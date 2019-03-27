@@ -50,7 +50,7 @@ class TrackTact {
 
     getChord(index) {
         assert(() => index >= 0 && index < this.chordCount);
-        return this._chords.length;
+        return this._chords[index];
     }
 
     addChord(chord, position = -1) {
@@ -63,7 +63,7 @@ class TrackTact {
     }
 
     get chordGenerator() {
-        return this.chordGenerator;
+        return this._chordGenerator;
     }
 }
 

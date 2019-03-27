@@ -15,18 +15,18 @@ it('Track tact is validated', () => {
 });
 
 it('Set and get chords', () => {
-    let tact = { tactDuration: TactDuration.Create({ fraction: 4, count: 4 }) };
+    let tact = Tact.Create({ tactDuration: TactDuration.Create({ fraction: 4, count: 4 }) });
     let chordGenerator = getChordGeneratorByInstrumentCode(INSTRUMENT_CODES.GUITAR);
     let trackTact = TrackTact.Create({ tact, chordGenerator });
     let note = {
-        duration: Duration.Create({ fraction: 1 }),
+        duration: { fraction: 1 },
         fret: 3
     };
     trackTact.addChord({
         notes: [{ index: 0, item: note }]
     });
     note = {
-        duration: Duration.Create({ fraction: 1 }),
+        duration: { fraction: 1 },
         fret: 4
     };
     trackTact.addChord({
