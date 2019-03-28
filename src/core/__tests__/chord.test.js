@@ -1,23 +1,19 @@
 import Chord from '../chord'
 import Note from '../note'
-import Duration from '../duration'
 
 it('Chord is created', () => {
-    expect(Chord.CreateGuitarChord({})).toBeDefined();
-    expect(Chord.CreateBassChord({})).toBeDefined();
-    let note = Note.Create({
-        duration: Duration.Create({ fraction: 1 }),
-        fret: 3
-    });
+    expect(Chord.CreateGuitarChord({ duration: { fraction: 1 } })).toBeDefined();
+    expect(Chord.CreateBassChord({ duration: { fraction: 1 } })).toBeDefined();
+    let note = { fret: 3 };
     expect(Chord.CreateGuitarChord({
-        notes: [{ index: 0, item: note }]
+        notes: [{ index: 0, item: note }],
+        duration: { fraction: 1 }
     })).toBeDefined();
 });
 
 it('Notes set and get', () => {
-    let chord = Chord.CreateGuitarChord({});
+    let chord = Chord.CreateGuitarChord({ duration: { fraction: 1 } });
     let note = Note.Create({
-        duration: Duration.Create({ fraction: 1 }),
         fret: 3
     });
     chord.setNote(0, note);
@@ -27,19 +23,18 @@ it('Notes set and get', () => {
 
 it('Chord is validated', () => {
     expect(() => Chord.Create()).toThrow();
-    let chord = Chord.CreateGuitarChord({});
+    let chord = Chord.CreateGuitarChord({ duration: { fraction: 1 } });
     expect(() => chord.getNote(7)).toThrow();
     expect(() => chord.setNote(7, {})).toThrow();
 })
 
 it('Chords are equal', () => {
-    let chord1 = Chord.CreateGuitarChord({});
-    let chord2 = Chord.CreateBassChord({});
+    let chord1 = Chord.CreateGuitarChord({ duration: { fraction: 1 } });
+    let chord2 = Chord.CreateBassChord({ duration: { fraction: 1 } });
     expect(chord1.equal(chord2)).toBe(false);
-    chord2 = Chord.CreateGuitarChord({});
+    chord2 = Chord.CreateGuitarChord({ duration: { fraction: 1 } });
     expect(chord1.equal(chord2)).toBe(true);
     let note = Note.Create({
-        duration: Duration.Create({ fraction: 1 }),
         fret: 3
     });
     chord1.setNote(2, note);

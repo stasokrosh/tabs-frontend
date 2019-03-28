@@ -1,5 +1,4 @@
 import { assert } from './util'
-import Duration  from './duration'
 
 export const DEFAULT_FRET_COUNTS = {
     GUITAR: 20,
@@ -7,16 +6,16 @@ export const DEFAULT_FRET_COUNTS = {
 }
 
 export const DEFAULT_FRET_COUNT = DEFAULT_FRET_COUNTS.GUITAR;
+export const DEFAULT_EXCEPTION_FRET = -1; 
 
 export function validateFret(fret, maxFret) {
-    assert(() => fret >= 0 && fret <= maxFret);
+    assert(() => (fret >= 0 && fret <= maxFret) || fret === DEFAULT_EXCEPTION_FRET);
 }
 
 class Note {
     constructor(props) {
         assert(() => props);
         this.maxFret = props.maxFret || DEFAULT_FRET_COUNT;
-        this.duration = props.duration;
         this.fret = props.fret;
     }
 
@@ -27,8 +26,7 @@ class Note {
     equal(note) {
         if (!note)
             return false;
-        return this.fret === note.fret &&
-            this.duration.equal(note.duration);
+        return this.fret === note.fret;
     }
 
     get fret() {
@@ -38,14 +36,6 @@ class Note {
     set fret(value) {
         validateFret(value, this._maxFret);
         this._fret = value;
-    }
-
-    get duration() {
-        return this._duration;
-    }
-
-    set duration(value) {
-        this._duration = Duration.Create(value);
     }
 
     get maxFret() {

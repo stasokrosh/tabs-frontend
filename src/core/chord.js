@@ -1,5 +1,6 @@
 import { assert } from './util'
 import Note, { DEFAULT_FRET_COUNTS } from './note'
+import Duration from './duration';
 
 export const DEFAULT_STRING_COUNTS = {
     GUITAR: 6,
@@ -20,6 +21,8 @@ class Chord {
         this._notes = new Array(props.stringNum);
         if (props.notes)
             this.notes = props.notes;
+        this.duration = props.duration;
+        this.isPause = props.isPause;
     }
 
     static CreateChord(props) {
@@ -89,6 +92,7 @@ class Chord {
         } else {
             item.maxFret = this._fretNum;
             this._notes[index] = Note.Create(item);
+            this.isPause = false;
         }
     }
 
@@ -106,6 +110,34 @@ class Chord {
 
     set fretNum(value) {
         this._fretNum = value;
+    }
+
+    get isEmpty() {
+        let isEmpty = true;
+        for (let index = 0; index < this.stringNum && isEmpty; index++) {
+            if (this.getNote(index))
+                isEmpty = true;
+        }
+        return isEmpty;
+    }
+
+    get duration() {
+        return this._duration;
+    }
+
+    set duration(value) {
+        this._duration = Duration.Create(value);
+    }
+
+    get isPause() {
+        return this._isPause;
+    }
+
+    set isPause(value) {
+        this._isPause = value;
+        if (value) 
+            for(let index = 0; index < this._stringNum; index++)
+                this.setNote(null);
     }
 }
 

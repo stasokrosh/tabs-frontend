@@ -19,18 +19,18 @@ it('Set and get chords', () => {
     let chordGenerator = getChordGeneratorByInstrumentCode(INSTRUMENT_CODES.GUITAR);
     let trackTact = TrackTact.Create({ tact, chordGenerator });
     let note = {
-        duration: { fraction: 1 },
         fret: 3
     };
     trackTact.addChord({
+        duration: { fraction: 1 },
         notes: [{ index: 0, item: note }]
     });
     note = {
-        duration: { fraction: 1 },
         fret: 4
     };
     trackTact.addChord({
-        notes: [{ index: 0, item: note }]
+        notes: [{ index: 0, item: note }],
+        duration: { fraction: 1 }
     }, 0);
     let chord = trackTact.getChord(0)
     expect(chord.getNote(0).fret).toBe(4);

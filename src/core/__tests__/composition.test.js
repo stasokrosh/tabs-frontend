@@ -1,6 +1,5 @@
 import Composition from '../composition'
-import {INSTRUMENT_CODES, getChordGeneratorByInstrumentCode} from '../instrument'
-import Track from '../track'
+import {INSTRUMENT_CODES} from '../instrument'
 
 it('Composition is created', () => {
     expect(Composition.Create({name : 'test composition'})).toBeDefined();
