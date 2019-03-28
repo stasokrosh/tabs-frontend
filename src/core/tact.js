@@ -1,4 +1,4 @@
-import { assert } from './util'
+import { assert } from '../util'
 import Reprise from './reprise'
 import TactDuration from './tact-duration'
 

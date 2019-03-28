@@ -1,4 +1,4 @@
-import { assert } from './util'
+import { assert } from '../util'
 import Note, { DEFAULT_FRET_COUNTS } from './note'
 import Duration from './duration';
 

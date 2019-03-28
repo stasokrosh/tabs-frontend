@@ -1,4 +1,4 @@
-import { assert } from './util'
+import { assert } from '../util'
 
 export const DURATION_FRACTIONS = [1, 2, 4, 8, 16, 32];
 export const EIGHTS_IN_QUATER = [2, 3, 5, 7];

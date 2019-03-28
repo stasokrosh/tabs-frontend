@@ -1,4 +1,4 @@
-import { assert } from './util'
+import { assert } from '../util'
 import Instrument from './instrument'
 import Composition from './composition'
 import TrackTact from './track-tact'

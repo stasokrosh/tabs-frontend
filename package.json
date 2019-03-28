@@ -6,7 +6,8 @@
     "create-react-app": "^2.1.8",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
-    "react-scripts": "2.1.8"
+    "react-scripts": "2.1.8",
+    "svg.js": "^2.7.1"
   },
   "scripts": {
     "start": "react-scripts start",

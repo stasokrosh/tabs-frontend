@@ -1,4 +1,4 @@
-import { assert } from './util'
+import { assert } from '../util'
 
 export const DEFAULT_FRET_COUNTS = {
     GUITAR: 20,

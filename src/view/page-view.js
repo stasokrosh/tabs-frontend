@@ -9,15 +9,10 @@ export const PAGE = {
     }
 };
 
+
+
 class PageView extends Component {
     constructor(props) {
         
-    }
-    render() {
-        return (
-            <div>
-                
-            </div>
-        )
     }
 }

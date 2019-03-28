@@ -1,4 +1,4 @@
-import { assert } from './util'
+import { assert } from '../util'
 import { validateFraction } from './duration'
 
 export function validateTactDurationCount(count, fraction) {
