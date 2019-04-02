@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
-import SVG from 'svg.js'
+import { createTestComposition } from './model/create-test-composition';
+import DrawContext from './view/draw-context'
+import TrackView from './view/track-view'
 
 class App extends Component {
 
@@ -17,15 +19,26 @@ class App extends Component {
   }
 
   componentDidMount() {
-    var draw = SVG('App').size(300, 300)
-    let nested = draw.nested();
-    nested.size(150, 150);
-    nested.rect(100, 100).attr({ fill: '#f06' });
-    this.setState({ nested, draw })
+    let composition = createTestComposition();
+    let drawContext = DrawContext.CreateSvgDrawContext({
+      containerID : 'App'
+    });
+    let trackView = TrackView.Create({
+      drawContext : drawContext,
+      track : composition.getTrack(0),
+      settings : {
+        isVertical : true
+      }
+    });
+    trackView.calculateStructure();
+    drawContext.renderer.renderTrack(trackView);
+    this.setState({trackView, drawContext});
   }
 
   onClick() {
-    this.state.draw.viewbox(20,20)
+    let state = this.state;
+    state.trackView.calculateStructure();
+    state.drawContext.renderer.renderTrack(state.trackView);
   }
 }
 

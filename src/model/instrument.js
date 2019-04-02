@@ -1,5 +1,5 @@
 import { assert } from '../util'
-import Chord from './chord'
+import Chord, { DEFAULT_STRING_COUNTS } from './chord'
 
 //develop only
 export const INSTRUMENT_CODES = {
@@ -57,6 +57,18 @@ export function getChordGeneratorByInstrumentCode(code) {
     }
 }
 
+export function getStringCountByInstrumentCode(code) {
+    let view = getInstrumentViewByCode(code);
+    switch (view) {
+        case INSTRUMENT_VIEWS.GUITAR:
+            return DEFAULT_STRING_COUNTS.GUITAR;
+        case INSTRUMENT_VIEWS.BASS:
+            return DEFAULT_STRING_COUNTS.BASS;
+        default: 
+            return 0;
+    }
+}
+
 //develop only
 export function validateInstrumentCode(code) {
     assert(() => Object.values(INSTRUMENT_CODES).indexOf(code) !== -1);
@@ -76,6 +88,10 @@ class Instrument {
 
     getChordGenerator() {
         return getChordGeneratorByInstrumentCode(this._code);
+    }
+
+    getStringCount() {
+        return getStringCountByInstrumentCode(this._code);
     }
 
     get code() {

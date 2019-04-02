@@ -16,6 +16,10 @@ class TactDuration {
         return new TactDuration(props);
     }
 
+    equal(tactDuration) {
+        return this.fraction === tactDuration.fraction && this.count === tactDuration.count;
+    }
+
     get fraction() {
         return this._fraction;
     }

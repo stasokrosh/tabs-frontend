@@ -1,9 +1,5 @@
 .App {
-    width: 50%;
-    margin: auto;
-    background-color: azure
-}
-
-.Nested {
+    width: 100%;
+    height: 1000px;
     background-color: blue
 }

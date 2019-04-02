@@ -9,6 +9,7 @@ class Track {
         this.name = props.name;
         this._instrument = Instrument.Create(props.instrument);
         this._tactsToTrackTacts = new Map();
+        this._tacts = [];
         this.refresh(props.composition);
     }
 
@@ -29,19 +30,19 @@ class Track {
 
     refresh(composition) {
         assert(() => composition instanceof Composition);
-        this._tacts = [];
+        this._tacts.length = 0;
         let compositionTacts = composition.tacts;
-        for (let tact of compositionTacts) {  
+        for (let tact of compositionTacts) {
             let trackTact = this.getTrackTactByTact(tact);
             if (trackTact)
                 this._tacts.push(trackTact);
             else
                 this._tacts.push(TrackTact.Create({
-                    tact : tact,
-                    chordGenerator : this._instrument.getChordGenerator()
+                    tact: tact,
+                    chordGenerator: this._instrument.getChordGenerator()
                 }));
         }
-        this.refreshTactsToTrackTacts();            
+        this.refreshTactsToTrackTacts();
     }
 
     get tactCount() {
@@ -55,7 +56,16 @@ class Track {
     getTact(index) {
         assert(() => index >= 0 && index < this.tactCount);
         return this._tacts[index];
-    } 
+    }
+
+    getTactNum(tact) {
+        assert(() => tact instanceof TrackTact);
+        return this._tacts.indexOf(tact);
+    }
+
+    get instrument() {
+        return this._instrument;
+    }
 }
 
 export default Track;
