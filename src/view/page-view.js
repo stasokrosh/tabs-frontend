@@ -35,6 +35,7 @@ class PageView {
     calculateRect(index, isVertical) {
         this._index = index;
         this._rect = getPageRect(index, isVertical);
+        this._isVertical = isVertical;
     }
 
     get lineViewsCount() {
@@ -83,7 +84,7 @@ class PageView {
     }
 
     _draw(parent) {
-        return this._drawContext.renderer.renderPage(this, parent);
+        return this._drawContext.renderPage(this, parent);
     }
 
     get rect() {
@@ -96,6 +97,40 @@ class PageView {
 
     get track() {
         return this._track;
+    }
+
+    get isVertical() {
+        return this._isVertical;
+    }
+
+    get headerRect() {
+        return Rect.Create({
+            x : this._rect.x += Measures.PAGE.PADDING.HORIZONTAL,
+            y : this._rect.y += Measures.PAGE.PADDING.VERTICAL,
+            width : Measures.LINE.WIDTH,
+            height : Measures.getHeaderHeight()
+        })
+    }
+
+    get numberRect() {
+        return Rect.Create({
+            x : this._rect.x + this._rect.width - Measures.PAGE.NUMBER.WIDTH,
+            y : this._rect.y + this._rect.height - Measures.PAGE.NUMBER.HEIGHT,
+            width : Measures.PAGE.NUMBER.WIDTH,
+            height : Measures.PAGE.NUMBER.HEIGHT
+        })
+    }
+
+    get renderData() {
+        let res = {
+            rect : Rect.Create(this._rect),
+            numberRect : this.numberRect,
+            isVertical : this._se
+        };
+        if (this._index === 0) {
+            res.headerRect = this.headerRect;
+        }   
+        return res
     }
 }
 

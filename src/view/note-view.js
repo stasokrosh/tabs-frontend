@@ -38,7 +38,7 @@ class NoteView {
     }
 
     _draw(parent) {
-        this._drawContext.renderer.renderNote(this, parent);
+        this._drawContext.renderNote(this, parent);
     }
 
     get rect() {
@@ -47,6 +47,13 @@ class NoteView {
 
     get note() {
         return this._note;
+    }
+
+    get renderData() {
+        let res = {
+            rect : Rect.Create(this._rect)
+        }
+        return res;
     }
 }
 

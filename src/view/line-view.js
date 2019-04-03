@@ -59,6 +59,7 @@ class LineView {
                 tactView.rect.x = position;
                 position += tactView.rect.width;
             }
+            this._rect.width = position;
         }
     }
 
@@ -70,7 +71,7 @@ class LineView {
     }
 
     _draw(parent) {
-        return this._drawContext.renderer.renderLine(this, parent);
+        return this._drawContext.renderLine(this, parent);
     }
 
     set tactViews(value) {
@@ -81,16 +82,27 @@ class LineView {
         return this._rect;
     }
 
-    get stringsRectInfo() {
+    get stringRects() {
+        let res = [];
         let stringCount = this._track.instrument.getStringCount();
-        return {
-            rect: Rect.Create({
-                x: this.rect.x,
-                y: Measures.LINE.PADDING.TOP,
-                width: this.width,
-            }),
-            stringCount : stringCount
-        };
+        let yPos = this._rect.y + Measures.TACT.Y_POS;
+        for (let index = 0; index < stringCount; index++) {
+            res.push(Rect.Create({
+                x : this._rect.x,
+                y : yPos,
+                width : this._rect.width
+            }));
+            yPos += Measures.LINE.STRING_INTERVAL;
+        }
+        return res;
+    }
+
+    get renderData() {
+        let res = {
+            rect : Rect.Create(this._rect),
+            stringRects : this.stringRects
+        }
+        return res;
     }
 
 }

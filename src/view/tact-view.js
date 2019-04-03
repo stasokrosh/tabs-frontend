@@ -6,6 +6,10 @@ import Rect from './rect'
 import * as Measures from './measures'
 import DrawContext from './draw-context'
 
+export function getTrackTactHeight(track) {
+    return Measures.LINE.STRING_INTERVAL * track.instrument.getStringCount();    
+}
+
 class TactView {
     constructor(props) {
         assert(() => props);
@@ -27,6 +31,8 @@ class TactView {
 
     calculateContence() {
         let xPosition = Measures.NOTE.HORIZONTAL_INTERVAL;
+        if (this.renderDuration) 
+            xPosition += Measures.TACT.DURATION_WIDTH;
         for (let chordView of this._chordViews) {
             chordView.calculateRect(xPosition);
             xPosition += chordView.chordWidth;
@@ -42,7 +48,14 @@ class TactView {
     }
 
     _draw(parent) {
-        return this._drawContext.renderer.renderTact(this, parent);
+        return this._drawContext.renderTact(this, parent);
+    }
+
+    createNewChordView(chord) {
+        return ChordView.Create({
+            chord: chord,
+            drawContext: this._drawContext
+        });
     }
 
     refresh() {
@@ -70,10 +83,7 @@ class TactView {
             if (chordView) {
                 this._chordViews.push(chordView);
             } else {
-                this._chordViews.push(ChordView.Create({
-                    chord: chord,
-                    drawContext: this._drawContext
-                }));
+                this._chordViews.push(this.createNewChordView(chord));
             }
         }
     }
@@ -90,12 +100,30 @@ class TactView {
         return this._track.getTactNum(this._tact);
     }
 
-    get drawDuration() {
+    get renderDuration() {
         let index = this.index;
         if (index === 0) 
             return true;
         let prevTact = this._track.getTact(index - 1);
         return prevTact.tact.tactDuration.equal(this._tact.tact.tactDuration);
+    }
+
+    get durationRect() {
+        return Rect.Create({
+            x : this.rect.x,
+            y : Measures.TACT.Y_POS,
+            height : getTrackTactHeight(this._track),
+            width : Measures.TACT.DURATION_WIDTH
+        })
+    }
+
+    get renderData() {
+        let res = {
+            rect : Rect.Create(this._rect)
+        };
+        if (this.drawDuration)
+            res.durationRect = this.durationRect;
+        return res;
     }
 }
 

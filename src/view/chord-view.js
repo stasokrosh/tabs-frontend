@@ -10,6 +10,12 @@ export function getChordWidth(chord) {
     return Measures.NOTE.HORIZONTAL_INTERVAL * (Math.log2(DURATION_FRACTIONS[DURATION_FRACTIONS.length - 1]) - Math.log2(chord.duration.fraction));
 }
 
+export function getChordHeight(chord) {
+    return Measures.LINE.PADDING.TOP + Measures.NOTE.HEIGHT * chord.stringNum;
+}
+
+export 
+
 class ChordView {
     constructor(props) {
         assert(() => props);
@@ -39,7 +45,7 @@ class ChordView {
         this.rect.x = xPosition;
         this.rect.y = Measures.LINE.PADDING.TOP;
         this.rect.width = width;
-        this.rect.height = Measures.getChordHeight();
+        this.rect.height = getChordHeight(this._chord);
         this.chordWidth = getChordWidth(this._chord);
     }
 
@@ -53,7 +59,15 @@ class ChordView {
     }
 
     _draw(parent) {
-        return this._drawContext.renderer.renderChord(this, parent);
+        return this._drawContext.renderChord(this, parent);
+    }
+
+    createNewNoteView(note, index) {
+        return NoteView.Create({ 
+            note : note, 
+            index : index,
+            drawContext : this._drawContext
+        });
     }
 
     refresh() {
@@ -61,11 +75,7 @@ class ChordView {
             let note = this._chord.getNote(index);
             if (note) {
                 if (!this._noteViews[index]) {
-                    this._noteViews[index] = NoteView.Create({ 
-                        note : note, 
-                        index : index,
-                        drawContext : this._drawContext
-                    });
+                    this._noteViews[index] = this.createNewNoteView(note, index);
                 }
             } else if (this._noteViews[index]) {
                 this._noteViews[index].remove();
@@ -80,6 +90,23 @@ class ChordView {
 
     get chord() {
         return this._chord;
+    }
+
+    get durationRect() {
+        return Rect.Create({
+            x : this._rect.x,
+            y : this._rect.y + this._rect.height,
+            width : this._rect.width,
+            height : Measures.LINE.HEIGHT - this._rect.height - Measures.LINE.PADDING.TOP - Measures.LINE.PADDING.BOTTOM
+        })
+    }
+
+    get renderData() {
+        let res = {
+            rect : Rect.Create(this._rect),
+            durationRect : this.durationRect
+        };
+        return res;
     }
 }
 

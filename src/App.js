@@ -27,11 +27,11 @@ class App extends Component {
       drawContext : drawContext,
       track : composition.getTrack(0),
       settings : {
-        isVertical : true
+        isVertical : false
       }
     });
     trackView.calculateStructure();
-    drawContext.renderer.renderTrack(trackView);
+    drawContext.renderTrack(trackView);
     this.setState({trackView, drawContext});
   }
 

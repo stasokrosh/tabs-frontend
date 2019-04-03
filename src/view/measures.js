@@ -8,7 +8,11 @@ export const PAGE = {
     },
     INTERVAL : 10,
     TITLE_LINES_COUNT : 2,
-    LINES_COUNT : 5
+    LINES_COUNT : 5,
+    NUMBER : {
+        HEIGHT : 5,
+        WIDTH : 5
+    }
 };
 
 export const LINE = {
@@ -27,10 +31,11 @@ export const NOTE = {
     HORIZONTAL_INTERVAL : 4
 };
 
-export function getHeaderHeight() {
-    return PAGE.HEIGHT - 2 * PAGE.PADDING.VERTICAL - PAGE.TITLE_LINES_COUNT * LINE.HEIGHT;
+export const TACT = {
+    DURATION_WIDTH : NOTE.HORIZONTAL_INTERVAL,
+    Y_POS : LINE.PADDING.TOP + NOTE.HEIGHT
 }
 
-export function getChordHeight() {
-    return LINE.HEIGHT - LINE.PADDING.TOP - LINE.PADDING.BOTTOM;
+export function getHeaderHeight() {
+    return PAGE.HEIGHT - 2 * PAGE.PADDING.VERTICAL - PAGE.TITLE_LINES_COUNT * LINE.HEIGHT;
 }

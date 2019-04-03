@@ -24,6 +24,28 @@ class TrackView {
         return new TrackView(props);
     }
 
+    createNewTactView(tact) {
+        return TactView.Create({
+            tact: tact,
+            track: this._track,
+            drawContext: this._drawContext
+        })
+    }
+
+    createNewPageView() {
+        return PageView.Create({
+            drawContext: this._drawContext,
+            track: this._track
+        });
+    }
+
+    createNewLineView() {
+        return LineView.Create({
+            drawContext: this._drawContext,
+            track : this._track
+        });
+    }
+
     refresh() {
         let tactSet = new Set(this._track.tacts);
         let index = 0;
@@ -44,11 +66,7 @@ class TrackView {
             if (tactView)
                 this._tactViews.push(tactView);
             else
-                this._tactViews.push(TactView.Create({
-                    tact: tact,
-                    track: this._track,
-                    drawContext: this._drawContext
-                }));
+                this._tactViews.push(this.createNewTactView(tact));
         }
     }
 
@@ -81,10 +99,7 @@ class TrackView {
         while (globalLineIndex < lines.length) {
             let pageView = this._pageViews[pageIndex];
             if (!pageView) {
-                pageView = PageView.Create({
-                    drawContext: this._drawContext,
-                    track: this._track
-                });
+                pageView = this.createNewPageView();
                 this._pageViews.push(pageView);
             }
             let linesCount = pageIndex === 0 ? Measures.PAGE.TITLE_LINES_COUNT : Measures.PAGE.LINES_COUNT;
@@ -92,9 +107,7 @@ class TrackView {
             while (lineIndex < linesCount && globalLineIndex < lines.length) {
                 let lineView = pageView.getLineView(lineIndex);
                 if (!lineView) {
-                    lineView = LineView.Create({
-                        drawContext: this._drawContext,
-                    });
+                    lineView = this.createNewLineView();
                     pageView.addLineView(lineView);
                     lineView.calculateRect(lineIndex, pageIndex === 0);
                 }
