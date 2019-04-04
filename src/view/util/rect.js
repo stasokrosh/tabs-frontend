@@ -1,5 +1,5 @@
 import { isUndefined } from "util";
-import { assert } from "../util";
+import { assert } from "../../util";
 
 class Rect {
     constructor(props) {

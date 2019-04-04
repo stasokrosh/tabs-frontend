@@ -1,8 +1,9 @@
-import Rect from './rect'
+import Rect from './util/rect'
 import { assert } from '../util';
-import DrawContext from './draw-context';
+import DrawContext from './context/draw-context';
 import * as Measures from './measures'
 import Track from '../model/track';
+import { getStringRects } from './tact-view';
 
 export function getLineRect(index, isTitlePage) {
     let rect = Rect.Create({
@@ -12,7 +13,7 @@ export function getLineRect(index, isTitlePage) {
     });
     rect.y = Measures.PAGE.PADDING.VERTICAL;
     if (isTitlePage)
-        rect.y += Measures.getHeaderHeight();
+        rect.y += Measures.HEADER.HEIGHT;
     rect.y += index * Measures.LINE.HEIGHT;
     return rect;
 }
@@ -47,10 +48,8 @@ class LineView {
                 let addWidth = (this._rect.width - tactsWidth) / tactCount;
                 let position = this._tactViews[0].rect.x;
                 for (let tactView of this._tactViews) {
-                    let newTactWidth = tactView.rect.width + addWidth;
-                    tactView.rect.width = newTactWidth;
-                    tactView.rect.x = position;
-                    position += newTactWidth;
+                    tactView.optimizeTactWidth(addWidth, position);
+                    position += tactView.rect.width;
                 }
             }
         } else {
@@ -83,18 +82,7 @@ class LineView {
     }
 
     get stringRects() {
-        let res = [];
-        let stringCount = this._track.instrument.getStringCount();
-        let yPos = this._rect.y + Measures.TACT.Y_POS;
-        for (let index = 0; index < stringCount; index++) {
-            res.push(Rect.Create({
-                x : this._rect.x,
-                y : yPos,
-                width : this._rect.width
-            }));
-            yPos += Measures.LINE.STRING_INTERVAL;
-        }
-        return res;
+        return getStringRects(this._rect.width,this._track.instrument.getStringCount())
     }
 
     get renderData() {
@@ -104,7 +92,10 @@ class LineView {
         }
         return res;
     }
-
+    
+    get DrawContext() {
+        return this._drawContext;
+    }
 }
 
 export default LineView;

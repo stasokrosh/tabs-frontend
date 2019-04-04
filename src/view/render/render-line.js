@@ -12,6 +12,10 @@ class LineSvgRenderer {
 
     render(lineView, renderInfo, container) {
         assert(() => lineView instanceof LineView && renderInfo && container);
+        for (let stringRect of renderInfo.stringRects) {
+            container.line(stringRect.x, stringRect.y, stringRect.x + stringRect.width, stringRect.y + stringRect.height)
+                .stroke({ color: '#000', width: stringRect.height, linecap: 'round' })
+        }
     }
 }
 

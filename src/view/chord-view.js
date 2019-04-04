@@ -1,17 +1,17 @@
 import { assert } from '../util'
 import Chord from '../model/chord'
 import NoteView from './note-view'
-import Rect from './rect'
+import Rect from './util/rect'
 import * as Measures from './measures'
 import { DURATION_FRACTIONS } from '../model/duration.js'
-import DrawContext from './draw-context'
+import DrawContext from './context/draw-context'
 
 export function getChordWidth(chord) {
-    return Measures.NOTE.HORIZONTAL_INTERVAL * (Math.log2(DURATION_FRACTIONS[DURATION_FRACTIONS.length - 1]) - Math.log2(chord.duration.fraction));
+    return Measures.CHORD.HORIZONTAL_INTERVAL + (Math.log2(DURATION_FRACTIONS[DURATION_FRACTIONS.length - 1]) - Math.log2(chord.duration.fraction)) * 2;
 }
 
 export function getChordHeight(chord) {
-    return Measures.LINE.PADDING.TOP + Measures.NOTE.HEIGHT * chord.stringNum;
+    return Measures.NOTE.HEIGHT * chord.stringNum;
 }
 
 export 
@@ -94,8 +94,7 @@ class ChordView {
 
     get durationRect() {
         return Rect.Create({
-            x : this._rect.x,
-            y : this._rect.y + this._rect.height,
+            y : this._rect.height,
             width : this._rect.width,
             height : Measures.LINE.HEIGHT - this._rect.height - Measures.LINE.PADDING.TOP - Measures.LINE.PADDING.BOTTOM
         })
@@ -107,6 +106,10 @@ class ChordView {
             durationRect : this.durationRect
         };
         return res;
+    }
+
+    get DrawContext() {
+        return this._drawContext;
     }
 }
 

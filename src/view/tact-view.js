@@ -2,12 +2,26 @@ import { assert } from '../util'
 import TrackTact from '../model/track-tact'
 import Track from '../model/track'
 import ChordView from './chord-view'
-import Rect from './rect'
+import Rect from './util/rect'
 import * as Measures from './measures'
-import DrawContext from './draw-context'
+import DrawContext from './context/draw-context'
 
 export function getTrackTactHeight(track) {
-    return Measures.LINE.STRING_INTERVAL * track.instrument.getStringCount();    
+    return Measures.LINE.STRING_INTERVAL * (track.instrument.getStringCount() - 1);    
+}
+
+export function getStringRects(width, stringNum) {
+    let res = [];;
+        let yPos = Measures.TACT.Y;
+        for (let index = 0; index < stringNum; index++) {
+            res.push(Rect.Create({
+                y : yPos,
+                width : width,
+                height : Measures.STRING.WIDTH
+            }));
+            yPos += Measures.LINE.STRING_INTERVAL;
+        }
+        return res;
 }
 
 class TactView {
@@ -30,7 +44,7 @@ class TactView {
 
 
     calculateContence() {
-        let xPosition = Measures.NOTE.HORIZONTAL_INTERVAL;
+        let xPosition = Measures.CHORD.HORIZONTAL_INTERVAL;
         if (this.renderDuration) 
             xPosition += Measures.TACT.DURATION_WIDTH;
         for (let chordView of this._chordViews) {
@@ -38,6 +52,18 @@ class TactView {
             xPosition += chordView.chordWidth;
         }
         this._rect.width = xPosition;
+    }
+
+    optimizeTactWidth(addWidth, xPos) {
+        this._rect.x = xPos;
+        this._rect.width += addWidth;
+        let chordAddWidth = addWidth / this._chordViews.length;
+        xPos = 0;
+        for (let chordView of this._chordViews) {
+            chordView.rect.x = chordView.rect.x + xPos;
+            chordView.chordWidth += chordAddWidth;
+            xPos += chordAddWidth;
+        }
     }
 
     draw(parent) {
@@ -88,6 +114,10 @@ class TactView {
         }
     }
 
+    getStringRects() {
+        return getStringRects(this._rect.width, this.track.instrument.getStringCount());
+    }
+
     get tact() {
         return this._tact;
     }
@@ -105,13 +135,12 @@ class TactView {
         if (index === 0) 
             return true;
         let prevTact = this._track.getTact(index - 1);
-        return prevTact.tact.tactDuration.equal(this._tact.tact.tactDuration);
+        return !prevTact.tact.tactDuration.equal(this._tact.tact.tactDuration);
     }
 
     get durationRect() {
         return Rect.Create({
-            x : this.rect.x,
-            y : Measures.TACT.Y_POS,
+            y : Measures.TACT.Y,
             height : getTrackTactHeight(this._track),
             width : Measures.TACT.DURATION_WIDTH
         })
@@ -119,11 +148,16 @@ class TactView {
 
     get renderData() {
         let res = {
-            rect : Rect.Create(this._rect)
+            rect : Rect.Create(this._rect),
+            getStringRects : this.getStringRects.bind(this)
         };
-        if (this.drawDuration)
+        if (this.renderDuration)
             res.durationRect = this.durationRect;
         return res;
+    }
+
+    get DrawContext() {
+        return this._drawContext;
     }
 }
 

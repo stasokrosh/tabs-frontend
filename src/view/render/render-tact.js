@@ -12,7 +12,9 @@ class TactSvgRenderer {
 
     render(tactView, renderInfo, container) {
         assert(() => tactView instanceof TactView && renderInfo && container);
-        container.rect(renderInfo.rect.width, renderInfo.rect.height).fill("#00f");
+        //container.rect(renderInfo.rect.width, renderInfo.rect.height).fill("#99f");
+        if (renderInfo.durationRect)
+            container.rect(renderInfo.durationRect.width, renderInfo.durationRect.height).move(renderInfo.durationRect.x, renderInfo.durationRect.y).fill("#0f0");
     }
 }
 

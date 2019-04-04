@@ -1,9 +1,9 @@
 import { assert } from '../util'
 import Note from '../model/note'
-import Rect from './rect'
+import Rect from './util/rect'
 
 import * as Measures from './measures'
-import DrawContext from './draw-context';
+import DrawContext from './context/draw-context'
 
 export function getNoteRect(index, fret) {
     return {
@@ -54,6 +54,10 @@ class NoteView {
             rect : Rect.Create(this._rect)
         }
         return res;
+    }
+
+    get DrawContext() {
+        return this._drawContext;
     }
 }
 

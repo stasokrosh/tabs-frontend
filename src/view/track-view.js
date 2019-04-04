@@ -1,10 +1,11 @@
 import { assert } from '../util'
 import Track from '../model/track'
 import TactView from './tact-view'
-import DrawContext from './draw-context'
+import DrawContext from './context/draw-context'
 import * as Measures from './measures'
 import LineView from './line-view';
 import PageView from './page-view';
+import Rect from './util/rect';
 
 class TrackView {
     constructor(props) {
@@ -17,6 +18,7 @@ class TrackView {
         this._settings = props.settings;
         this._tactViews = [];
         this._pageViews = [];
+        this._rect = Rect.Create({});
         this.refresh();
     }
 
@@ -70,7 +72,7 @@ class TrackView {
         }
     }
 
-    calculateStructure() {
+    calculateRect() {
         const lineWidth = Measures.LINE.WIDTH;
         let lines = [];
         let currentLine = [];
@@ -130,6 +132,9 @@ class TrackView {
                 this._pageViews.pop();
             }
         }
+        let lastPage = this._pageViews[this._pageViews.length - 1];
+        this._rect.width = lastPage.rect.x + lastPage.rect.width + Measures.PAGE.INTERVAL;
+        this._rect.height = lastPage.rect.y + lastPage.rect.height + Measures.PAGE.INTERVAL;
     }
 
     draw(parent) {
@@ -140,6 +145,21 @@ class TrackView {
 
     get settings() {
         return this._settings;
+    }
+
+    get rect() {
+        return this._rect;
+    }
+
+    get renderData() {
+        let res = {
+            rect : Rect.Create(this._rect)
+        };
+        return res;
+    }
+
+    get DrawContext() {
+        return this._drawContext;
     }
 }
 

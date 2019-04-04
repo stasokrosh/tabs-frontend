@@ -1,6 +1,6 @@
-import Rect from './rect'
+import Rect from './util/rect'
 import * as Measures from './measures'
-import DrawContext from './draw-context';
+import DrawContext from './context/draw-context';
 import LineView from './line-view'
 import { assert } from '../util';
 import Track from '../model/track';
@@ -10,10 +10,13 @@ export function getPageRect(index, isVertical) {
         width: Measures.PAGE.WIDTH,
         height: Measures.PAGE.HEIGHT
     });
-    if (isVertical)
-        rect.y = (Measures.PAGE.HEIGHT + Measures.PAGE.INTERVAL) * index;
-    else
-        rect.x = (Measures.PAGE.WIDTH + Measures.PAGE.INTERVAL) * index;
+    if (isVertical) {
+        rect.y = Measures.PAGE.INTERVAL + (Measures.PAGE.HEIGHT + Measures.PAGE.INTERVAL) * index;
+        rect.x = Measures.PAGE.INTERVAL;
+    } else {
+        rect.x = Measures.PAGE.INTERVAL + (Measures.PAGE.WIDTH + Measures.PAGE.INTERVAL) * index;
+        rect.y = Measures.PAGE.INTERVAL;
+    }
     return rect;
 }
 
@@ -105,32 +108,35 @@ class PageView {
 
     get headerRect() {
         return Rect.Create({
-            x : this._rect.x += Measures.PAGE.PADDING.HORIZONTAL,
-            y : this._rect.y += Measures.PAGE.PADDING.VERTICAL,
-            width : Measures.LINE.WIDTH,
-            height : Measures.getHeaderHeight()
+            x: Measures.HEADER.X,
+            y: Measures.HEADER.Y,
+            width: Measures.HEADER.WIDTH,
+            height: Measures.HEADER.HEIGHT
         })
     }
 
     get numberRect() {
         return Rect.Create({
-            x : this._rect.x + this._rect.width - Measures.PAGE.NUMBER.WIDTH,
-            y : this._rect.y + this._rect.height - Measures.PAGE.NUMBER.HEIGHT,
-            width : Measures.PAGE.NUMBER.WIDTH,
-            height : Measures.PAGE.NUMBER.HEIGHT
+            x: this._rect.width - Measures.PAGE.NUMBER.WIDTH,
+            y: this._rect.height - Measures.PAGE.NUMBER.HEIGHT,
+            width: Measures.PAGE.NUMBER.WIDTH,
+            height: Measures.PAGE.NUMBER.HEIGHT
         })
     }
 
     get renderData() {
         let res = {
-            rect : Rect.Create(this._rect),
-            numberRect : this.numberRect,
-            isVertical : this._se
+            rect: Rect.Create(this._rect),
+            numberRect: this.numberRect
         };
         if (this._index === 0) {
             res.headerRect = this.headerRect;
-        }   
+        }
         return res
+    }
+
+    get DrawContext() {
+        return this._drawContext;
     }
 }
 
