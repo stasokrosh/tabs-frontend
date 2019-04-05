@@ -27,6 +27,8 @@ class PageView {
         this._drawContext = props.drawContext;
         assert(() => props.track instanceof Track);
         this._track = props.track;
+        assert(() => props.composition);
+        this._composition = props.composition;
         this._rect = Rect.Create({});
         this._lineViews = [];
     }
@@ -115,11 +117,30 @@ class PageView {
         })
     }
 
-    get numberRect() {
+    get compositionHeaderRect() {
         return Rect.Create({
-            x: this._rect.width - Measures.PAGE.NUMBER.WIDTH,
-            y: this._rect.height - Measures.PAGE.NUMBER.HEIGHT,
-            width: Measures.PAGE.NUMBER.WIDTH,
+            x: Measures.HEADER.X,
+            y: Measures.HEADER.Y + Measures.COMPOSITION_HEADER.MARGIN,
+            width : Measures.COMPOSITION_HEADER.WIDTH,
+            height : Measures.COMPOSITION_HEADER.HEIGHT
+        })
+    }
+
+    get trackHeaderRect() {
+        return Rect.Create({
+            x: Measures.TRACK_HEADER.X,
+            y: Measures.TRACK_HEADER.Y,
+            width : Measures.TRACK_HEADER.WIDTH,
+            height : Measures.TRACK_HEADER.HEIGHT
+        })
+    }
+
+    get numberRect() {
+        let width = ((this._index + 1) + '').length * Measures.PAGE.NUMBER.WIDTH;
+        return Rect.Create({
+            x: this._rect.width - width - Measures.PAGE.NUMBER.WIDTH,
+            y: this._rect.height - 2 * Measures.PAGE.NUMBER.HEIGHT,
+            width: width,
             height: Measures.PAGE.NUMBER.HEIGHT
         })
     }
@@ -131,12 +152,18 @@ class PageView {
         };
         if (this._index === 0) {
             res.headerRect = this.headerRect;
+            res.compositionHeaderRect = this.compositionHeaderRect;
+            res.trackHeaderRect = this.trackHeaderRect;
         }
         return res
     }
 
     get DrawContext() {
         return this._drawContext;
+    }
+    
+    get composition() {
+        return this._composition;
     }
 }
 

@@ -1,5 +1,7 @@
-import { assert } from "../../util";
-import PageView from "../page-view";
+import { assert } from "../../util"
+import PageView from "../page-view"
+import * as Draw from './draw'
+import { renderText, renderRect } from "./util";
 
 class PageSvgRenderer {
     constructor(props) {
@@ -12,10 +14,32 @@ class PageSvgRenderer {
 
     render(pageView, renderInfo, container) {
         assert(() => pageView instanceof PageView && renderInfo && container);
-        container.rect(renderInfo.rect.width, renderInfo.rect.height).fill("#fff");
-        container.rect(renderInfo.numberRect.width, renderInfo.numberRect.height).move(renderInfo.numberRect.x, renderInfo.numberRect.y).fill("#ff5");
+        this.renderBackground(renderInfo.rect, container);
+        this.renderNumber(pageView, renderInfo.numberRect, container);
         if (renderInfo.headerRect)
-            container.rect(renderInfo.headerRect.width, renderInfo.headerRect.height).move(renderInfo.headerRect.x, renderInfo.headerRect.y).fill("#ff0");
+            this.renderHeader(pageView, renderInfo.compositionHeaderRect, renderInfo.trackHeaderRect, container);
+    }
+
+    renderBackground(rect, container) {
+        renderRect(container, rect, Draw.PAGE.COLOR, true);
+    }
+
+    renderNumber(pageView, rect, container) {
+        renderText(container, pageView.index + 1, rect, {
+            fill: Draw.PAGE.NUMBER.COLOR, 
+            family: Draw.PAGE.NUMBER.FONT,
+        });
+    }
+
+    renderHeader(pageView, compositionHeaderRect, trackHeaderRect, container) {
+        renderText(container, pageView.composition.name, compositionHeaderRect, {
+            fill: Draw.PAGE.HEADER.COLOR, 
+            family: Draw.PAGE.HEADER.FONT,
+        });
+        renderText(container, pageView.track.name, trackHeaderRect, {
+            fill: Draw.PAGE.HEADER.COLOR, 
+            family: Draw.PAGE.HEADER.FONT,
+        });
     }
 }
 

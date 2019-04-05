@@ -4,7 +4,7 @@ class EventDispatcher {
         this._eventListeners = [];
     }
 
-    Create() {
+    static Create() {
         return new EventDispatcher();
     }
 

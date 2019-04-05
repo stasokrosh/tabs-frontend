@@ -1,6 +1,5 @@
 import Tact from '../tact'
 import TactDuration from '../tact-duration'
-import Reprise from '../reprise';
 
 it('Tact is created',() => {
     expect(Tact.Create({
@@ -8,7 +7,7 @@ it('Tact is created',() => {
     })).toBeDefined();
     expect(Tact.Create({
         tactDuration : TactDuration.Create({fraction : 4, count : 4}),
-        reprise : Reprise.Create({}) 
+        reprise : 2
     })).toBeDefined();
 });
 

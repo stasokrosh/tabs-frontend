@@ -1,5 +1,7 @@
 import { assert } from "../../util";
 import LineView from "../line-view";
+import * as Draw from './draw'
+import { renderLine } from "./util";
 
 class LineSvgRenderer {
     constructor(props) {
@@ -12,9 +14,19 @@ class LineSvgRenderer {
 
     render(lineView, renderInfo, container) {
         assert(() => lineView instanceof LineView && renderInfo && container);
-        for (let stringRect of renderInfo.stringRects) {
-            container.line(stringRect.x, stringRect.y, stringRect.x + stringRect.width, stringRect.y + stringRect.height)
-                .stroke({ color: '#000', width: stringRect.height, linecap: 'round' })
+        this.renderStrings(renderInfo.stringRects, container);
+        this.renderBorders(renderInfo.tactsBorderRects, container);
+    }
+
+    renderStrings(stringRects, container) {
+        for (let stringRect of stringRects) {
+            renderLine(container, stringRect, Draw.LINE.COLOR,Draw.LINE.WIDTH);
+        }
+    }
+
+    renderBorders(borderRects, container) {
+        for (let borderRect of borderRects) {
+            renderLine(container, borderRect, Draw.LINE.COLOR,Draw.LINE.WIDTH);
         }
     }
 }

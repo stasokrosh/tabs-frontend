@@ -3,7 +3,7 @@ import { assert } from '../util';
 import DrawContext from './context/draw-context';
 import * as Measures from './measures'
 import Track from '../model/track';
-import { getStringRects } from './tact-view';
+import { getStringRects, getTrackTactHeight } from './tact-view';
 
 export function getLineRect(index, isTitlePage) {
     let rect = Rect.Create({
@@ -85,10 +85,30 @@ class LineView {
         return getStringRects(this._rect.width,this._track.instrument.getStringCount())
     }
 
+    get tactsBorderRects() {
+        let res = [];
+        for (let index = 0; index < this._tactViews.length; index++) {
+            let tactView = this._tactViews[index];
+            if (index === 0) {
+                res.push(Rect.Create({
+                    y : Measures.TACT.Y,
+                    height : getTrackTactHeight(this._track)
+                }))
+            }
+            res.push(Rect.Create({
+                x : tactView.rect.x + tactView.rect.width,
+                y : Measures.TACT.Y,
+                height : getTrackTactHeight(this._track)
+            }))
+        }
+        return res;
+    }
+ 
     get renderData() {
         let res = {
             rect : Rect.Create(this._rect),
-            stringRects : this.stringRects
+            stringRects : this.stringRects,
+            tactsBorderRects : this.tactsBorderRects
         }
         return res;
     }

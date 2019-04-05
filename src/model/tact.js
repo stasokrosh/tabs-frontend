@@ -1,11 +1,16 @@
 import { assert } from '../util'
-import Reprise from './reprise'
 import TactDuration from './tact-duration'
+
+export const DEFAULT_NO_REPRISE = 0;
+
+export function validateReprise(reprise) {
+    assert(() => reprise >= 0);
+}
 
 class Tact {
     constructor(props) {
         assert(() => props);
-        this.reprise = props.reprise;
+        this.reprise = props.reprise || DEFAULT_NO_REPRISE;
         this.tactDuration = props.tactDuration;
     }
 
@@ -26,7 +31,8 @@ class Tact {
     }
 
     set reprise(value) {
-        this._reprise = value ? Reprise.Create(value) : value;
+        validateReprise(value);
+        this._reprise = value;
     }
 
 }

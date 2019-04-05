@@ -12,6 +12,7 @@ class Editor {
         this._drawContext.addEventListener(this);
         assert(() => props.composition);
         this._composition = props.composition;
+        assert(() => props.settings)
         this._settings = props.settings;
         this.selectedTrack = props.composition.getTrack(0);
     }
@@ -33,6 +34,7 @@ class Editor {
         this._selectedTrack = value;
         this._trackView = TrackView.Create({
             track : this._selectedTrack,
+            composition : this._composition,
             drawContext : this._drawContext,
             settings : this._settings
         })

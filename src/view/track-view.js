@@ -16,6 +16,8 @@ class TrackView {
         this._drawContext = props.drawContext;
         assert(() => props.settings);
         this._settings = props.settings;
+        assert(() => props.composition);
+        this._composition = props.composition;
         this._tactViews = [];
         this._pageViews = [];
         this._rect = Rect.Create({});
@@ -37,14 +39,15 @@ class TrackView {
     createNewPageView() {
         return PageView.Create({
             drawContext: this._drawContext,
-            track: this._track
+            track: this._track,
+            composition: this._composition
         });
     }
 
     createNewLineView() {
         return LineView.Create({
             drawContext: this._drawContext,
-            track : this._track
+            track: this._track
         });
     }
 
@@ -93,8 +96,8 @@ class TrackView {
         }
         if (currentLineWidth !== 0)
             lines.push({
-                line : currentLine,
-                optimize : false
+                line: currentLine,
+                optimize: false
             });
         let globalLineIndex = 0;
         let pageIndex = 0;
@@ -153,13 +156,17 @@ class TrackView {
 
     get renderData() {
         let res = {
-            rect : Rect.Create(this._rect)
+            rect: Rect.Create(this._rect)
         };
         return res;
     }
 
     get DrawContext() {
         return this._drawContext;
+    }
+
+    get Composition() {
+        return this._composition;
     }
 }
 
