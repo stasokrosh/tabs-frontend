@@ -51,6 +51,20 @@ class TrackView {
         });
     }
 
+    getRowPageCount(availableRect) {
+        if (!this._settings.wrapPages)
+            return 1;
+        let count = 0;
+        if (this._settings.isVertical) {
+            count = Math.floor((availableRect.width - Measures.PAGE.INTERVAL) / (Measures.PAGE.INTERVAL + Measures.PAGE.WIDTH));
+        } else {
+            count = Math.floor((availableRect.height - Measures.PAGE.INTERVAL) / (Measures.PAGE.INTERVAL + Measures.PAGE.HEIGHT));
+        }
+        if (count === 0)
+            count++;
+        return count;
+    }
+
     refresh() {
         let tactSet = new Set(this._track.tacts);
         let index = 0;
@@ -73,77 +87,124 @@ class TrackView {
             else
                 this._tactViews.push(this.createNewTactView(tact));
         }
+        this._updated = true;
     }
 
-    calculateRect() {
-        const lineWidth = Measures.LINE.WIDTH;
-        let lines = [];
-        let currentLine = [];
-        let currentLineWidth = 0;
-        for (let tactView of this._tactViews) {
-            tactView.calculateContence();
-            currentLineWidth += tactView.rect.width;
-            if (currentLineWidth > lineWidth) {
+    _calculateSelfRect(rowPageCount) {
+        let verticalCount = 1;
+        let horizontalCount = 1;
+        const pagesCount = this._pageViews.length;
+        if (this._settings.isVertical) {
+            verticalCount = Math.floor(pagesCount / rowPageCount);
+            horizontalCount = pagesCount % rowPageCount
+            if (verticalCount === 0) {
+                verticalCount++;
+            } else {
+                if (horizontalCount !== 0) {
+                    verticalCount++;
+                }
+                horizontalCount = rowPageCount;
+            }
+        } else {
+            horizontalCount = Math.floor(pagesCount / rowPageCount);
+            verticalCount = pagesCount % rowPageCount
+            if (horizontalCount === 0) {
+                horizontalCount++;
+            } else {
+                if (verticalCount !== 0) {
+                    horizontalCount++;
+                }
+                verticalCount = rowPageCount;
+            }
+        }
+        this._rect.width = Measures.PAGE.INTERVAL + (Measures.PAGE.INTERVAL + Measures.PAGE.WIDTH) * horizontalCount;
+        this._rect.height = Measures.PAGE.INTERVAL + (Measures.PAGE.INTERVAL + Measures.PAGE.HEIGHT) * verticalCount;
+    }
+
+    calculateRect(availableRect) {
+        let rowPageCount = this.getRowPageCount(availableRect);
+        if (!this._updated) {
+            if (rowPageCount > this._pageViews.length)
+                rowPageCount = this._pageViews.length;
+            this._updated = rowPageCount === this._rowPageCount;
+        }
+        if (this._updated) {
+            const lineWidth = Measures.LINE.WIDTH;
+            let lines = [];
+            let currentLine = [];
+            let currentLineWidth = 0;
+            for (let tactView of this._tactViews) {
+                tactView.calculateContence();
+                currentLineWidth += tactView.rect.width;
+                if (currentLineWidth > lineWidth) {
+                    lines.push({
+                        line: currentLine,
+                        optimize: true
+                    });
+                    currentLine = [tactView];
+                    currentLineWidth = tactView.rect.width;
+                } else {
+                    currentLine.push(tactView);
+                }
+            }
+            if (currentLineWidth !== 0)
                 lines.push({
                     line: currentLine,
-                    optimize: true
+                    optimize: false
                 });
-                currentLine = [tactView];
-                currentLineWidth = tactView.rect.width;
-            } else {
-                currentLine.push(tactView);
-            }
-        }
-        if (currentLineWidth !== 0)
-            lines.push({
-                line: currentLine,
-                optimize: false
-            });
-        let globalLineIndex = 0;
-        let pageIndex = 0;
-        while (globalLineIndex < lines.length) {
-            let pageView = this._pageViews[pageIndex];
-            if (!pageView) {
-                pageView = this.createNewPageView();
-                this._pageViews.push(pageView);
-            }
-            let linesCount = pageIndex === 0 ? Measures.PAGE.TITLE_LINES_COUNT : Measures.PAGE.LINES_COUNT;
-            let lineIndex = 0;
-            while (lineIndex < linesCount && globalLineIndex < lines.length) {
-                let lineView = pageView.getLineView(lineIndex);
-                if (!lineView) {
-                    lineView = this.createNewLineView();
-                    pageView.addLineView(lineView);
-                    lineView.calculateRect(lineIndex, pageIndex === 0);
+            let globalLineIndex = 0;
+            let pageIndex = 0;
+            while (globalLineIndex < lines.length) {
+                let pageView = this._pageViews[pageIndex];
+                if (!pageView) {
+                    pageView = this.createNewPageView();
+                    this._pageViews.push(pageView);
                 }
-                lineView.tactViews = lines[globalLineIndex].line;
-                lineView.calculateTactsWidth(lines[globalLineIndex].optimize);
-                lineIndex++;
-                globalLineIndex++;
+                let linesCount = pageIndex === 0 ? Measures.PAGE.TITLE_LINES_COUNT : Measures.PAGE.LINES_COUNT;
+                let lineIndex = 0;
+                while (lineIndex < linesCount && globalLineIndex < lines.length) {
+                    let lineView = pageView.getLineView(lineIndex);
+                    if (!lineView) {
+                        lineView = this.createNewLineView();
+                        pageView.addLineView(lineView);
+                        lineView.calculateRect(lineIndex, pageIndex === 0);
+                    }
+                    lineView.tactViews = lines[globalLineIndex].line;
+                    lineView.calculateTactsWidth(lines[globalLineIndex].optimize);
+                    lineIndex++;
+                    globalLineIndex++;
+                }
+                if (lineIndex < pageView.linesCount) {
+                    for (let index = pageView.linesCount; index >= lineIndex; index--) {
+                        pageView.deleteLineView(index);
+                    }
+                }
+                pageIndex++;
             }
-            if (lineIndex < pageView.linesCount) {
-                for (let index = pageView.linesCount; index >= lineIndex; index--) {
-                    pageView.deleteLineView(index);
+            if (pageIndex < this._pageViews.length) {
+                for (let index = this._pageViews.length - 1; index >= pageIndex; index--) {
+                    this._pageViews[index].remove();
+                    this._pageViews.pop();
                 }
             }
-            pageView.calculateRect(pageIndex, this._settings.isVertical);
-            pageIndex++;
-        }
-        if (pageIndex < this._pageViews.length) {
-            for (let index = this._pageViews.length - 1; index >= pageIndex; index--) {
-                this._pageViews[index].remove();
-                this._pageViews.pop();
+            if (rowPageCount > this._pageViews.length)
+                rowPageCount = this._pageViews.length;
+            for (let index = 0; index < this._pageViews.length; index++) {
+                this._pageViews[index].calculateRect(index, this._settings.isVertical, rowPageCount);
             }
+            this._needDraw = true;
+            this._updated = false;
+            this._calculateSelfRect(rowPageCount);
         }
-        let lastPage = this._pageViews[this._pageViews.length - 1];
-        this._rect.width = lastPage.rect.x + lastPage.rect.width + Measures.PAGE.INTERVAL;
-        this._rect.height = lastPage.rect.y + lastPage.rect.height + Measures.PAGE.INTERVAL;
+        this._rowPageCount = rowPageCount;
     }
 
     draw(parent) {
-        for (let pageView of this._pageViews) {
-            pageView.draw(parent);
-        }
+        if (this._needDraw)
+            for (let pageView of this._pageViews) {
+                pageView.draw(parent);
+            }
+        this._needDraw = false;
     }
 
     get settings() {
@@ -167,6 +228,10 @@ class TrackView {
 
     get Composition() {
         return this._composition;
+    }
+
+    get needRender() {
+        return this._needDraw;
     }
 }
 

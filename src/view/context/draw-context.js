@@ -6,6 +6,7 @@ import TactView from '../tact-view';
 import LineView from '../line-view';
 import PageView from '../page-view';
 import EventDispatcher from './event-dispatcher';
+import TrackView from '../track-view';
 
 class DrawContext {
     constructor(props) {
@@ -24,10 +25,6 @@ class DrawContext {
             renderer : SvgRenderer.Create(props)
         };
         return new DrawContext(contextData);
-    }
-
-    clear() {
-        this._renderer.clear();
     }
 
     renderNote(noteView, parent) {
@@ -55,7 +52,13 @@ class DrawContext {
         return this._renderer.renderPage(pageView, parent);
     }
 
+    prepareRender(trackView) {
+        assert(() => trackView instanceof TrackView);
+        this._renderer.prepareRender(trackView);
+    }
+
     renderTrack(trackView) {
+        assert(() => trackView instanceof TrackView);
         this._renderer.renderTrack(trackView);
     }
 

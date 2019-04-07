@@ -5,17 +5,19 @@ import LineView from './line-view'
 import { assert } from '../util';
 import Track from '../model/track';
 
-export function getPageRect(index, isVertical) {
+export function getPageRect(index, isVertical, rowPageCount) {
+    let colIndex = index % rowPageCount;
+    let rowIndex = Math.floor(index / rowPageCount);
     let rect = Rect.Create({
         width: Measures.PAGE.WIDTH,
         height: Measures.PAGE.HEIGHT
     });
     if (isVertical) {
-        rect.y = Measures.PAGE.INTERVAL + (Measures.PAGE.HEIGHT + Measures.PAGE.INTERVAL) * index;
-        rect.x = Measures.PAGE.INTERVAL;
+        rect.y = Measures.PAGE.INTERVAL + (Measures.PAGE.HEIGHT + Measures.PAGE.INTERVAL) * rowIndex;
+        rect.x = Measures.PAGE.INTERVAL + (Measures.PAGE.INTERVAL + Measures.PAGE.WIDTH) * colIndex;
     } else {
-        rect.x = Measures.PAGE.INTERVAL + (Measures.PAGE.WIDTH + Measures.PAGE.INTERVAL) * index;
-        rect.y = Measures.PAGE.INTERVAL;
+        rect.x = Measures.PAGE.INTERVAL + (Measures.PAGE.WIDTH + Measures.PAGE.INTERVAL) * rowIndex;
+        rect.y = Measures.PAGE.INTERVAL  + (Measures.PAGE.INTERVAL + Measures.PAGE.HEIGHT) * colIndex;
     }
     return rect;
 }
@@ -37,9 +39,9 @@ class PageView {
         return new PageView(props);
     }
 
-    calculateRect(index, isVertical) {
+    calculateRect(index, isVertical, rowPageCount) {
         this._index = index;
-        this._rect = getPageRect(index, isVertical);
+        this._rect = getPageRect(index, isVertical, rowPageCount);
         this._isVertical = isVertical;
     }
 

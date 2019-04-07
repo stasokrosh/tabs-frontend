@@ -12,7 +12,7 @@ class App extends Component {
 
   render() {
     return (
-      <EditorComponent id = 'Editor' composition={this.state.composition}/>
+      <EditorComponent composition={this.state.composition}/>
     );
   }
 }

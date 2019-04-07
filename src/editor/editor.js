@@ -7,13 +7,17 @@ class Editor {
         assert(() => props);
         assert(() => props.containerID);
         this._drawContext = DrawContext.Create({
-            containerID : props.containerID
+            containerID : props.containerID,
+            workspaceID : props.workspaceID
         });
         this._drawContext.addEventListener(this);
         assert(() => props.composition);
         this._composition = props.composition;
-        assert(() => props.settings)
-        this._settings = props.settings;
+        this._settings = { 
+            isVertical : true,
+            zoom : 3,
+            wrapPages : true
+        };
         this.selectedTrack = props.composition.getTrack(0);
     }
 
@@ -22,8 +26,11 @@ class Editor {
     }
 
     redraw() {
-        this._trackView.calculateRect();
         this._drawContext.renderTrack(this._trackView);
+    }
+
+    prepare() {
+        this._drawContext.prepareRender(this._trackView);
     }
 
     get selectedTrack() {

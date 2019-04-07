@@ -5,12 +5,16 @@ import ChordSvgRenderer from './render-chord';
 import TactSvgRenderer from './render-tact';
 import LineSvgRenderer from './render-line';
 import PageSvgRenderer from './render-page';
+import Rect from '../util/rect';
 
 class SvgRenderer {
     constructor(props) {
+        assert(() => props);
         assert(() => props.containerID);
-        this._container = SVG(props.containerID);
-        this._containerID = props.containerID;
+        this._svgContainer = SVG(props.containerID);
+        this._container = document.getElementById(props.containerID);
+        assert(() => props.workspaceID);
+        this._workspace = document.getElementById(props.workspaceID);
         this._noteRenderer = NoteSvgRenderer.Create({});
         this._chordRenderer = ChordSvgRenderer.Create({});
         this._tactRenderer = TactSvgRenderer.Create({});
@@ -20,11 +24,6 @@ class SvgRenderer {
 
     static Create(props) {
         return new SvgRenderer(props);
-    }
-
-    clear() {
-        this._container.remove();
-        this._container = SVG(this._containerID);
     }
 
     renderNote(noteView, parent) {
@@ -67,17 +66,31 @@ class SvgRenderer {
         return container;
     }
 
+    prepareRender(trackView) {
+        let zoom = trackView.settings.zoom;
+        let availableRect = Rect.Create({
+            width : this._workspace.clientWidth / zoom,
+            height : this._workspace.clientHeight / zoom
+        });
+        trackView.calculateRect(availableRect);
+    }
+
     renderTrack(trackView) {
         let renderInfo = trackView.renderData;
-        this._container.clear();
-        let bbox = this._container.rbox();
-        if (trackView.settings.isVertical) {
-            this._container.height(bbox.width * renderInfo.rect.height / renderInfo.rect.width);
-        } else {
-            this._container.width(bbox.height * renderInfo.rect.width / renderInfo.rect.height);
-        }
-        this._container.viewbox(0,0, renderInfo.rect.width, renderInfo.rect.height);
-        trackView.draw(this._container);
+        let containerRect = this.getContainerRect(trackView);
+        this._container.style.width = containerRect.width + 'px';
+        this._container.style.height = containerRect.height + 'px';
+        if (trackView.needRender)
+            this._svgContainer.viewbox(0,0, renderInfo.rect.width, renderInfo.rect.height);
+        trackView.draw(this._svgContainer);
+    }
+
+    getContainerRect(trackView) {
+        let zoom = trackView.settings.zoom;
+        return Rect.Create({
+            width : trackView.rect.width * zoom,
+            height : trackView.rect.height * zoom
+        })
     }
 }
 
