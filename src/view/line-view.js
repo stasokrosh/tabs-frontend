@@ -46,7 +46,7 @@ class LineView {
                     tactsWidth += tactView.rect.width;
                 }
                 let addWidth = (this._rect.width - tactsWidth) / tactCount;
-                let position = this._tactViews[0].rect.x;
+                let position = 0;
                 for (let tactView of this._tactViews) {
                     tactView.optimizeTactWidth(addWidth, position);
                     position += tactView.rect.width;

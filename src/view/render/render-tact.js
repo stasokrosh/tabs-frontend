@@ -15,11 +15,7 @@ class TactSvgRenderer {
 
     render(tactView, renderInfo, container) {
         assert(() => tactView instanceof TactView && renderInfo && container);
-        container.click((e) => {
-            tactView.drawContext.invokeEvent(EditorEvent.CreateSelectTactEvent({ object: tactView.tact }));
-            e.stopPropagation();
-        });
-        this.renderSelection(renderInfo, tactView.tact.selected, renderInfo.rect, container);
+        this.renderSelection(renderInfo, tactView, renderInfo.rect, container);
         if (renderInfo.durationCountRect && renderInfo.durationFractionRect) {
             this.renderDuration(tactView, renderInfo.durationCountRect, renderInfo.durationFractionRect, container);
         }
@@ -29,9 +25,28 @@ class TactSvgRenderer {
         }
     }
 
-    renderSelection(renderInfo, selected, rect, container) {
-        renderRect(container, rect, selected ? Draw.TACT.BACKGROUND_COLOR_SELECTED : Draw.TACT.BACKGROUND_COLOR, true);
-        if (selected) {
+    renderSelection(renderInfo, tactView, rect, container) {
+        let selection = renderRect(container, rect, tactView.tact.selected ? Draw.TACT.BACKGROUND_COLOR_SELECTED : Draw.TACT.BACKGROUND_COLOR, true);
+        selection.on('contextmenu', (e) => {
+            tactView.drawContext.invokeEvent(EditorEvent.CreateSelectTactEvent({ 
+                object : {
+                    tact : tactView.tact
+                } 
+            }));
+            e.stopPropagation();
+            e.preventDefault();
+        });
+        selection.click((e) => {
+            tactView.drawContext.invokeEvent(EditorEvent.CreateAddChordEvent({ 
+                object : {
+                    tact : tactView.tact,
+                    index : -1
+                } 
+            }));
+            e.stopPropagation();
+            e.preventDefault();
+        });
+        if (tactView.tact.selected) {
             container.selectionColor = Draw.TACT.BACKGROUND_COLOR_SELECTED;
             let stringRects = renderInfo.getStringRects();
             let borderRects = renderInfo.getBorderRects();

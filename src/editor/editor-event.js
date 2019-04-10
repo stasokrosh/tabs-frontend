@@ -1,13 +1,13 @@
 /* eslint-disable default-case */
 import { assert } from "../util";
 import Editor from "./editor";
-import Note from "../model/note";
 
 const EVENT_CODES = {
     SELECT_NOTE: 1,
     SELECT_CHORD: 2,
     SELECT_TACT: 3,
-    CLEAR_SELECTED: 4
+    CLEAR_SELECTED: 4,
+    ADD_CHORD: 5,
 }
 
 export class EditorEvent {
@@ -41,6 +41,11 @@ export class EditorEvent {
         return EditorEvent.Create({ code: EVENT_CODES.CLEAR_SELECTED });
     }
 
+    static CreateAddChordEvent(props) {
+        props.code = EVENT_CODES.ADD_CHORD;
+        return EditorEvent.Create(props);
+    }
+
     get code() {
         return this._code;
     }
@@ -64,12 +69,12 @@ export class EditorEventDispatcher {
     dispatch(event) {
         switch (event.code) {
             case EVENT_CODES.SELECT_NOTE: {
-                if (event.object instanceof Note) {
-                    if (this._editor.selectedNote === event.object)
+                if (event.object.note) {
+                    if (this._editor.selectedNote === event.object.note)
                         this._editor.selectedNote = null;
                     else
-                        this._editor.selectedNote = event.object;
-                } else {
+                        this._editor.selectedNote = event.object.note;
+                } else if (event.object.chord) {
                     event.object.chord.setNote(event.object.index, this._editor.createEmptyNote());
                     this._editor.selectedNote = event.object.chord.getNote(event.object.index);
                     this._editor.refreshChord();
@@ -78,26 +83,38 @@ export class EditorEventDispatcher {
                 break;
             }
             case EVENT_CODES.SELECT_CHORD: {
-                if (this._editor.selectedChord === event.object && !this._editor.selectedNote)
-                    this._editor.selectedChord = null;
-                else
-                    this._editor.selectedChord = event.object;
-                this._editor.update(true);
+                if (event.object.chord) {
+                    if (this._editor.selectedChord === event.object.chord && !this._editor.selectedNote)
+                        this._editor.selectedChord = null;
+                    else
+                        this._editor.selectedChord = event.object.chord;
+                    this._editor.update(true);
+                }
                 break;
             }
             case EVENT_CODES.SELECT_TACT: {
-                if (this._editor.selectedTact === event.object && !this._editor.selectedChord && !this._editor.selectedNote)
-                    this._editor.selectedTact = null;
-                else
-                    this._editor.selectedTact = event.object;
-                this._editor.update(true);
+                if (event.object.tact) {
+                    if (this._editor.selectedTact === event.object.tact && !this._editor.selectedChord && !this._editor.selectedNote)
+                        this._editor.selectedTact = null;
+                    else
+                        this._editor.selectedTact = event.object.tact;
+                    this._editor.update(true);
+                }
                 break;
             }
-
             case EVENT_CODES.CLEAR_SELECTED: {
                 this._editor.clearSelected();
                 this._editor.update(true);
                 break;
+            }
+            case EVENT_CODES.ADD_CHORD: {
+                if (event.object.tact) {
+                    event.object.tact.addChord(this._editor.createEmptyChord(), event.object.index);
+                    this._editor._refreshTact(event.object.tact);
+                    let index = ( event.object.index === -1 ? event.object.tact.chordCount - 1 : event.object.index );
+                    this._editor.selectedChord = event.object.tact.getChord(index);
+                    this._editor.update(true);
+                }
             }
         }
     }

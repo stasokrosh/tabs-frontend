@@ -60,25 +60,31 @@ class TactView {
     }
 
     calculateContence() {
-        let xPosition = Measures.CHORD.HORIZONTAL_INTERVAL;
-        if (this.renderDuration)
-            xPosition += this.durationWidth
-        for (let chordView of this._chordViews) {
-            chordView.calculateRect(xPosition);
-            xPosition += chordView.chordWidth;
+        if (this._chordViews.length !== 0) {
+            let xPosition = Measures.CHORD.HORIZONTAL_INTERVAL;
+            if (this.renderDuration)
+                xPosition += this.durationWidth
+            for (let chordView of this._chordViews) {
+                chordView.calculateRect(xPosition);
+                xPosition += chordView.chordWidth;
+            }
+            this._rect.width = xPosition;
+        } else {
+            this._rect.width = Measures.TACT.WIDTH;
         }
-        this._rect.width = xPosition;
     }
 
     optimizeTactWidth(addWidth, xPos) {
         this._rect.x = xPos;
         this._rect.width += addWidth;
-        let chordAddWidth = addWidth / this._chordViews.length;
-        xPos = 0;
-        for (let chordView of this._chordViews) {
-            chordView.rect.x = chordView.rect.x + xPos;
-            chordView.chordWidth += chordAddWidth;
-            xPos += chordAddWidth;
+        if (this._chordViews.length !== 0) {
+            let chordAddWidth = addWidth / this._chordViews.length;
+            xPos = 0;
+            for (let chordView of this._chordViews) {
+                chordView.rect.x = chordView.rect.x + xPos;
+                chordView.chordWidth += chordAddWidth;
+                xPos += chordAddWidth;
+            }
         }
     }
 
@@ -93,11 +99,12 @@ class TactView {
         return this._drawContext.renderTact(this, parent);
     }
 
-    createNewChordView(chord) {
+    createNewChordView(chord, index) {
         return ChordView.Create({
             chord: chord,
             drawContext: this._drawContext,
-            parent : this
+            parent: this,
+            index: index
         });
     }
 
@@ -120,14 +127,17 @@ class TactView {
         }
 
         this._chordViews.length = 0;
+        index = 0;
         for (let chord of tactChords) {
             let chordView = chordViewMap.get(chord);
             if (chordView) {
                 chordView.refresh();
                 this._chordViews.push(chordView);
+                chordView.index = index;
             } else {
-                this._chordViews.push(this.createNewChordView(chord));
+                this._chordViews.push(this.createNewChordView(chord, index));
             }
+            index++;
         }
     }
 

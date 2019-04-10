@@ -129,6 +129,7 @@ class Editor {
             this._prevSelectedNote = null;
             this._refreshChord(this._prevSelectedChord);
         }
+        this._prevSelectedNote = null;
     }
 
     get selectedChord() {
@@ -155,19 +156,12 @@ class Editor {
     }
 
     _clearPrevSelectedChord() {
-        if (this._prevSelectedChord && (this._prevSelectedChord.isEmpty || this._prevSelectedChord.isPause)
-            && this._prevSelectedChord !== this.selectedChord) {
+        if (this._prevSelectedChord && this._prevSelectedChord.isEmpty && this._prevSelectedChord !== this.selectedChord) {
             let tact = this._prevSelectedTact;
-            let tactNum = this._selectedTrack.getTactNum(tact);
-            let lastChord = tactNum === this._selectedTrack.tactCount - 1 && tact.chordCount === 1;
-            if (lastChord || tact.chordCount > 1) {
-                tact.deleteChord(this._prevSelectedChord);
-                this._refreshTact(tact);
-            } else {
-                this._prevSelectedChord.isPause = true;
-            }
-            this._prevSelectedChord = null;
+            tact.deleteChord(this._prevSelectedChord);
+            this._refreshTact(tact);
         }
+        this._prevSelectedChord = null;
     }
 
     get selectedTact() {
@@ -196,13 +190,13 @@ class Editor {
     }
 
     _clearPrevSelectedTact() {
-        if (this._prevSelectedTact && this._prevSelectedTact.chordCount === 0 && this._prevSelectedTact !== this.selectedTact) {
-            if (this._selectedTrack.getTactNum(this._prevSelectedTact) === this._selectedTrack.tactCount - 1) {
-                this._composition.deleteTact(this._prevSelectedTact.tact);
-                this.refresh();
-            }
-            this.prevSelectedChord = null;
-        }
+        // if (this._prevSelectedTact && this._prevSelectedTact.chordCount === 0 && this._prevSelectedTact !== this.selectedTact) {
+        //     if (this._selectedTrack.getTactNum(this._prevSelectedTact) === this._selectedTrack.tactCount - 1) {
+        //         this._composition.deleteTact(this._prevSelectedTact.tact);
+        //         this.refresh();
+        //     }
+        //     this.prevSelectedChord = null;
+        // }
     }
 
     _clearSelectedAll() {
@@ -258,11 +252,17 @@ class Editor {
     }
 
     createEmptyChord() {
+        const DEFAULT_FRACTION = 4;
+
         let selectedChord = this.selectedChord;
         if (selectedChord)
             return { duration: selectedChord.duration };
         else
-            return null;
+            return {
+                duration: {
+                    fraction: DEFAULT_FRACTION
+                }
+            };
     }
 
     createEmptyTact() {

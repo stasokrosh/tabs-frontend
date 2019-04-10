@@ -23,6 +23,7 @@ class ChordView {
         this._chord = props.chord;
         assert(() => props.drawContext instanceof DrawContext);
         this._drawContext = props.drawContext;
+        this.index = props.index;
         this._noteViews = new Array(this._chord.stringNum);
         this._rect = Rect.Create({});
         this.refresh();
@@ -144,10 +145,19 @@ class ChordView {
         return res;
     }
 
+    get spaceRect() {
+        return Rect.Create({
+            x : this._rect.width,
+            width : this.chordWidth - this._rect.width,
+            height : this._rect.height
+        });
+    }
+
     get renderData() {
         let res = {
             rect: Rect.Create(this._rect),
-            durationData: this.durationData
+            durationData: this.durationData,
+            spaceRect: this.spaceRect
         };
         return res;
     }

@@ -84,6 +84,7 @@ export const CHORD = {
 }
 
 export const TACT = {
+    WIDTH : CHORD.HORIZONTAL_INTERVAL * 3,
     Y : LINE.PADDING.TOP + NOTE.HEIGHT / 2,
     NUMBER : {
         WIDTH : TACT_NUMBER_FONT_SIZE * FONT_COEFF,

@@ -15,20 +15,26 @@ class ChordSvgRenderer {
 
     render(chordView, renderInfo, container) {
         assert(() => chordView instanceof ChordView && renderInfo && container);
-        container.click((e) => {
-            chordView.drawContext.invokeEvent(EditorEvent.CreateSelectChordEvent({ object: chordView.chord }));
-            e.stopPropagation();
-        });
-        this.renderSelection(chordView.chord.selected, renderInfo.rect, container);
+        this.renderSelection(chordView, renderInfo.rect, container);
+        this.renderSpace(chordView, renderInfo.spaceRect, container);
         this.renderDuration(chordView, renderInfo.durationData, container);
         if (chordView.chord.isPause)
             this.renderPause(chordView, renderInfo, container);
     }
 
-    renderSelection(selected, rect, container) {
-        let color = container.selectionColor ? null : (selected ? Draw.CHORD.BACKGROUND_COLOR_SELECTED : Draw.CHORD.BACKGROUND_COLOR);
-        renderRect(container, rect, color, true);
-        if (selected)
+    renderSelection(chordView, rect, container) {
+        let color = container.selectionColor ? null : (chordView.chord.selected ? Draw.CHORD.BACKGROUND_COLOR_SELECTED : Draw.CHORD.BACKGROUND_COLOR);
+        let selection = renderRect(container, rect, color, true);
+        selection.click((e) => {
+            chordView.drawContext.invokeEvent(EditorEvent.CreateSelectChordEvent({
+                object : {
+                    chord : chordView.chord
+                }
+            }));
+            e.stopPropagation();
+            e.preventDefault();
+        });
+        if (chordView.chord.selected)
             container.selectionColor = Draw.CHORD.BACKGROUND_COLOR_SELECTED;
     }
 
@@ -53,6 +59,20 @@ class ChordSvgRenderer {
         if (durationData.dotRect) {
             renderRect(container, durationData.dotRect, Draw.CHORD.DURATION.COLOR);
         }
+    }
+
+    renderSpace(chordView, rect, container) {
+        let space = renderRect(container, rect);
+        space.click((e) => {
+            chordView.drawContext.invokeEvent(EditorEvent.CreateAddChordEvent({
+                object : {
+                    tact : chordView.parent.tact,
+                    index : chordView.index + 1
+                }
+            }));
+            e.stopPropagation();
+            e.preventDefault();
+        })
     }
 }
 
