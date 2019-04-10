@@ -2,6 +2,7 @@ import { assert } from "../../util"
 import PageView from "../page-view"
 import * as Draw from './draw'
 import { renderText, renderRect } from "./util";
+import { EditorEvent } from "../../editor/editor-event";
 
 class PageSvgRenderer {
     constructor(props) {
@@ -14,6 +15,10 @@ class PageSvgRenderer {
 
     render(pageView, renderInfo, container) {
         assert(() => pageView instanceof PageView && renderInfo && container);
+        container.click((e) => { 
+            pageView.drawContext.invokeEvent(EditorEvent.CreateClearSelectedEvent());
+            e.stopPropagation();
+        });
         this.renderBackground(renderInfo.rect, container);
         this.renderNumber(pageView, renderInfo.numberRect, container);
         if (renderInfo.headerRect)

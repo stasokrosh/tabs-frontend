@@ -66,6 +66,39 @@ class Track {
     get instrument() {
         return this._instrument;
     }
+
+    getChordByNote(note) {
+        for (let tactIndex = 0; tactIndex < this._tacts.length; tactIndex++) {
+            let tact = this._tacts[tactIndex];
+            for (let chordIndex = 0; chordIndex < tact.chordCount; chordIndex++) {
+                let chord = tact.getChord(chordIndex);
+                if (chord.getNoteString(note) !== -1)
+                    return chord;
+            }
+        }
+        return null;
+    }
+
+    getTactByNote(note) {
+        for (let tactIndex = 0; tactIndex < this._tacts.length; tactIndex++) {
+            let tact = this._tacts[tactIndex];
+            for (let chordIndex = 0; chordIndex < tact.chordCount; chordIndex++) {
+                let chord = tact.getChord(chordIndex);
+                if (chord.getNoteString(note) !== -1)
+                    return tact;
+            }
+        }
+        return null;
+    }
+
+    getTactByChord(chord) {
+        for (let tactIndex = 0; tactIndex < this._tacts.length; tactIndex++) {
+            let tact = this._tacts[tactIndex];
+            if (tact.getChordNum(chord) !== -1) 
+                return tact;
+        }
+        return null;
+    }
 }
 
 export default Track;

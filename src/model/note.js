@@ -1,8 +1,8 @@
 import { assert } from '../util'
 
 export const DEFAULT_FRET_COUNTS = {
-    GUITAR: 20,
-    BASS: 20
+    GUITAR: 24,
+    BASS: 24
 }
 
 export const DEFAULT_FRET_COUNT = DEFAULT_FRET_COUNTS.GUITAR;
@@ -45,6 +45,10 @@ class Note {
     set maxFret(value) {
         this._maxFret = value;
     } 
+
+    get isEmpty() {
+        return this._fret === DEFAULT_EXCEPTION_FRET;
+    }
 }
 
 export default Note

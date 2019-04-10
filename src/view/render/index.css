@@ -1,0 +1,16 @@
+
+text {
+    cursor: default;
+}
+
+.SvgNote text {
+    cursor: pointer;
+}
+
+.SvgChord rect{
+    cursor: pointer;
+}
+
+.SvgChord image{
+    cursor: pointer;
+}

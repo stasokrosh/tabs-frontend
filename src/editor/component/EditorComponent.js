@@ -1,50 +1,43 @@
 import React, { Component } from 'react'
 import './EditorComponent.css'
 import Editor from '../editor';
-import InstrumentPanelComponent from './InstrumentPanelComponent';
+import InstrumentPanelComponent from './instrument-panel/InstrumentPanelComponent';
+import ControlPanelComponent from './control-panel/ControlPanelComponent';
+import TrackPanelComponent from './track-panel/TrackPanelComponent';
+import WorkspaceComponent from './workspace/WorkspaceComponent';
 
 class EditorComponent extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            loading: true,
-        };
-        this.onClick = this.onClick.bind(this);
-        this.onContextMenu = this.onContextMenu.bind(this);
+        this.editor = Editor.Create({
+            composition: this.props.composition
+        });
         this.onResize = this.onResize.bind(this);
+        window.onresize = this.onResize;
+        this.state = {
+            loading : true
+        };
     }
 
     render() {
-        if (!this.state.loading) {
+        if (!this.state.loading)
             this.editor.prepare();
-        }
         return (
-            <div>
-                <div className='Editor'>
-                    <div className='InstrumentPanelContainer'><InstrumentPanelComponent /></div>
-                    <div className='Workspace' id='Workspace' onClick={this.onClick} onContextMenu={this.onContextMenu}>
-                        <div className='WorkspacePages' id='WorkspacePages'>
-                        </div>
-                    </div>
+            <div className='Editor'>
+                <div className='InstrumentPanelContainer' id='InstrumentPanelContainer'>
+                    <InstrumentPanelComponent editor = {this.editor}/>
                 </div>
-                <div className='ControlPanel' id='ControlPanel'>ControlPanel</div>
+                <div className='WorkspaceContainer'>
+                    <div className='TrackPanelContainer' id='TrackPanelContainer'>
+                        <TrackPanelComponent/>
+                    </div>
+                    <WorkspaceComponent editor={this.editor}/>
+                </div>
+                <div className='ControlPanelContainer' id='ControlPanelContainer'>
+                    <ControlPanelComponent/>
+                </div>
             </div>
         )
-    }
-
-    onClick() {
-        let editor = this.editor;
-        editor.settings.zoom += 0.1;
-        editor.prepare();
-        editor.redraw();
-    }
-
-    onContextMenu(e) {
-        let editor = this.editor;
-        editor.settings.zoom -= 0.1;
-        editor.prepare();
-        editor.redraw();
-        e.preventDefault();
     }
 
     onResize() {
@@ -53,27 +46,25 @@ class EditorComponent extends Component {
         this.editor.redraw();
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
+    componentDidUpdate() {
         this.editor.redraw();
     }
 
     updateWorkspaceHeight() {
         let workspace = document.getElementById('Workspace');
-        let controlPanel = document.getElementById('ControlPanel');
-        let height = controlPanel.offsetTop - workspace.offsetTop;
+        let controlPanel = document.getElementById('ControlPanelContainer');
+        let height = controlPanel.offsetTop - workspace.offsetTop - 8;
         workspace.style.height = height + 'px';
     }
 
     componentDidMount() {
+        this.editor.init({
+            containerID: "WorkspacePages",
+            workspaceID: "Workspace"
+        });
         this.updateWorkspaceHeight();
-        window.onresize = this.onResize;
         let state = this.state;
         state.loading = false;
-        this.editor = Editor.Create({
-            composition: this.props.composition,
-            containerID: "WorkspacePages",
-            workspaceID: "Workspace",
-        });
         this.setState(state);
     }
 }

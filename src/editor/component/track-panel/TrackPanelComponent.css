@@ -1,0 +1,21 @@
+.TrackList {
+    margin: auto;
+    padding: 0;
+}
+
+.TrackControlContainer {
+    margin: 0;
+}
+
+.TrackInput{
+    width:auto;
+}
+
+.TrackControl {
+    display: flex;
+    width: 100%;
+}
+
+.TrackAddButton {
+    width: 100%;
+}

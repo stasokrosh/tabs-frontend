@@ -1,0 +1,10 @@
+.WorkspaceContainer {
+    width: 100%;
+    display: flex;
+}
+
+.Workspace {
+    background-image: linear-gradient( rgb(230, 232, 235), rgb(188, 193, 219));
+    overflow: auto;
+    width: 100%;
+}

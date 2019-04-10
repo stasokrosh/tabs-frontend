@@ -54,7 +54,7 @@ class TrackTact {
     }
 
     addChord(chord, position = -1) {
-        assert(() => position === -1 || position === 0 || (position >= 0 && position < this.chordCount));
+        assert(() => position === -1 || (position >= 0 && position <= this.chordCount));
         let newChord = this._chordGenerator(chord);
         if (position === -1)
             this._chords.push(newChord);

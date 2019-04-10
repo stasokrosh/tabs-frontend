@@ -82,7 +82,7 @@ class LineView {
     }
 
     get stringRects() {
-        return getStringRects(this._rect.width,this._track.instrument.getStringCount())
+        return getStringRects(this._rect.width, this._track.instrument.getStringCount())
     }
 
     get tactsBorderRects() {
@@ -91,29 +91,29 @@ class LineView {
             let tactView = this._tactViews[index];
             if (index === 0) {
                 res.push(Rect.Create({
-                    y : Measures.TACT.Y,
-                    height : getTrackTactHeight(this._track)
+                    y: Measures.TACT.Y,
+                    height: getTrackTactHeight(this._track)
                 }))
             }
             res.push(Rect.Create({
-                x : tactView.rect.x + tactView.rect.width,
-                y : Measures.TACT.Y,
-                height : getTrackTactHeight(this._track)
+                x: tactView.rect.x + tactView.rect.width,
+                y: Measures.TACT.Y,
+                height: getTrackTactHeight(this._track)
             }))
         }
         return res;
     }
- 
+
     get renderData() {
         let res = {
-            rect : Rect.Create(this._rect),
-            stringRects : this.stringRects,
-            tactsBorderRects : this.tactsBorderRects
+            rect: Rect.Create(this._rect),
+            stringRects: this.stringRects,
+            tactsBorderRects: this.tactsBorderRects
         }
         return res;
     }
-    
-    get DrawContext() {
+
+    get drawContext() {
         return this._drawContext;
     }
 }

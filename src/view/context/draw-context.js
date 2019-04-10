@@ -16,15 +16,19 @@ class DrawContext {
         this._eventDispatcher = EventDispatcher.Create();
     }
     
-    static Create(props) {
-        return DrawContext.CreateSvgDrawContext(props);
+    static Create() {
+        return DrawContext.CreateSvgDrawContext();
     }
 
-    static CreateSvgDrawContext(props) {
+    static CreateSvgDrawContext() {
         let contextData = {
-            renderer : SvgRenderer.Create(props)
+            renderer : SvgRenderer.Create()
         };
         return new DrawContext(contextData);
+    }
+
+    init(props) {
+        this._renderer.init(props);
     }
 
     renderNote(noteView, parent) {
@@ -52,9 +56,9 @@ class DrawContext {
         return this._renderer.renderPage(pageView, parent);
     }
 
-    prepareRender(trackView) {
+    prepareRender(trackView, forceCalculate) {
         assert(() => trackView instanceof TrackView);
-        this._renderer.prepareRender(trackView);
+        this._renderer.prepareRender(trackView, forceCalculate);
     }
 
     renderTrack(trackView) {
@@ -72,6 +76,10 @@ class DrawContext {
 
     invokeEvent(event) {
         this._eventDispatcher.invokeEvent(event);
+    }
+
+    focus() {
+        this._renderer.focus();
     }
 }
 

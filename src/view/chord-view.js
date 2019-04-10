@@ -17,6 +17,8 @@ export function getChordHeight(chord) {
 class ChordView {
     constructor(props) {
         assert(() => props);
+        assert(() => props.parent);
+        this._parent = props.parent;
         assert(() => props.chord instanceof Chord);
         this._chord = props.chord;
         assert(() => props.drawContext instanceof DrawContext);
@@ -30,15 +32,21 @@ class ChordView {
         return new ChordView(props);
     }
 
+    get parent() {
+        return this._parent;
+    }
+
     calculateRect(xPosition) {
         let width = Measures.NOTE.WIDTH;
         for (let noteView of this._noteViews) {
-            if (noteView) {
-                noteView.calculateRect();
-                if (noteView.rect.width > width) {
-                    width = noteView.rect.width;
-                }
+            noteView.calculateRect();
+            if (noteView.rect.width > width) {
+                width = noteView.rect.width;
             }
+        }
+        for (let noteView of this._noteViews) {
+            if (noteView.rect.width !== width)
+                noteView.rect.x = (width - noteView.rect.width) / 2;
         }
         this.rect.x = xPosition;
         this.rect.y = Measures.LINE.PADDING.TOP;
@@ -64,21 +72,17 @@ class ChordView {
         return NoteView.Create({
             note: note,
             index: index,
-            drawContext: this._drawContext
+            drawContext: this._drawContext,
+            parent: this
         });
     }
 
     refresh() {
         for (let index = 0; index < this._chord.stringNum; index++) {
             let note = this._chord.getNote(index);
-            if (note) {
-                if (!this._noteViews[index]) {
-                    this._noteViews[index] = this.createNewNoteView(note, index);
-                }
-            } else if (this._noteViews[index]) {
-                this._noteViews[index].remove();
-                delete this._noteViews[index];
-            }
+
+            this._noteViews[index] = this.createNewNoteView(note, index);
+
         }
     }
 
@@ -131,10 +135,10 @@ class ChordView {
         }
         if (duration.dot) {
             res.dotRect = Rect.Create({
-                x : res.fractionLine.x + Measures.CHORD.DURATION.FLAG.WIDTH,
-                y : res.fractionLine.y,
-                width : Measures.CHORD.DURATION.DOT.WIDTH,
-                height : Measures.CHORD.DURATION.DOT.HEIGHT
+                x: res.fractionLine.x + Measures.CHORD.DURATION.FLAG.WIDTH,
+                y: res.fractionLine.y,
+                width: Measures.CHORD.DURATION.DOT.WIDTH,
+                height: Measures.CHORD.DURATION.DOT.HEIGHT
             })
         }
         return res;
@@ -148,7 +152,7 @@ class ChordView {
         return res;
     }
 
-    get DrawContext() {
+    get drawContext() {
         return this._drawContext;
     }
 }

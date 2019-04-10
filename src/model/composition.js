@@ -50,7 +50,7 @@ class Composition {
     }
 
     addTact(tact, position = -1) {
-        assert(() => position === -1 || position === 0 || (position >= 0 && position < this.tactCount));
+        assert(() => position === -1 || (position >= 0 && position <= this.tactCount));
         let newTact = Tact.Create(tact);
         if (position === -1)
             this._tacts.push(newTact);

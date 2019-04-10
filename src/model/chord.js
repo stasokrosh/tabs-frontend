@@ -96,6 +96,10 @@ class Chord {
         }
     }
 
+    getNoteString(note) {
+        return this._notes.indexOf(note);
+    }
+
     get stringNum() {
         return this._stringNum;
     }
@@ -113,11 +117,23 @@ class Chord {
     }
 
     get isEmpty() {
-        let isEmpty = true;
-        for (let index = 0; index < this.stringNum && isEmpty; index++) {
-            if (this.getNote(index))
-                isEmpty = true;
-        }
+        let isEmpty = !this._isPause;
+        if (isEmpty) 
+            for (let index = 0; index < this.stringNum && isEmpty; index++) {
+                if (this.getNote(index))
+                    isEmpty = false;
+            }
+        return isEmpty;
+    }
+
+    get isEmptyExcept() {
+        let isEmpty = !this._isPause;
+        if (isEmpty) 
+            for (let index = 0; index < this.stringNum && isEmpty; index++) {
+                let note = this.getNote(index);
+                if (note && !note.isEmpty)
+                    isEmpty = false;
+            }
         return isEmpty;
     }
 
@@ -137,7 +153,7 @@ class Chord {
         this._isPause = value;
         if (value) 
             for(let index = 0; index < this._stringNum; index++)
-                this.setNote(null);
+                this.setNote(index, null);
     }
 }
 

@@ -1,5 +1,4 @@
 import { assert } from '../util'
-import Note from '../model/note'
 import Rect from './util/rect'
 
 import * as Measures from './measures'
@@ -17,7 +16,8 @@ export function getNoteRect(index, fret) {
 class NoteView {
     constructor(props) {
         assert(() => props);
-        assert(() => props.note instanceof Note);
+        assert(() => props.parent);
+        this._parent = props.parent;
         this._note = props.note;
         assert(() => props.drawContext instanceof DrawContext);
         this._drawContext = props.drawContext;
@@ -29,8 +29,12 @@ class NoteView {
         return new NoteView(props);
     }
 
+    get parent() {
+        return this._parent;
+    }
+
     calculateRect() {
-        this._rect.init(getNoteRect(this._index, this._note.fret));
+        this._rect.init(getNoteRect(this._index, this._note ? this._note.fret : 0));
     }
 
     draw(parent) {
@@ -56,8 +60,12 @@ class NoteView {
         return res;
     }
 
-    get DrawContext() {
+    get drawContext() {
         return this._drawContext;
+    }
+
+    get index() {
+        return this._index;
     }
 }
 

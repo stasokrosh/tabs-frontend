@@ -17,7 +17,7 @@ export function getPageRect(index, isVertical, rowPageCount) {
         rect.x = Measures.PAGE.INTERVAL + (Measures.PAGE.INTERVAL + Measures.PAGE.WIDTH) * colIndex;
     } else {
         rect.x = Measures.PAGE.INTERVAL + (Measures.PAGE.WIDTH + Measures.PAGE.INTERVAL) * rowIndex;
-        rect.y = Measures.PAGE.INTERVAL  + (Measures.PAGE.INTERVAL + Measures.PAGE.HEIGHT) * colIndex;
+        rect.y = Measures.PAGE.INTERVAL + (Measures.PAGE.INTERVAL + Measures.PAGE.HEIGHT) * colIndex;
     }
     return rect;
 }
@@ -58,10 +58,9 @@ class PageView {
     }
 
     deleteLineView(index) {
-        assert(() => index < this.lineViews.length);
+        assert(() => index < this._lineViews.length);
         if (index !== -1) {
-            this.lineViews[index].remove();
-            this.lineViews.splice(index, 1);
+            this._lineViews.splice(index, 1);
         }
     }
 
@@ -123,8 +122,8 @@ class PageView {
         return Rect.Create({
             x: Measures.HEADER.X,
             y: Measures.HEADER.Y + Measures.COMPOSITION_HEADER.MARGIN,
-            width : Measures.COMPOSITION_HEADER.WIDTH,
-            height : Measures.COMPOSITION_HEADER.HEIGHT
+            width: Measures.COMPOSITION_HEADER.WIDTH,
+            height: Measures.COMPOSITION_HEADER.HEIGHT
         })
     }
 
@@ -132,8 +131,8 @@ class PageView {
         return Rect.Create({
             x: Measures.TRACK_HEADER.X,
             y: Measures.TRACK_HEADER.Y,
-            width : Measures.TRACK_HEADER.WIDTH,
-            height : Measures.TRACK_HEADER.HEIGHT
+            width: Measures.TRACK_HEADER.WIDTH,
+            height: Measures.TRACK_HEADER.HEIGHT
         })
     }
 
@@ -160,10 +159,10 @@ class PageView {
         return res
     }
 
-    get DrawContext() {
+    get drawContext() {
         return this._drawContext;
     }
-    
+
     get composition() {
         return this._composition;
     }

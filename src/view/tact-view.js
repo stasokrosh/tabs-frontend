@@ -30,6 +30,8 @@ export function getStringRects(width, stringNum) {
 class TactView {
     constructor(props) {
         assert(() => props);
+        assert(() => props.parent);
+        this._parent = props.parent;
         assert(() => props.tact instanceof TrackTact);
         this._tact = props.tact;
         assert(() => props.track instanceof Track);
@@ -45,6 +47,17 @@ class TactView {
         return new TactView(props);
     }
 
+    get parent() {
+        return this._parent;
+    }
+
+    get chordViewsCount() {
+        return this._chordViews.length;
+    }
+
+    getChordView(index) {
+        return this._chordViews[index];
+    }
 
     calculateContence() {
         let xPosition = Measures.CHORD.HORIZONTAL_INTERVAL;
@@ -83,7 +96,8 @@ class TactView {
     createNewChordView(chord) {
         return ChordView.Create({
             chord: chord,
-            drawContext: this._drawContext
+            drawContext: this._drawContext,
+            parent : this
         });
     }
 
@@ -93,7 +107,6 @@ class TactView {
         while (index < this._chordViews.length) {
             let chordView = this._chordViews[index];
             if (!tactChords.has(chordView.chord)) {
-                chordView.remove();
                 this._chordViews.splice(index, 1);
             } else {
                 index++;
@@ -110,6 +123,7 @@ class TactView {
         for (let chord of tactChords) {
             let chordView = chordViewMap.get(chord);
             if (chordView) {
+                chordView.refresh();
                 this._chordViews.push(chordView);
             } else {
                 this._chordViews.push(this.createNewChordView(chord));
@@ -118,7 +132,7 @@ class TactView {
     }
 
     getStringRects() {
-        return getStringRects(this._rect.width, this.track.instrument.getStringCount());
+        return getStringRects(this._rect.width, this._track.instrument.getStringCount());
     }
 
     getBorderRects() {
@@ -128,7 +142,7 @@ class TactView {
             height: getTrackTactHeight(this._track)
         }))
         res.push(Rect.Create({
-            x: this._rect.height,
+            x: this._rect.width,
             y: Measures.TACT.Y,
             height: getTrackTactHeight(this._track)
         }))
@@ -199,7 +213,7 @@ class TactView {
                 width: Measures.TACT.REPRISE.WIDTH,
                 height: getTrackTactHeight(this._track)
             }),
-            line : Rect.Create({
+            line: Rect.Create({
                 x: this._rect.width - Measures.TACT.REPRISE.WIDTH - Measures.TACT.REPRISE.MARGIN,
                 y: Measures.TACT.Y,
                 height: getTrackTactHeight(this._track)
@@ -224,7 +238,7 @@ class TactView {
         return res;
     }
 
-    get DrawContext() {
+    get drawContext() {
         return this._drawContext;
     }
 }

@@ -1,7 +1,7 @@
 import Composition from "./composition";
 import { INSTRUMENT_CODES } from "./instrument";
 
-const TACT_AMOUNT = 16;
+const TACT_AMOUNT = 2;
 
 export function createTestComposition() {
     let composition = Composition.Create({
@@ -26,7 +26,12 @@ export function createTestComposition() {
         duration : {
             fraction : 4
         },
-        isPause : true
+        notes : [{
+            index : 2,
+            item : {
+                fret : 3
+            }
+        }]
     }
     for (let index = 0; index < TACT_AMOUNT; index++) {
         for (let queue = 0; queue < 4; queue++) {

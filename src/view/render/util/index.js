@@ -8,9 +8,14 @@ export function renderText(container, text, rect, font, absolutePosition) {
 }
 
 export function renderRect(container, rect, color, absolutePosition ) {
-    let renderedRect = container.rect(rect.width, rect.height).fill(color);
+    let renderedRect = container.rect(rect.width, rect.height);
+    if (color)
+        renderedRect.fill(color);
+    else
+        renderedRect.fill('none');
     if (!absolutePosition) 
         renderedRect.move(rect.x, rect.y);
+    renderedRect.attr({'pointer-events': "visible"});
 }
 
 export function renderLine(container, rect, color, width) {

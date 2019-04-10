@@ -32,7 +32,8 @@ class TrackView {
         return TactView.Create({
             tact: tact,
             track: this._track,
-            drawContext: this._drawContext
+            drawContext: this._drawContext,
+            parent : this
         })
     }
 
@@ -82,12 +83,34 @@ class TrackView {
 
         for (let tact of tactSet) {
             let tactView = tactMap.get(tact);
-            if (tactView)
+            if (tactView) {
+                tactView.refresh();
                 this._tactViews.push(tactView);
-            else
+            } else {
                 this._tactViews.push(this.createNewTactView(tact));
+            }
         }
         this._updated = true;
+    }
+
+    refreshTact(tact) {
+        for (let tactView of this._tactViews) {
+            if (tactView.tact === tact) {
+                tactView.refresh();
+            }
+        }
+        this._updated = true;
+    }
+
+    refreshChord(chord) {
+        for (let tactView of this._tactViews) {
+            for (let index = 0; index < tactView.chordViewsCount; index++) {
+                let chordView = tactView.getChordView(index);
+                if (chordView.chord === chord) {
+                    chordView.refresh();
+                }
+            }
+        }
     }
 
     _calculateSelfRect(rowPageCount) {
@@ -121,14 +144,14 @@ class TrackView {
         this._rect.height = Measures.PAGE.INTERVAL + (Measures.PAGE.INTERVAL + Measures.PAGE.HEIGHT) * verticalCount;
     }
 
-    calculateRect(availableRect) {
+    calculateRect(availableRect, forceCalculate) {
         let rowPageCount = this.getRowPageCount(availableRect);
-        if (!this._updated) {
+        if (!this._updated && !forceCalculate) {
             if (rowPageCount > this._pageViews.length)
                 rowPageCount = this._pageViews.length;
             this._updated = rowPageCount === this._rowPageCount;
         }
-        if (this._updated) {
+        if (this._updated || forceCalculate) {
             const lineWidth = Measures.LINE.WIDTH;
             let lines = [];
             let currentLine = [];
@@ -167,15 +190,15 @@ class TrackView {
                     if (!lineView) {
                         lineView = this.createNewLineView();
                         pageView.addLineView(lineView);
-                        lineView.calculateRect(lineIndex, pageIndex === 0);
                     }
+                    lineView.calculateRect(lineIndex, pageIndex === 0);
                     lineView.tactViews = lines[globalLineIndex].line;
                     lineView.calculateTactsWidth(lines[globalLineIndex].optimize);
                     lineIndex++;
                     globalLineIndex++;
                 }
-                if (lineIndex < pageView.linesCount) {
-                    for (let index = pageView.linesCount; index >= lineIndex; index--) {
+                if (lineIndex < pageView.lineViewsCount) {
+                    for (let index = pageView.lineViewsCount - 1; index >= lineIndex; index--) {
                         pageView.deleteLineView(index);
                     }
                 }
@@ -183,7 +206,6 @@ class TrackView {
             }
             if (pageIndex < this._pageViews.length) {
                 for (let index = this._pageViews.length - 1; index >= pageIndex; index--) {
-                    this._pageViews[index].remove();
                     this._pageViews.pop();
                 }
             }
@@ -192,19 +214,22 @@ class TrackView {
             for (let index = 0; index < this._pageViews.length; index++) {
                 this._pageViews[index].calculateRect(index, this._settings.isVertical, rowPageCount);
             }
-            this._needDraw = true;
             this._updated = false;
+            this._needDraw = true;
             this._calculateSelfRect(rowPageCount);
         }
         this._rowPageCount = rowPageCount;
     }
 
     draw(parent) {
-        if (this._needDraw)
-            for (let pageView of this._pageViews) {
-                pageView.draw(parent);
-            }
+        for (let pageView of this._pageViews) {
+            pageView.draw(parent);
+        }
         this._needDraw = false;
+    }
+
+    get needDraw() {
+        return this._needDraw;
     }
 
     get settings() {
@@ -222,7 +247,7 @@ class TrackView {
         return res;
     }
 
-    get DrawContext() {
+    get drawContext() {
         return this._drawContext;
     }
 

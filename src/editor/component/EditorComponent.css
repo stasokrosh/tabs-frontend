@@ -1,33 +1,33 @@
-.Editor {
-    display: flex;
-}
 
-.Workspace {
-    background-image: linear-gradient( to right bottom, rgb(240, 242, 247), rgb(208, 213, 236));
-    overflow: auto;
+.Editor {
     width: 100%;
 }
 
 .InstrumentPanelContainer {
-    vertical-align: top;
+    width: 100%;
+    padding-bottom: 2px;
 }
 
-.WorkspacePages{
+.WorkspacePages {
     margin : auto;
 }
 
-.ControlPanel{
+.ControlPanelContainer {
     position:fixed;
     left:0px;
     bottom:0px;
-    height:40px;
     width:100%;
-    background-color: rgb(45, 35, 99);
-    color: white;
-    text-align: center;
+}
+
+.SettingsPanelContainer {
+    width: 100%;
+}
+
+.TrackPanelContainer {
+    vertical-align: top;
+    padding-right: 2px;
 }
 
 body {
-    background-image: linear-gradient(rgb(101, 90, 168), rgb(63, 55, 110));
+    background-image: linear-gradient(rgb(43, 43, 90), rgb(29, 30, 48));
 }
-
