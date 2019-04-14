@@ -1,1 +1,1 @@
-Collaborative tabs editor. Frontend-part
+Collaborative tabs editor. Frontend part
