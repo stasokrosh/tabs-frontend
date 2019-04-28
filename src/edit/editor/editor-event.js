@@ -1,5 +1,5 @@
 /* eslint-disable default-case */
-import { assert } from "../util";
+import { assert } from "./util";
 import Editor from "./editor";
 
 const EVENT_CODES = {

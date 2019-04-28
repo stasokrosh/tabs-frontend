@@ -2,7 +2,7 @@ import { assert } from "../../util"
 import PageView from "../page-view"
 import * as Draw from './draw'
 import { renderText, renderRect } from "./util";
-import { EditorEvent } from "../../editor/editor-event";
+import { EditorEvent } from "../../editor-event";
 
 class PageSvgRenderer {
     constructor(props) {

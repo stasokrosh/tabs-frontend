@@ -13,18 +13,18 @@
 }
 
 .InstrumentPanelButton.Instrument {
-    background-color: rgb(76, 89, 163);
-    color: white;
+    /*background-color: rgb(76, 89, 163);
+     color: white; */
     width: 35px;
     margin-left: 2px;
 }
 
 .InstrumentPanelButton.Instrument.Selected {
-    background-color: rgb(113, 73, 151);
+    /*background-color: rgb(113, 73, 151);*/
 }
 
 .InstrumentPanelButton.Instrument:disabled {
-    background-color: rgb(136, 119, 151);
+    /*background-color: rgb(136, 119, 151);*/
 }
 
 .InstrumentPanelButton.ViewSetting {
@@ -37,8 +37,8 @@
 }
 
 .Settings {
-    background-color: rgb(76, 163, 76);
-    color: white;
+    /* background-color: rgb(76, 163, 76);
+    color: white; */
 }
 
 .InstrumentPanelInnerContainer {

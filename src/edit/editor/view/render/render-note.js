@@ -3,7 +3,7 @@ import NoteView from "../note-view";
 import { DEFAULT_EXCEPTION_FRET } from "../../model/note";
 import * as Draw from './draw'
 import { renderText, renderRect } from "./util";
-import { EditorEvent } from "../../editor/editor-event";
+import { EditorEvent } from "../../editor-event";
 
 class NoteSvgRenderer {
     constructor(props) {

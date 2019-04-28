@@ -2,7 +2,7 @@ import { assert } from "../../util"
 import TactView from "../tact-view"
 import * as Draw from './draw'
 import { renderText, renderRect, renderLine } from "./util";
-import { EditorEvent } from "../../editor/editor-event";
+import { EditorEvent } from "../../editor-event";
 
 class TactSvgRenderer {
     constructor(props) {

@@ -1,4 +1,4 @@
-import { assert } from "../util";
+import { assert } from "./util";
 import Editor from "./editor";
 
 class EditorPosition {

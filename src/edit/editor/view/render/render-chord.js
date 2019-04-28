@@ -2,7 +2,7 @@ import { assert } from "../../util";
 import ChordView from "../chord-view";
 import { renderRect, renderText, renderLine } from './util'
 import * as Draw from './draw'
-import { EditorEvent } from "../../editor/editor-event";
+import { EditorEvent } from "../../editor-event";
 
 class ChordSvgRenderer {
     constructor(props) {

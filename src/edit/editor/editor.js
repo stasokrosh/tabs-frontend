@@ -1,8 +1,8 @@
-import { assert } from '../util'
-import DrawContext from '../view/context/draw-context'
-import TrackView from '../view/track-view'
+import { assert } from './util'
+import DrawContext from './view/context/draw-context'
+import TrackView from './view/track-view'
 import { EditorEventDispatcher } from './editor-event';
-import { DEFAULT_EXCEPTION_FRET } from '../model/note';
+import { DEFAULT_EXCEPTION_FRET } from './model/note';
 import EditorPosition from './editor-position';
 
 class Editor {

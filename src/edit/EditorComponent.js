@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import './EditorComponent.css'
-import Editor from '../editor';
+import Editor from './editor/editor';
 import InstrumentPanelComponent from './instrument-panel/InstrumentPanelComponent';
 import ControlPanelComponent from './control-panel/ControlPanelComponent';
 import TrackPanelComponent from './track-panel/TrackPanelComponent';
