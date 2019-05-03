@@ -1,4 +1,4 @@
 .PageContainer {
-    margin-left : 100px;
-    margin-right: 100px;
+    margin : auto;
+    width : 800px;
 }
