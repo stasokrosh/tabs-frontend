@@ -11,6 +11,8 @@ import AccountComponent from './account/AccountComponent';
 import SignUpComponent from './auth/SignUpComponent';
 import SignInComponent from './auth/SignInComponent';
 import TabComponent from './tab/TabComponent';
+import GroupListComponent from './group/GroupListComponent';
+import UserListComponent from './user/UserListComponent';
 
 class AppComponent extends Component {
   render() {
@@ -24,8 +26,10 @@ class AppComponent extends Component {
           <Route exact path='/signin' component={SignInComponent}></Route>
           <Route exact path='/tabs' component={TabListComponent}></Route>
           <Route path='/tabs/:id' component={TabComponent}></Route>
-          <Route path='/groups/:id' component={GroupComponent}></Route>
-          <Route path='/users/:id' component={UserComponent}></Route>
+          <Route exact path='/groups' component={GroupListComponent}></Route>
+          <Route path='/groups/:name' component={GroupComponent}></Route>
+          <Route exact path='/users' component={UserListComponent}></Route>
+          <Route path='/users/:name' component={UserComponent}></Route>
           <Route exact path='/account' component={AccountComponent}></Route>
         </Switch>
       </div>

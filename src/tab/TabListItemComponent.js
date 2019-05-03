@@ -5,7 +5,7 @@ function TabListItemComponent(props) {
     return (
         <div className = 'TabListItem'>
             <button className = 'TabListItemName'>{props.tab.name}</button>
-            <div className = 'TabListItemNameInfo'>
+            <div className = 'TabListItemInfo'>
                 <button className = 'TabListItemFavourites'>{props.tab.favouritesCount}</button>
                 <button className = 'TabListItemCreator'>{props.tab.creator}</button>
                 <button className = 'TabListItemGroup'>{props.tab.group}</button>
