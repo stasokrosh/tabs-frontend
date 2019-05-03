@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import './NavBarComponent.css'
+import './NavComponent.css'
 
-class NavBarComponent extends Component {
+class NavComponent extends Component {
     render() {
         return (
         <nav className='NavBar' id='NavBar'>
@@ -13,4 +13,4 @@ class NavBarComponent extends Component {
     }
 }
 
-export default NavBarComponent;
+export default NavComponent;
