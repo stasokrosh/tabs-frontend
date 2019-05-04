@@ -3,7 +3,7 @@ import React, {Component} from 'react'
 class HomeComponent extends Component {
     constructor(props) {
         super(props);
-        props.history.push('/account');
+        props.history.push('/tabs');
     }
     
     render() {

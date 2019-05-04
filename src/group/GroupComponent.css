@@ -1,0 +1,14 @@
+.GroupInfo {
+    width: 100%;
+}
+
+.GroupListsHeader {
+    width: 100%;
+}
+
+.GroupList {
+    width: 100%;
+    margin: auto;
+    padding: 0;
+    list-style: none
+}

@@ -1,7 +1,7 @@
 import React from 'react'
 import './UserListItemComponent.css'
 
-function GroupListItemComponent(props) {
+function UserListItemComponent(props) {
     return (
         <div className = 'UserListItem'>
             <button className = 'UserListItemName'>{props.user.name}</button>
@@ -12,4 +12,4 @@ function GroupListItemComponent(props) {
     )
 }
 
-export default GroupListItemComponent;
+export default UserListItemComponent;
