@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import './EditorComponent.css'
 import Editor from './editor/editor';
-import InstrumentPanelComponent from './instrument-panel/InstrumentPanelComponent';
-import ControlPanelComponent from './control-panel/ControlPanelComponent';
-import TrackPanelComponent from './track-panel/TrackPanelComponent';
-import WorkspaceComponent from './workspace/WorkspaceComponent';
+import InstrumentPanelComponent from './components/instrument-panel/InstrumentPanelComponent';
+import ControlPanelComponent from './components/control-panel/ControlPanelComponent';
+import TrackPanelComponent from './components/track-panel/TrackPanelComponent';
+import WorkspaceComponent from './components/workspace/WorkspaceComponent';
 
 class EditorComponent extends Component {
     constructor(props) {
@@ -24,11 +24,14 @@ class EditorComponent extends Component {
             this.editor.prepare();
         return (
             <div className='Editor'>
-                <div className='InstrumentPanelContainer' id='InstrumentPanelContainer'>
+                <div className='InfoPanel'>
+
+                </div>
+                <div className='InstrumentPanelContainer'>
                     <InstrumentPanelComponent editor = {this.editor}/>
                 </div>
                 <div className='WorkspaceContainer'>
-                    <div className='TrackPanelContainer' id='TrackPanelContainer'>
+                    <div className='TrackPanelContainer'>
                         <TrackPanelComponent/>
                     </div>
                     <WorkspaceComponent editor={this.editor}/>
