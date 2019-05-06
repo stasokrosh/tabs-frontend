@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import './InstrumentPanelComponent.css'
 import OrientationButtonComponent from './OrientationButtonComponent'
-import { DURATION_FRACTIONS } from '../../editor/model/duration'
+import { DURATION_FRACTIONS } from '../editor/model/duration'
 
 function InstrumentButtonComponent(props) {
     return (

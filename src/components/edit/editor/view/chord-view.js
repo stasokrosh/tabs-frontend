@@ -3,7 +3,7 @@ import Chord from '../model/chord'
 import NoteView from './note-view'
 import Rect from './util/rect'
 import * as Measures from './measures'
-import { DURATION_FRACTIONS, DEFAULT_EIGHT_IN_QUATER_COUNT } from '../model/duration.js'
+import { DURATION_FRACTIONS, DEFAULT_EIGHT_IN_QUATER_COUNT } from '../model/duration'
 import DrawContext from './context/draw-context'
 
 export function getChordWidth(chord) {

@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
 import './EditorComponent.css'
 import Editor from './editor/editor';
-import InstrumentPanelComponent from './components/instrument-panel/InstrumentPanelComponent';
-import ControlPanelComponent from './components/control-panel/ControlPanelComponent';
-import TrackPanelComponent from './components/track-panel/TrackPanelComponent';
-import WorkspaceComponent from './components/workspace/WorkspaceComponent';
+import InstrumentPanelComponent from './components/InstrumentPanelComponent';
+import ControlPanelComponent from './components/ControlPanelComponent';
+import TrackPanelComponent from './components/TrackPanelComponent';
+import WorkspaceComponent from './components/WorkspaceComponent';
+import InfoPanelComponent from './components/InfoPanelComponent';
 
 class EditorComponent extends Component {
     constructor(props) {
@@ -15,7 +16,7 @@ class EditorComponent extends Component {
         this.onResize = this.onResize.bind(this);
         window.onresize = this.onResize;
         this.state = {
-            loading : true
+            loading: true
         };
     }
 
@@ -24,20 +25,20 @@ class EditorComponent extends Component {
             this.editor.prepare();
         return (
             <div className='Editor'>
-                <div className='InfoPanel'>
-
+                <div className='InfoPanelContainer'>
+                    <InfoPanelComponent />
                 </div>
                 <div className='InstrumentPanelContainer'>
-                    <InstrumentPanelComponent editor = {this.editor}/>
+                    <InstrumentPanelComponent editor={this.editor} />
                 </div>
                 <div className='WorkspaceContainer'>
                     <div className='TrackPanelContainer'>
-                        <TrackPanelComponent/>
+                        <TrackPanelComponent />
                     </div>
-                    <WorkspaceComponent editor={this.editor}/>
+                    <WorkspaceComponent editor={this.editor} />
                 </div>
                 <div className='ControlPanelContainer' id='ControlPanelContainer'>
-                    <ControlPanelComponent/>
+                    <ControlPanelComponent />
                 </div>
             </div>
         )

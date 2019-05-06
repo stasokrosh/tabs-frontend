@@ -1,10 +1,16 @@
 .Editor {
-    width: 100%;
+    margin: auto;
+    width: 80%;
+    min-width: 900px;
 }
 
 .InstrumentPanelContainer {
     width: 100%;
     padding-bottom: 2px;
+}
+
+.InfoPanelContainer {
+    width: 100%;
 }
 
 .WorkspacePages {
