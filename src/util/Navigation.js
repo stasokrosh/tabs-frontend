@@ -1,8 +1,9 @@
 
 export const APP_PAGES = {
     HOME : '/',
-    SIGNUP : '/signup',
-    SIGNIN : '/signin',
+    AUTH : '/auth',
+    SIGNUP : '/auth/signup',
+    SIGNIN : '/auth/signin',
     TABS : '/tabs',
     TABS_SINGLE : '/tabs/:id',
     GROUPS : '/groups',
@@ -11,6 +12,17 @@ export const APP_PAGES = {
     USERS_SINGLE : '/users/:name',
 }
 
+export function getSingleUserPath(name) {
+    return APP_PAGES.USERS_SINGLE.replace(':name', name);
+}
+
+export function getSingleGroupPath(name) {
+    return APP_PAGES.GROUPS_SINGLE.replace(':name', name);
+}
+
+export function getSingleTabPath(id) {
+    return APP_PAGES.TABS_SINGLE.replace(':id', id);
+}
 
 export function NavigateHome(history) {
     history.push(APP_PAGES.HOME);
@@ -37,13 +49,13 @@ export function NavigateUserList(history) {
 }
 
 export function NavigateTab(history, id) {
-    history.push(APP_PAGES.TABS_SINGLE.replace(':id', id));
+    history.push(getSingleTabPath(id));
 }
 
 export function NavigateGroup(history, name) {
-    history.push(APP_PAGES.GROUPS_SINGLE.replace(':name', name));
+    history.push(getSingleGroupPath(name));
 }
 
 export function NavigateUser(history, name) {
-    history.push(APP_PAGES.USERS_SINGLE.replace(':name', name));
+    history.push(getSingleUserPath(name));
 }

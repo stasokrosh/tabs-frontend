@@ -1,0 +1,11 @@
+.ItemList {
+    width: 100%;
+    margin: auto;
+    padding: 0;
+    list-style: none
+}
+
+.PageContainer {
+    width: 800px;
+    margin: auto;
+}

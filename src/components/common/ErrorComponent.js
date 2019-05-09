@@ -3,9 +3,9 @@ import './ErrorComponent.css'
 
 function ErrorComponent(props) {
         return (
-            <PageContainerComponent>
-                <h className='ErrorText'>{props.text}</h>
-            </PageContainerComponent>            
+            <div className='PageContainer'>
+                <p className='ErrorText'>{props.text}</p>
+            </div>            
         );
 }
 

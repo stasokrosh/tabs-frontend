@@ -1,6 +1,6 @@
 
 .TabListItemName {
-    width: 100%;
+    width: 100%
 }
 
 .TabListItemInfo {
@@ -8,10 +8,6 @@
 
 }
 
-.TabListItemGroup {
-    float : right;
-}
-
-.TabListItemCreator {
-    float : right;
+.TabListItemLinks {
+    float: right
 }
