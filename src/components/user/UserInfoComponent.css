@@ -1,1 +1,35 @@
+.UserInfoContainer {
+    display: flex;
+    width: 100%;
+}
 
+.UserImageContainer {
+    width: 100px;
+}
+
+.UserImage {
+    height: 100px;
+    width: inherit;
+}
+
+.UserInfoTable {
+    table-layout: auto;
+}
+
+.UserInfo {
+    width: 100%;
+}
+
+.UserLinksContainer {
+    width: 100%;
+    display: flex;
+}
+
+.UserLinks {
+    margin: auto;
+    display: inline-block;
+}
+
+.UserListsHeader {
+    width: 100%;
+}

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import './GroupListItemComponent.css'
 import { Link } from 'react-router-dom'
-import { getSingleUserPath, NavigateSignIn } from '../../util/navigation';
+import { getSingleUserPath, NavigateSignIn, getSingleGroupPath } from '../../util/navigation';
 import ParticipationButtonComponent from '../common/ParticipationButtonComponent';
 
 class GroupListItemComponent extends Component {
@@ -28,7 +28,7 @@ class GroupListItemComponent extends Component {
         let group = this.props.group;
         return (
             <div className='GroupListItem'>
-                <Link className='GroupListItemName' to={getSingleUserPath(group.name)}>{group.name}</Link>
+                <Link className='GroupListItemName' to={getSingleGroupPath(group.name)}>{group.name}</Link>
                 <div className='GroupListItemInfo'>
                     <ParticipationButtonComponent checked={auth.user && auth.user.groups.indexOf(group.name) !== -1} name={group.name} onClick={this.handleParticipateClick}/>
                     <div className='GroupListItemLinks'>

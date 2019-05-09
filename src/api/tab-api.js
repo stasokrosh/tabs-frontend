@@ -18,6 +18,11 @@ export async function getFavouriteTabsByUserRequest(name, token) {
     });
 }
 
+export async function getTabsByGroupRequest(name, token) {
+    let res = await getRequest(getUrl('/tab/group/' + name), createHeaders({token}));
+    return parseResponse(res);
+}
+
 export async function getTabRequest(id, token) {
     let res = await getRequest(getUrl('/tab/' + id), createHeaders({token}));
     return parseResponse(res, (res) => {

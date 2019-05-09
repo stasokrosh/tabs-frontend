@@ -5,3 +5,25 @@
 .GroupListsHeader {
     width: 100%;
 }
+
+.GroupInfoContainer {
+    display: flex;
+    width: 100%;
+}
+
+.GroupImageContainer {
+    width: 100px;
+}
+
+.GroupImage {
+    height: 100px;
+    width: inherit;
+}
+
+.GroupInfoTable {
+    table-layout: auto;
+}
+
+.GroupInfo {
+    width: 100%;
+}
