@@ -23,6 +23,10 @@ class GroupListItemComponent extends Component {
         }
     }
 
+    ownGroup() {
+        return this.props.App.auth.isAuthorised && this.props.group.creator === this.props.App.auth.user.name;
+    }
+
     render() {
         let auth = this.props.App.auth;
         let group = this.props.group;
@@ -30,7 +34,10 @@ class GroupListItemComponent extends Component {
             <div className='GroupListItem'>
                 <Link className='GroupListItemName' to={getSingleGroupPath(group.name)}>{group.name}</Link>
                 <div className='GroupListItemInfo'>
-                    <ParticipationButtonComponent checked={auth.user && auth.user.groups.indexOf(group.name) !== -1} name={group.name} onClick={this.handleParticipateClick}/>
+                    {
+                        !this.ownGroup() &&
+                        <ParticipationButtonComponent checked={auth.user && auth.user.groups.indexOf(group.name) !== -1} name={group.name} onClick={this.handleParticipateClick} />
+                    }
                     <div className='GroupListItemLinks'>
                         <Link className='GroupListItemCreator' to={getSingleUserPath(group.creator)}>{group.creator}</Link>
                     </div>

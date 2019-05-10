@@ -12,8 +12,8 @@
     width: inherit;
 }
 
-.UserInfoTable {
-    table-layout: auto;
+.UserNameContainer {
+    width: 100%;
 }
 
 .UserInfo {

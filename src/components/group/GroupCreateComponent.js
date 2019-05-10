@@ -17,7 +17,7 @@ class GroupCreateComponent extends Component {
     handleCreateButtonClick() {
         this.setState({
             isButton: false,
-            tab: {
+            group: {
                 name: 'New group',
                 public: true
             }
@@ -26,6 +26,7 @@ class GroupCreateComponent extends Component {
 
     handleOkButtonClick() {
         this.props.createGroup(this.state.group);
+        this.setState({ isButton: true })
     }
 
     handleCancelButtonClick() {

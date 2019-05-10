@@ -1,4 +1,9 @@
-import { getRequest, getUrl, createHeaders, deleteRequest, putRequest, parseResponse, HTTP_STATUSES, getErrorResponse } from "../util/connection";
+import { getRequest, getUrl, createHeaders, deleteRequest, putRequest, postRequest, parseResponse, HTTP_STATUSES, getErrorResponse } from "../util/connection";
+
+export async function postGroupRequest(group, token) {
+    let res = await postRequest(group, getUrl('/group'), createHeaders({token}));
+    return parseResponse(res);
+}
 
 export async function getGroupsRequest(token) {
     let res = await getRequest(getUrl('/group'), createHeaders({token}));

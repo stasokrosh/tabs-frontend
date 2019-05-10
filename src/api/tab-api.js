@@ -1,4 +1,9 @@
-import { getRequest, getUrl, createHeaders, deleteRequest, putRequest, parseResponse, HTTP_STATUSES, getErrorResponse } from "../util/connection";
+import { getRequest, getUrl, createHeaders, deleteRequest, putRequest, postRequest, parseResponse, HTTP_STATUSES, getErrorResponse } from "../util/connection";
+
+export async function postTabRequest(tab, token) {
+    let res = await postRequest(tab, getUrl('/tab'), createHeaders({token}));
+    return parseResponse(res);
+}
 
 export async function getTabsRequest(token) {
     let res = await getRequest(getUrl('/tab'), createHeaders({token}));

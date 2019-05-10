@@ -26,6 +26,7 @@ class TabCreateComponent extends Component {
 
     handleOkButtonClick() {
         this.props.createTab(this.state.tab);
+        this.setState({ isButton: true })
     }
 
     handleCancelButtonClick() {

@@ -5,8 +5,8 @@ import GroupListItemComponent from '../group/GroupListItemComponent';
 import { getUserRequest } from '../../api/user-api';
 import ErrorComponent from '../common/ErrorComponent';
 import LoadingComponent from '../common/LoadingComponent';
-import { getTabsByUserRequest } from '../../api/tab-api';
-import { getGroupsByUserRequest } from '../../api/group-api';
+import { getTabsByUserRequest, postTabRequest, removeTabRequest } from '../../api/tab-api';
+import { getGroupsByUserRequest, postGroupRequest, removeGroupRequest } from '../../api/group-api';
 import TabCreateComponent from '../tab/TabCreateComponent';
 import GroupCreateComponent from '../group/GroupCreateComponent';
 
@@ -26,23 +26,24 @@ class UserInfoComponent extends Component {
             selectedList: USER_LISTS.TAB
         }
         this.switchList = this.switchList.bind(this);
+        this.createTab = this.createTab.bind(this);
+        this.createGroup = this.createGroup.bind(this);
     }
 
     async componentDidMount() {
-        let name = this.props.match.params.name;
-        let token = this.props.App.auth.token;
-        await this.load(name, token);
+        await this.reload();
     }
 
     async componentWillReceiveProps(props) {
         let name = props.match.params.name;
-        let token = props.App.auth.token;
         let user = this.state.user;
         if (user.name && user.name !== name)
-            await this.load(name, token);
+            await this.reload();
     }
 
-    async load(name, token) {
+    async reload() {
+        let name = this.props.match.params.name;
+        let token = this.props.App.auth.token;
         let state = {};
         state.loading = false;
         let res = await getUserRequest(name, token);
@@ -76,6 +77,26 @@ class UserInfoComponent extends Component {
         return this.props.App.auth.isAuthorised && this.props.App.auth.user.name === this.props.match.params.name;
     }
 
+    async createTab(tab) {
+        await postTabRequest(tab, this.props.App.auth.token);
+        await this.reload();
+    }
+
+    async createGroup(group) {
+        await postGroupRequest(group, this.props.App.auth.token);
+        await this.reload();
+    }
+
+    async deleteTab(id) {
+        await removeTabRequest(id, this.props.App.auth.token);
+        await this.reload();
+    }
+
+    async deleteGroup(name) {
+        await removeGroupRequest(name, this.props.App.auth.token);
+        await this.reload();
+    }
+
     render() {
         let user = this.state.user;
         let tabs = this.state.tabs;
@@ -93,13 +114,7 @@ class UserInfoComponent extends Component {
                             <img className='UserImage' src={process.env.PUBLIC_URL + '/images/no-image.png'} alt='' />
                         </div>
                         <div className="UserInfo">
-                            <table className="UserInfoTable">
-                                <tbody>
-                                    <tr>
-                                        <td>Name:</td><td><input type='text' value={this.state.user.name} /></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <div className='UserNameContainer'><p>{this.state.user.name}</p></div>
                             <div className='UserLinksContainer'>
                                 <div className='UserLinks'>
                                     <button className='UserLinkItem'>{user.favouriteTabs.length}<br />Favourites</button>
@@ -115,19 +130,25 @@ class UserInfoComponent extends Component {
                     <ul className='UserList'>
                         {this.selfAccount() && (this.state.selectedList === USER_LISTS.TAB ?
                             (
-                                <li className='UserListItemContainer'><TabCreateComponent/></li>
+                                <li className='UserListItemContainer'><TabCreateComponent createTab={this.createTab} /></li>
                             ) : (
-                                <li className='UserListItemContainer'><GroupCreateComponent/></li>
+                                <li className='UserListItemContainer'><GroupCreateComponent createGroup={this.createGroup} /></li>
                             ))
                         }
                         {this.state.selectedList === USER_LISTS.TAB ?
                             (
                                 tabs.length > 0 ? tabs.map(tab =>
-                                    <li className='UserListItemContainer'><TabListItemComponent tab={tab} App={this.props.App} history={this.props.history} /></li>)
+                                    <li className='UserListItemContainer'>
+                                        <TabListItemComponent tab={tab} App={this.props.App} history={this.props.history} />
+                                        {this.selfAccount() && <button className='UserTabDeleteButton' onClick={() => this.deleteTab(tab.id)}>Delete</button>}
+                                    </li>)
                                     : <li className='UserListItemContainerEmpty'>No tabs</li>
                             ) : (
                                 groups.length > 0 ? groups.map(group =>
-                                    <li className='UserListItemContainer'><GroupListItemComponent group={group} App={this.props.App} history={this.props.history} /></li>)
+                                    <li className='UserListItemContainer'>
+                                        <GroupListItemComponent group={group} App={this.props.App} history={this.props.history} />
+                                        {this.selfAccount() && <button className='UserTabDeleteButton' onClick={() => this.deleteGroup(group.name)}>Delete</button>}
+                                    </li>)
                                     : <li className='UserListItemContainerEmpty'>No groups</li>
                             )
                         }
