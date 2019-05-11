@@ -12,8 +12,8 @@ class ImageDropComponent extends Component {
     onDrop(files) {
         let reader = new FileReader();
         reader.onload = async () => {
-            await postImageRequest(reader.result, this.props.id);
-            this.forceUpdate();
+            let res = await postImageRequest(reader.result, this.props.folder);
+            this.props.imageChanged(res.body);
         };
         reader.readAsDataURL(files[0]);
     }

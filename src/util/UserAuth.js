@@ -63,6 +63,13 @@ class UserAuth {
         }
     }
 
+    async changeImage(id) {
+        if (this._token) {
+            let res = await updateUserRequest(this._user.name, this._token, {image : id});
+            this._user = res.body;
+        }
+    }
+
     async register(name, password) {
         let res = await signUpRequest(name, password);
         if (res.success) {

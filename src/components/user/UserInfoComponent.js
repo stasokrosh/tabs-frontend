@@ -10,7 +10,6 @@ import { getGroupsByUserRequest, postGroupRequest, removeGroupRequest } from '..
 import TabCreateComponent from '../tab/TabCreateComponent';
 import GroupCreateComponent from '../group/GroupCreateComponent';
 import ImageDropComponent from '../common/ImageDropComponent';
-import { getUserImageId } from '../../util/image';
 
 const USER_LISTS = {
     TAB: "TAB",
@@ -101,8 +100,8 @@ class UserInfoComponent extends Component {
     }
 
     async imageChanged(res) {
-        await this.props.App.auth.changeImage(res.version);
-        this.forceUpdate();
+        await this.props.App.auth.changeImage(res.public_id);
+        await this.reload();
     }
 
     render() {
@@ -120,7 +119,7 @@ class UserInfoComponent extends Component {
                     <div className='UserInfoContainer'>
                         <div className='UserImageContainer'>
                             <div className='UserImage'>
-                                <ImageDropComponent id={getUserImageId(user.name)}/>
+                                <ImageDropComponent id={user.image} folder='users' imageChanged={this.imageChanged}/>
                             </div>
                         </div>
                         <div className="UserInfo">
