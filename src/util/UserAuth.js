@@ -21,7 +21,7 @@ class UserAuth {
         }
     }
 
-    async addFavourite(id, refresh) {
+    async addFavourite(id) {
         if (this._token) {
             let user = { favouriteTabs: this._user.favouriteTabs };
             user.favouriteTabs.push(id);
@@ -30,7 +30,7 @@ class UserAuth {
         }
     }
 
-    async removeFavourite(id, refresh) {
+    async removeFavourite(id) {
         if (this._token) {
             let user = { favouriteTabs: this._user.favouriteTabs };
             let index = user.favouriteTabs.indexOf(id);
@@ -42,7 +42,7 @@ class UserAuth {
         }
     }
 
-    async addGroup(name, refresh) {
+    async addGroup(name) {
         if (this._token) {
             let user = { groups: this._user.groups };
             user.groups.push(name);
@@ -51,7 +51,7 @@ class UserAuth {
         }
     }
 
-    async removeGroup(name, refresh) {
+    async removeGroup(name) {
         if (this._token) {
             let user = { groups: this._user.groups };
             let index = user.groups.indexOf(name);

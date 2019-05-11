@@ -9,6 +9,8 @@ import { getTabsByUserRequest, postTabRequest, removeTabRequest } from '../../ap
 import { getGroupsByUserRequest, postGroupRequest, removeGroupRequest } from '../../api/group-api';
 import TabCreateComponent from '../tab/TabCreateComponent';
 import GroupCreateComponent from '../group/GroupCreateComponent';
+import ImageDropComponent from '../common/ImageDropComponent';
+import { getUserImageId } from '../../util/image';
 
 const USER_LISTS = {
     TAB: "TAB",
@@ -28,6 +30,7 @@ class UserInfoComponent extends Component {
         this.switchList = this.switchList.bind(this);
         this.createTab = this.createTab.bind(this);
         this.createGroup = this.createGroup.bind(this);
+        this.imageChanged = this.imageChanged.bind(this);
     }
 
     async componentDidMount() {
@@ -97,6 +100,11 @@ class UserInfoComponent extends Component {
         await this.reload();
     }
 
+    async imageChanged(res) {
+        await this.props.App.auth.changeImage(res.version);
+        this.forceUpdate();
+    }
+
     render() {
         let user = this.state.user;
         let tabs = this.state.tabs;
@@ -111,7 +119,9 @@ class UserInfoComponent extends Component {
                 <div className='PageContainer'>
                     <div className='UserInfoContainer'>
                         <div className='UserImageContainer'>
-                            <img className='UserImage' src={process.env.PUBLIC_URL + '/images/no-image.png'} alt='' />
+                            <div className='UserImage'>
+                                <ImageDropComponent id={getUserImageId(user.name)}/>
+                            </div>
                         </div>
                         <div className="UserInfo">
                             <div className='UserNameContainer'><p>{this.state.user.name}</p></div>

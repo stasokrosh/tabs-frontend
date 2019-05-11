@@ -7,7 +7,7 @@
     width: 100px;
 }
 
-.UserImage {
+.UserImage img{
     height: 100px;
     width: inherit;
 }
