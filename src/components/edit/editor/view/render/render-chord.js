@@ -3,6 +3,7 @@ import ChordView from "../chord-view";
 import { renderRect, renderText, renderLine } from './util'
 import * as Draw from './draw'
 import { EditorEvent } from "../../editor-event";
+import { getPublicImageUrl } from "../../../../../util";
 
 class ChordSvgRenderer {
     constructor(props) {
@@ -39,7 +40,7 @@ class ChordSvgRenderer {
     }
 
     renderPause(chordView, renderInfo, container) {
-        container.image(process.env.PUBLIC_URL + "/images/pause.png").size(renderInfo.rect.width, renderInfo.rect.height);
+        container.image(getPublicImageUrl('pause.png')).size(renderInfo.rect.width, renderInfo.rect.height);
     }
 
     renderDuration(chordView, durationData, container) {

@@ -1,13 +1,4 @@
-
 .TabListItemName {
-    width: 100%
-}
-
-.TabListItemInfo {
-    width: 100%
-
-}
-
-.TabListItemLinks {
-    float: right
+    width: 100%;
+    margin-left: 10px;
 }

@@ -1,8 +1,9 @@
 
-.UserListItemName {
-    width: 100%;
+.ListItem.User img{
+    height: 50px;
+    border-radius: 25px;
 }
 
-.UserListItemInfo {
-    width: 100%
+.UserListItemName{
+    margin-left: 10px;
 }

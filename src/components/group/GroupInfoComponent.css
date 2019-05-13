@@ -9,25 +9,38 @@
 .GroupInfoContainer {
     display: flex;
     width: 100%;
+    padding: 10px;
 }
 
-.GroupNameContainer{
+.GroupInfoName{
     width: 100%;
+    color: yellow;
 }
 
 .GroupImageContainer {
     width: 100px;
 }
 
-.GroupImage {
+.GroupImage img{
     height: 100px;
     width: inherit;
+    border-radius: 50px;
 }
 
 .GroupInfoTable {
     table-layout: auto;
+    color: yellow;
+}
+
+.GroupCreator {
+    color: yellow;
 }
 
 .GroupInfo {
+    width: 100%;
+    margin: 10px;
+}
+
+.GroupImageButton button {
     width: 100%;
 }

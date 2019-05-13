@@ -4,12 +4,13 @@ import UserListItemComponent from './UserListItemComponent';
 import { getUsersRequest } from '../../api/user-api';
 import LoadingComponent from '../common/LoadingComponent';
 import ErrorComponent from '../common/ErrorComponent';
+import NavComponent from '../common/NavComponent';
 
 class UserListComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            loading : true,
+            loading: true,
             users: []
         };
     }
@@ -30,15 +31,20 @@ class UserListComponent extends Component {
             return <LoadingComponent />
         else if (this.state.error)
             return <ErrorComponent text={this.state.error} />
-        else 
-        return (
-            <div className='PageContainer'>
-                <ul className='UserList'>
-                    {this.state.users.map(user => 
-                    <li key={user.name}><UserListItemComponent user={user} /></li>)}
-                </ul>
-            </div>
-        )
+        else
+            return (
+                <div className='PageContainer'>
+                <NavComponent App={this.props.App} />
+                    <h1 className='ListTitle'>Users:</h1>
+                    <ul className='ItemList'>
+                        {this.state.users.map(user =>
+                            <li key={user.name} className='ListItemContainer'>
+                                <UserListItemComponent user={user} />
+                                <hr className='ListSeparator' />
+                            </li>)}
+                    </ul>
+                </div>
+            )
     }
 }
 

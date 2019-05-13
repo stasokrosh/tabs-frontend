@@ -8,7 +8,6 @@ import GroupComponent from './group'
 import UserComponent from './user'
 import * as Navigation from '../util/navigation'
 import UserAuth from '../util/UserAuth'
-import NavComponent from './common/NavComponent';
 
 class AppComponent extends Component {
   constructor(props) {
@@ -33,7 +32,6 @@ class AppComponent extends Component {
   render() {
     return (
       <div className='App'>
-        <NavComponent App={this.state.App} />
         <Switch>
           <Route exact path={Navigation.APP_PAGES.HOME} render={(props) => <HomeComponent {...props} App={this.state.App} />}></Route>
           <Route path={Navigation.APP_PAGES.AUTH} render={(props) => <AuthComponent {...props} App={this.state.App} />}></Route>

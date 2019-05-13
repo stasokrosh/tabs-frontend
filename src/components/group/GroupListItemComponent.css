@@ -1,13 +1,14 @@
 
+.GroupListItemNameContainer {
+    width: 100%;
+    margin-left: 10px;
+}
+
 .GroupListItemName {
     width: 100%;
+    display: inline-block;
 }
 
-.GroupListItemInfo {
-    width: 100%
-
-}
-
-.GroupListItemLinks {
-    float : right;
+.ListItem.Group img{
+    height: 50px;
 }

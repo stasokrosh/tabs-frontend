@@ -3,14 +3,17 @@ import './GroupInfoComponent.css'
 import TabListItemComponent from '../tab/TabListItemComponent';
 import UserListItemComponent from '../user/UserListItemComponent';
 import { Link } from 'react-router-dom'
-import { getSingleUserPath, NavigateGroupList } from '../../util/navigation';
+import { getSingleUserPath, NavigateGroupList, NavigateSignIn } from '../../util/navigation';
 import { getGroupRequest, updateGroupRequest, removeGroupRequest } from '../../api/group-api';
-import { getTabsByGroupRequest, postTabRequest, removeTabRequest } from '../../api/tab-api';
+import { getTabsByGroupRequest, postTabRequest } from '../../api/tab-api';
 import { getUsersByGroupRequest } from '../../api/user-api';
 import LoadingComponent from '../common/LoadingComponent';
 import ErrorComponent from '../common/ErrorComponent';
 import TabCreateComponent from '../tab/TabCreateComponent';
 import ParticipationButtonComponent from '../common/ParticipationButtonComponent';
+import ImageDropComponent from '../common/ImageDropComponent';
+import ImageComponent from '../common/ImageComponent';
+import NavComponent from '../common/NavComponent';
 
 const GROUP_LISTS = {
     USER: 'USER',
@@ -32,6 +35,9 @@ class GroupInfoComponent extends Component {
         this.changeAccess = this.changeAccess.bind(this);
         this.enterGroup = this.enterGroup.bind(this);
         this.deleteGroup = this.deleteGroup.bind(this);
+        this.createButton = this.createButton.bind(this);
+        this.cancelCreate = this.cancelCreate.bind(this);
+        this.imageChanged = this.imageChanged.bind(this);
     }
 
     switchList(list) {
@@ -54,7 +60,7 @@ class GroupInfoComponent extends Component {
     async reload() {
         let name = this.props.match.params.name;
         let token = this.props.App.auth.token;
-        let state = {};
+        let state = { creating: false };
         state.loading = false;
         let res = await getGroupRequest(name, token);
         if (!res.success) {
@@ -77,6 +83,14 @@ class GroupInfoComponent extends Component {
         this.setState(state);
     }
 
+    createButton() {
+        this.setState({ creating: false });
+    }
+
+    cancelCreate() {
+        this.setState({ creating: false });
+    }
+
     async createTab(tab) {
         await postTabRequest(tab, this.props.App.auth.token);
         await this.reload();
@@ -89,17 +103,24 @@ class GroupInfoComponent extends Component {
         this.setState({ group });
     }
 
-    async deleteTab(id) {
-        await removeTabRequest(id, this.props.App.auth.token);
-        await this.reload();
+    deleteTab(id) {
+        let index = this.state.tabs.findIndex(el => el.id === id);
+        if (index !== -1) {
+            this.state.tabs.splice(index, 1);
+            this.forceUpdate()
+        }
     }
 
     async enterGroup(checked) {
-        if (checked)
-            await this.props.App.auth.removeGroup(this.state.group.name);
-        else
-            await this.props.App.auth.removeGroup(this.state.group.name);
-        this.forceUpdate();
+        if (!this.props.App.auth.isAuthorised) {
+            NavigateSignIn(this.props.history);
+        } else {
+            if (checked)
+                await this.props.App.auth.removeGroup(this.state.group.name);
+            else
+                await this.props.App.auth.removeGroup(this.state.group.name);
+            this.forceUpdate();
+        }
     }
 
     ownGroup() {
@@ -115,6 +136,11 @@ class GroupInfoComponent extends Component {
         NavigateGroupList(this.props.history);
     }
 
+    async imageChanged(res) {
+        await updateGroupRequest(this.state.group.name, this.props.App.auth.token, { image: res.public_id });
+        await this.reload();
+    }
+
     render() {
         let group = this.state.group;
         let tabs = this.state.tabs;
@@ -126,17 +152,25 @@ class GroupInfoComponent extends Component {
         else
             return (
                 <div className='PageContainer'>
+                    <NavComponent App={this.props.App} />
                     <div className='GroupInfoContainer'>
                         <div className='GroupImageContainer'>
-                            <img className='GroupImage' src={process.env.PUBLIC_URL + '/images/no-image.png'} alt='' />
-                            {
-                                this.ownGroup() ?
-                                <button className="GroupDeleteButton" onClick={this.deleteGroup}>Delete</button>
-                                : <ParticipationButtonComponent checked={this.partOfGroup()} onClick={this.enterGroup} />
-                            }
+                            <div className='GroupImage'>
+                                {
+                                    this.ownGroup() ? <ImageDropComponent id={group.image} folder='users' imageChanged={this.imageChanged} />
+                                        : <ImageComponent id={group.image} />
+                                }
+                            </div>
+                            <div className='GroupImageButton'>
+                                {
+                                    this.ownGroup() ?
+                                        <button className="GroupDeleteButton" onClick={this.deleteGroup}>Delete</button>
+                                        : <ParticipationButtonComponent checked={this.partOfGroup()} onClick={this.enterGroup} />
+                                }
+                            </div>
                         </div>
                         <div className="GroupInfo">
-                            <div className='GroupNameContainer'><p>{this.state.group.name}</p></div>
+                            <h3 className='GroupInfoName'>{this.state.group.name}</h3>
                             <table className="GroupInfoTable">
                                 <tbody>
                                     <tr>
@@ -158,29 +192,36 @@ class GroupInfoComponent extends Component {
                     <div className='GroupListsHeader'>
                         <button onClick={() => { this.switchList(GROUP_LISTS.TAB) }}>Tabs {tabs.length}</button>
                         <button onClick={() => { this.switchList(GROUP_LISTS.USER) }}>Users {users.length}</button>
+                        {this.ownGroup() && this.state.selectedList === GROUP_LISTS.TAB && !this.state.creating
+                            && <button onClick={this.createButton}>Create</button>}
                     </div>
-                    <ul className='GroupList'>
+                    <ul className='ItemList'>
                         {
-                            this.ownGroup() && this.state.selectedList === GROUP_LISTS.TAB
-                            && <li className='GroupListItemContainer'><TabCreateComponent createTab={this.createTab} /></li>
+                            this.ownGroup() && this.state.selectedList === GROUP_LISTS.TAB && this.state.creating
+                            && <li className='ListItemContainer'>
+                                <TabCreateComponent createTab={this.createTab} cancel={this.cancelCreate} />
+                            </li>
                         }
                         {
                             this.state.selectedList === GROUP_LISTS.TAB ?
                                 (
                                     tabs.length > 0 ?
                                         tabs.map(tab =>
-                                            <li className='GroupListItemContainer'>
-                                                <TabListItemComponent tab={tab} App={this.props.App} history={this.props.history} />
-                                                {this.ownGroup && <button className='GroupTabDeleteButton' onClick={() => this.deleteTab(tab.id)}>Delete</button>}
+                                            <li className='ListItemContainer'>
+                                                <TabListItemComponent tab={tab} App={this.props.App} history={this.props.history} delete={this.deleteTab}/>
+                                                <hr className='ListSeparator' />
                                             </li>)
-                                        : <li className='GroupListItemContainerEmpty'>No tabs</li>
+                                        : <li className='ListItemContainerEmpty'>No tabs</li>
                                 )
                                 :
                                 (
                                     tabs.length > 0 ?
                                         users.map(user =>
-                                            <li className='GroupListItemContainer'><UserListItemComponent user={user} /></li>)
-                                        : <li className='GroupListItemContainerEmpty'>No users</li>
+                                            <li className='ListItemContainer'>
+                                                <UserListItemComponent user={user} />
+                                                <hr className='ListSeparator' />
+                                            </li>)
+                                        : <li className='ListItemContainerEmpty'>No users</li>
                                 )
                         }
                     </ul>

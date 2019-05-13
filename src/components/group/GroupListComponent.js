@@ -4,6 +4,7 @@ import GroupListItemComponent from './GroupListItemComponent';
 import { getGroupsRequest } from '../../api/group-api';
 import LoadingComponent from '../common/LoadingComponent';
 import ErrorComponent from '../common/ErrorComponent';
+import NavComponent from '../common/NavComponent';
 
 class GroupListComponent extends Component {
     constructor(props) {
@@ -12,6 +13,7 @@ class GroupListComponent extends Component {
             loading: true,
             groups: []
         };
+        this.deleteGroup = this.deleteGroup.bind(this);
     }
 
     async componentDidMount() {
@@ -25,6 +27,14 @@ class GroupListComponent extends Component {
         this.setState(state);
     }
 
+    deleteGroup(name) {
+        let index = this.state.groups.findIndex(el => el.name === name);
+        if (index !== -1) {
+            this.state.groups.splice(index, 1);
+            this.forceUpdate()
+        }
+    }
+
     render() {
         if (this.state.loading)
             return <LoadingComponent />
@@ -33,9 +43,14 @@ class GroupListComponent extends Component {
         else
             return (
                 <div className='PageContainer'>
-                    <ul className='GroupList'>
+                    <NavComponent App={this.props.App} />
+                    <h1 className='ListTitle'>Groups:</h1>
+                    <ul className='ItemList'>
                         {this.state.groups.map(group =>
-                            <li key={group.name}><GroupListItemComponent group={group} App={this.props.App} history={this.props.history} /></li>
+                            <li key={group.name} className='ListItemContainer'>
+                                <GroupListItemComponent group={group} App={this.props.App} history={this.props.history} delete={this.deleteGroup}/>
+                                <hr className='ListSeparator' />
+                            </li>
                         )}
                     </ul>
                 </div>

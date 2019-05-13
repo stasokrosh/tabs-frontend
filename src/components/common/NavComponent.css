@@ -1,3 +1,16 @@
-.UserPanel {
-    float: right
+.NavBar {
+    padding: 5px;
+    background: #585959
+}
+
+.NavBar a {
+    color: white;
+}
+
+.AuthPanel {
+    float: right;
+}
+
+.NavButton { 
+    margin: 5px;
 }

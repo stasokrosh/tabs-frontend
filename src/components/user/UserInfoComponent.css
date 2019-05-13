@@ -1,6 +1,7 @@
 .UserInfoContainer {
     display: flex;
     width: 100%;
+    padding: 10px;
 }
 
 .UserImageContainer {
@@ -10,14 +11,17 @@
 .UserImage img{
     height: 100px;
     width: inherit;
+    border-radius: 50px;
 }
 
-.UserNameContainer {
+.UserInfoName {
     width: 100%;
+    color: yellow;
 }
 
 .UserInfo {
     width: 100%;
+    margin: 10px;
 }
 
 .UserLinksContainer {

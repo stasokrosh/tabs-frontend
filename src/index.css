@@ -1,11 +1,58 @@
+.PageContainer {
+    max-width: 900px;
+    min-width: 480px;
+    width: 90%;
+    margin: auto;
+    background: #4A4A4A;
+    padding-top: 10px;
+    padding-bottom: 20px;
+    padding-right: 2px;
+    padding-left: 4px;
+}
+
 .ItemList {
     width: 100%;
     margin: auto;
     padding: 0;
-    list-style: none
+    padding-bottom: 10px;
+    list-style: none;
+    background: rgb(39, 38, 38);
 }
 
-.PageContainer {
-    width: 800px;
+.ListItemContainer {
+    padding: 10px;
+    padding-bottom: 0px;
+}
+
+.ListItemContainerEmpty {
+    color: yellow;
+    text-align: center;
+    padding: 10px;
+    padding-bottom: 0px;
+}
+
+.ListItem {    
+    width: 100%;
+    display: flex;
+}
+
+.ListItem a {
+    color : yellow;
+}
+
+.ListSeparator {
     margin: auto;
+    margin-top: 10px;
+    border: 0; 
+    background: #4A4A4A;
+    height: 2px;
+}
+
+.ListTitle {
+    color: yellow;
+    margin: auto;
+}
+
+body {
+    background:rgb(39, 38, 38);
 }

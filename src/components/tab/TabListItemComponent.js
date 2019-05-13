@@ -3,11 +3,13 @@ import './TabListItemComponent.css'
 import { NavigateSignIn, getSingleTabPath, getSingleGroupPath, getSingleUserPath } from '../../util/navigation';
 import FavouriteButtonComponent from '../common/FavouriteButtonComponent';
 import { Link } from 'react-router-dom'
+import { removeGroupRequest } from '../../api/group-api';
 
 class TabListItemComponent extends Component {
     constructor(props) {
         super(props);
         this.handleFavouriteClick = this.handleFavouriteClick.bind(this);
+        this.deleteTab = this.deleteTab.bind(this);
     }
 
     async handleFavouriteClick(checked, id) {
@@ -27,22 +29,24 @@ class TabListItemComponent extends Component {
         return this.props.App.auth.isAuthorised && this.props.tab.creator === this.props.App.auth.user.name;
     }
 
+    async deleteTab() {
+        await removeGroupRequest(this.props.tab.id, this.props.App.auth.token);
+        if (this.props.delete)
+            this.props.delete(this.props.tab.id);
+    }
+
     render() {
         let auth = this.props.App.auth;
         let tab = this.props.tab;
         return (
-            <div className='TabListItem'>
+            <div className='ListItem'>
+                {
+                    this.ownTab() ? <button onClick={this.deleteTab}>Delete</button> 
+                    : <FavouriteButtonComponent checked={auth.user && auth.user.favouriteTabs.indexOf(tab.id) !== -1} onClick={this.handleFavouriteClick} id={tab.id} />
+                }
                 <Link className='TabListItemName' to={getSingleTabPath(tab.id)}>{tab.name}</Link>
-                <div className='TabListItemInfo'>
-                    {
-                        !this.ownTab() &&
-                        <FavouriteButtonComponent checked={auth.user && auth.user.favouriteTabs.indexOf(tab.id) !== -1} onClick={this.handleFavouriteClick} id={tab.id} />
-                    }
-                    <div className="TabListItemLinks">
-                        {this.props.tab.group && <Link className='TabListItemGroup' to={getSingleGroupPath(tab.group)}>{tab.group}</Link>}
-                        <Link className='TabListItemCreator' to={getSingleUserPath(tab.creator)}>{tab.creator}</Link>
-                    </div>
-                </div>
+                {this.props.tab.group && <Link className='TabListItemGroup' to={getSingleGroupPath(tab.group)}>{tab.group}</Link>}
+                <Link className='TabListItemCreator' to={getSingleUserPath(tab.creator)}>{tab.creator}</Link>
             </div>
         )
     }
