@@ -1,0 +1,35 @@
+
+.PageContainer.Auth {
+    background-image: linear-gradient( rgb(230, 232, 235), rgb(188, 193, 219));
+}
+
+.PageContainer.Auth div.Footer{
+    color: rgb(255, 255, 255);
+    background: rgb(146, 154, 165);
+    bottom: 0px;
+}
+
+.AuthForm {
+    width: 40%;
+    margin: auto;
+    margin-top: 15%;
+    background: white;
+    padding: 10%;
+}
+
+.AuthInput {
+    width: 100%;
+}
+
+.AuthError {
+    width: 100%;
+}
+
+.RegisterLink a{
+    color: blue;
+}
+
+.AuthButton {
+    font-size: 15px;
+    margin-top: 10px;
+}

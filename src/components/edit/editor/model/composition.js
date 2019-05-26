@@ -13,18 +13,18 @@ class Composition {
     static Create(props) {
         return new Composition(props);
     }
-
+    
     refreshTracks() {
         for (let track of this._tracks)
             track.refresh(this);
     }
 
     get tacts() {
-        return [...this._tacts];
+        return this._tacts;
     }
 
     get tracks() {
-        return [...this._tracks];
+        return this._tracks;
     }
 
     get tactCount() {
@@ -57,6 +57,7 @@ class Composition {
         else
             this._tacts.splice(position, 0, newTact);
         this.refreshTracks();
+        return newTact;
     }
 
     deleteTact(tact) {
@@ -71,6 +72,7 @@ class Composition {
         let newTrack = Track.Create(track);
         this._tracks.push(newTrack);
         newTrack.refresh(this);
+        return newTrack;
     }
 
     deleteTrack(track) {

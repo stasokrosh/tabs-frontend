@@ -1,10 +1,10 @@
 .NavBar {
     padding: 5px;
-    background: #585959
+    background: #000000
 }
 
 .NavBar a {
-    color: white;
+    color: rgb(253, 252, 252);
 }
 
 .AuthPanel {
@@ -13,4 +13,35 @@
 
 .NavButton { 
     margin: 5px;
+}
+
+.UserButtonPanel {
+    display: flex;
+}
+
+.UserButtonPanel img {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.UserButton {
+    background: none;
+}
+
+.UserButtonDropdown {
+    display: none;
+    position: absolute;
+    background: black;
+    top:28px;
+    z-index: 1;
+}
+
+.UserButtonDropdown button {
+    background: none;
+    width: 100%;
+}
+
+.UserButtonDropdown.Active {
+    display: block;
 }

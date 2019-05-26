@@ -1,6 +1,5 @@
 import { assert } from '../util'
 import Tact from './tact'
-import Chord from './chord'
 
 class TrackTact {
     constructor(props) {
@@ -19,6 +18,10 @@ class TrackTact {
         return new TrackTact(trackTact);
     }
 
+    copy(trackTact) {
+        this.chords = trackTact.chords;
+    }
+
     get chordCount() {
         return this._chords.length;
     }
@@ -28,13 +31,13 @@ class TrackTact {
     }
 
     get chords() {
-        return [...this._chords];
+        return this._chords;
     }
 
     set chords(value) {
         this._chords.length = 0;
         for (let chord of value) {
-            this._chords.push(Chord.Create(chord));
+            this._chords.push(this._chordGenerator(chord));
         }
     }
 
@@ -60,6 +63,7 @@ class TrackTact {
             this._chords.push(newChord);
         else
             this._chords.splice(position, 0, newChord);
+        return newChord;
     }
 
     get chordGenerator() {

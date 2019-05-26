@@ -1,3 +1,8 @@
+.TrackPanel {
+    display: flex;
+    background: rgb(148, 163, 233);
+}
+
 .TrackList {
     margin: auto;
     padding: 0;
@@ -6,17 +11,55 @@
 
 .TrackControlContainer {
     margin: 0;
-}
-
-.TrackInput{
-    width: auto;
+    margin-top: 2px;
 }
 
 .TrackControl {
     display: flex;
+}
+
+.TrackInfo.TextEdit{
     width: 100%;
+}
+
+.TrackInfo {
+    width: 100%;
+}
+
+.ExpandButton {
+    width: 7px;
+    padding: 0px;
+    background: rgb(171, 184, 240);
+    color: black;
 }
 
 .TrackAddButton {
     width: 100%;
+}
+
+.TrackCreate {
+    margin-right: 1px;
+}
+
+.TrackCreate.Instrument {
+    background: none;
+} 
+
+.TrackIcon {
+    width: 50px;
+    height: 50px;
+    padding: 5px;
+    border-radius: 10%;
+    background: rgb(188, 193, 219);
+}
+
+.TrackIcon.Create {
+    width: 25px;
+    height: 25px;
+    padding: 2px;
+}
+
+.TrackControlContainer.Create {
+    position: absolute;
+    background: rgb(115, 118, 136);
 }

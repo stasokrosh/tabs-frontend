@@ -12,6 +12,7 @@ import GroupCreateComponent from '../group/GroupCreateComponent';
 import ImageDropComponent from '../common/ImageDropComponent';
 import ImageComponent from '../common/ImageComponent';
 import NavComponent from '../common/NavComponent';
+import FooterComponent from '../common/FooterComponent';
 
 const USER_LISTS = {
     TAB: "TAB",
@@ -34,6 +35,8 @@ class UserInfoComponent extends Component {
         this.imageChanged = this.imageChanged.bind(this);
         this.createButton = this.createButton.bind(this);
         this.cancelCreate = this.cancelCreate.bind(this);
+        this.deleteTab = this.deleteTab.bind(this);
+        this.deleteGroup = this.deleteGroup.bind(this);
     }
 
     async componentDidMount() {
@@ -54,19 +57,22 @@ class UserInfoComponent extends Component {
         state.loading = false;
         let res = await getUserRequest(name, token);
         if (!res.success) {
-            this.setState({ error: res.message });
+            state.error = res.message;
+            this.setState(state);
             return;
         }
         state.user = res.body;
         res = await getTabsByUserRequest(name, token);
         if (!res.success) {
-            this.setState({ error: res.message });
+            state.error = res.message;
+            this.setState(state);
             return;
         }
         state.tabs = res.body;
         res = await getGroupsByUserRequest(name, token);
         if (!res.success) {
-            this.setState({ error: res.message });
+            state.error = res.message;
+            this.setState(state);
             return;
         }
         state.groups = res.body;
@@ -76,6 +82,7 @@ class UserInfoComponent extends Component {
     switchList(list) {
         let state = this.state;
         state.selectedList = list;
+        state.creating = false;
         this.setState(state);
     }
 
@@ -97,8 +104,11 @@ class UserInfoComponent extends Component {
     }
 
     async createGroup(group) {
-        await postGroupRequest(group, this.props.App.auth.token);
+        let res = await postGroupRequest(group, this.props.App.auth.token);
+        if (!res.success)
+            return res;
         await this.reload();
+        return res;
     }
 
     deleteTab(id) {
@@ -126,71 +136,80 @@ class UserInfoComponent extends Component {
         let user = this.state.user;
         let tabs = this.state.tabs;
         let groups = this.state.groups;
-
-        if (this.state.loading)
-            return <LoadingComponent />
-        else if (this.state.error)
-            return <ErrorComponent text={this.state.error} />
-        else
-            return (
-                <div className='PageContainer'>
-                    <NavComponent App={this.props.App} />
-                    <div className='UserInfoContainer'>
-                        <div className='UserImageContainer'>
-                            <div className='UserImage'>
-                                {
-                                    this.selfAccount() ? <ImageDropComponent id={user.image} folder='users' imageChanged={this.imageChanged} />
-                                        : <ImageComponent id={user.image} />
-                                }
-                            </div>
-                        </div>
-                        <div className="UserInfo">
-                            <h3 className='UserInfoName'>{this.state.user.name}</h3>
-                            <div className='UserLinksContainer'>
-                                <div className='UserLinks'>
-                                    <button className='UserLinkItem'>{user.favouriteTabs.length}<br />Favourites</button>
-                                    <button className='UserLinkItem'>{user.groups.length}<br />Groups</button>
+        return (
+            <div className='PageContainer'>
+                <NavComponent App={this.props.App} history={this.props.history} />
+                {this.state.loading ?
+                    <LoadingComponent />
+                    : this.state.error ?
+                        <ErrorComponent text={this.state.error} />
+                        : <div>
+                            <div className='UserInfoContainer'>
+                                <div className='UserImageContainer'>
+                                    <div className='UserImage'>
+                                        {
+                                            this.selfAccount() ? <ImageDropComponent id={user.image} folder='users' imageChanged={this.imageChanged} />
+                                                : <ImageComponent id={user.image} />
+                                        }
+                                    </div>
+                                </div>
+                                <div className="UserInfo">
+                                    <h3 className='UserInfoName'>{this.state.user.name}</h3>
+                                    <div className='UserLinksContainer'>
+                                        <div className='UserLinks'>
+                                            <button className='UserLinkItem'>{user.favouriteTabs.length}<br />Favourites</button>
+                                            <button className='UserLinkItem'>{user.groups.length}<br />Groups</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                            <div className='ListsHeader'>
+                                <button className={'ListHeaderItem' + ((this.state.selectedList === USER_LISTS.TAB) ? ' Active' : '')} onClick={() => { this.switchList(USER_LISTS.TAB) }}>
+                                    Created Tabs {tabs.length}
+                                </button>
+                                <button className={'ListHeaderItem' + ((this.state.selectedList === USER_LISTS.GROUP) ? ' Active' : '')} onClick={() => { this.switchList(USER_LISTS.GROUP) }}>
+                                    Created Groups {groups.length}
+                                </button>
+                                {this.selfAccount() && !this.state.creating &&
+                                    <button className='ListHeaderItem Submit' onClick={this.createButton}>Create</button>}
+                            </div>
+                            <div className='ItemListContainer User'>
+                                <ul className='ItemList'>
+                                    {this.selfAccount() && this.state.creating && (this.state.selectedList === USER_LISTS.TAB ?
+                                        (
+                                            <li className='ListItemContainer'>
+                                                <TabCreateComponent createTab={this.createTab} cancel={this.cancelCreate} />
+                                            </li>
+                                        ) : (
+                                            <li className='ListItemContainer'>
+                                                <GroupCreateComponent createGroup={this.createGroup} cancel={this.cancelCreate} />
+                                            </li>
+                                        ))
+                                    }
+                                    {this.state.selectedList === USER_LISTS.TAB ?
+                                        (
+                                            tabs.length > 0 ? tabs.map(tab =>
+                                                <li className='ListItemContainer User' key={tab.id}>
+                                                    <TabListItemComponent tab={tab} App={this.props.App} history={this.props.history} delete={this.deleteTab} />
+                                                    <hr className='ListSeparator' />
+                                                </li>)
+                                                : <li className='ListItemContainerEmpty'>No tabs</li>
+                                        ) : (
+                                            groups.length > 0 ? groups.map(group =>
+                                                <li className='ListItemContainer' key={group.name}>
+                                                    <GroupListItemComponent group={group} App={this.props.App} history={this.props.history} delete={this.deleteGroup} />
+                                                    <hr className='ListSeparator' />
+                                                </li>)
+                                                : <li className='ListItemContainerEmpty'>No groups</li>
+                                        )
+                                    }
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                    <div className='UserListsHeader'>
-                        <button onClick={() => { this.switchList(USER_LISTS.TAB) }}>Created Tabs {tabs.length}</button>
-                        <button onClick={() => { this.switchList(USER_LISTS.GROUP) }}>Created Groups {groups.length}</button>
-                        {this.selfAccount() && !this.state.creating && <button onClick={this.createButton}>Create</button>}
-                    </div>
-                    <ul className='ItemList'>
-                        {this.selfAccount() && this.state.creating && (this.state.selectedList === USER_LISTS.TAB ?
-                            (
-                                <li className='ListItemContainer'>
-                                    <TabCreateComponent createTab={this.createTab} cancel={this.cancelCreate} />
-                                </li>
-                            ) : (
-                                <li className='ListItemContainer'>
-                                    <GroupCreateComponent createGroup={this.createGroup} cancel={this.cancelCreate} />
-                                </li>
-                            ))
-                        }
-                        {this.state.selectedList === USER_LISTS.TAB ?
-                            (
-                                tabs.length > 0 ? tabs.map(tab =>
-                                    <li className='ListItemContainer User'>
-                                        <TabListItemComponent tab={tab} App={this.props.App} history={this.props.history} delete={this.deleteTab}/>
-                                        <hr className='ListSeparator' />
-                                    </li>)
-                                    : <li className='ListItemContainerEmpty'>No tabs</li>
-                            ) : (
-                                groups.length > 0 ? groups.map(group =>
-                                    <li className='ListItemContainer'>
-                                        <GroupListItemComponent group={group} App={this.props.App} history={this.props.history} delete={this.deleteGroup}/>
-                                        <hr className='ListSeparator' />
-                                    </li>)
-                                    : <li className='ListItemContainerEmpty'>No groups</li>
-                            )
-                        }
-                    </ul>
-                </div>
-            )
+                }
+                <FooterComponent />
+            </div>
+        )
     }
 }
 

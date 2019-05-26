@@ -50,7 +50,7 @@ class Track {
     }
 
     get tacts() {
-        return [...this._tacts];
+        return this._tacts;
     }
 
     getTact(index) {

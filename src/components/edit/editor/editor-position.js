@@ -5,7 +5,7 @@ class EditorPosition {
     constructor(props) {
         assert(() => props);
         assert(() => props.editor instanceof Editor);
-        this._editor = props.editor;
+        this._editor = props.editor; 
     }
 
     static Create(props) {
@@ -26,7 +26,7 @@ class EditorPosition {
             let nextTact = false;
             if (chordNum === selectedTact.chordCount - 1 && selectedChord.isEmptyExcept) {
                 if (tactNum === this._editor.selectedTrack.tactCount - 1) {
-                    this._editor._composition.addTact(this._editor.createEmptyTact());
+                    this._editor._compositionProvider.composition.addTact(this._editor.createEmptyTact());
                     this._editor.refresh();
                 }
                 selectedTact = this._editor.selectedTrack.getTact(tactNum + 1);

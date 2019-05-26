@@ -5,6 +5,7 @@ import { getTabsRequest } from '../../api/tab-api';
 import LoadingComponent from '../common/LoadingComponent';
 import ErrorComponent from '../common/ErrorComponent';
 import NavComponent from '../common/NavComponent';
+import FooterComponent from '../common/FooterComponent';
 
 class TabListComponent extends Component {
     constructor(props) {
@@ -36,25 +37,31 @@ class TabListComponent extends Component {
     }
 
     render() {
-        if (this.state.loading)
-            return <LoadingComponent />
-        else if (this.state.error)
-            return <ErrorComponent text={this.state.error} />
-        else
-            return (
-                <div className='PageContainer'>
-                    <NavComponent App={this.props.App} />
-                    <h1 className='ListTitle'>Tabs:</h1>
-                    <ul className='ItemList'>
-                        {this.state.tabs.map(tab =>
-                            <li key={tab.id} className='ListItemContainer'>
-                                <TabListItemComponent tab={tab} App={this.props.App} history={this.props.history} delete={this.deleteTab}/>
-                                <hr className='ListSeparator' />
-                            </li>
-                        )}
-                    </ul>
-                </div>
-            )
+        return (
+            <div className='PageContainer'>
+                <NavComponent App={this.props.App} history={this.props.history}/>
+                {
+                    this.state.loading ?
+                        <LoadingComponent />
+                        : this.state.error ? <ErrorComponent text={this.state.error} /> :
+                            <div>
+                                <h1 className='ListTitle'>Tabs:</h1>
+                                <div className='ItemListContainer'>
+                                    <ul className='ItemList'>
+                                        {this.state.tabs.map(tab =>
+                                            <li key={tab.id} className='ListItemContainer'>
+                                                <TabListItemComponent tab={tab} App={this.props.App} history={this.props.history} delete={this.deleteTab} />
+                                                <hr className='ListSeparator' />
+                                            </li>
+                                        )}
+                                    </ul>
+                                </div>
+                            </div>
+                }
+                <FooterComponent />
+            </div>
+        )
+
     }
 }
 

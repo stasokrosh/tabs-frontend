@@ -1,7 +1,7 @@
-.Editor {
-    margin: auto;
-    width: 80%;
-    min-width: 900px;
+.PageContainer.Editor {
+    min-width: 530px;
+    left: 15%;
+    width: 70%;
 }
 
 .InstrumentPanelContainer {
@@ -18,10 +18,10 @@
 }
 
 .ControlPanelContainer {
-    position:fixed;
-    left:0px;
+    position:absolute;
+    width: 100%;
     bottom:0px;
-    width:100%;
+    background: rgba(81, 55, 124, 0.664);
 }
 
 .SettingsPanelContainer {

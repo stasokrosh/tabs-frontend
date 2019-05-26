@@ -3,7 +3,7 @@ import './TabListItemComponent.css'
 import { NavigateSignIn, getSingleTabPath, getSingleGroupPath, getSingleUserPath } from '../../util/navigation';
 import FavouriteButtonComponent from '../common/FavouriteButtonComponent';
 import { Link } from 'react-router-dom'
-import { removeGroupRequest } from '../../api/group-api';
+import { removeTabRequest } from '../../api/tab-api';
 
 class TabListItemComponent extends Component {
     constructor(props) {
@@ -30,7 +30,7 @@ class TabListItemComponent extends Component {
     }
 
     async deleteTab() {
-        await removeGroupRequest(this.props.tab.id, this.props.App.auth.token);
+        await removeTabRequest(this.props.tab.id, this.props.App.auth.token);
         if (this.props.delete)
             this.props.delete(this.props.tab.id);
     }
@@ -41,7 +41,7 @@ class TabListItemComponent extends Component {
         return (
             <div className='ListItem'>
                 {
-                    this.ownTab() ? <button onClick={this.deleteTab}>Delete</button> 
+                    this.ownTab() ? <button className='Cancel' onClick={this.deleteTab}>Delete</button> 
                     : <FavouriteButtonComponent checked={auth.user && auth.user.favouriteTabs.indexOf(tab.id) !== -1} onClick={this.handleFavouriteClick} id={tab.id} />
                 }
                 <Link className='TabListItemName' to={getSingleTabPath(tab.id)}>{tab.name}</Link>

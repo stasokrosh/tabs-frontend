@@ -5,6 +5,7 @@ import { getGroupsRequest } from '../../api/group-api';
 import LoadingComponent from '../common/LoadingComponent';
 import ErrorComponent from '../common/ErrorComponent';
 import NavComponent from '../common/NavComponent';
+import FooterComponent from '../common/FooterComponent';
 
 class GroupListComponent extends Component {
     constructor(props) {
@@ -36,25 +37,34 @@ class GroupListComponent extends Component {
     }
 
     render() {
-        if (this.state.loading)
-            return <LoadingComponent />
-        else if (this.state.error)
-            return <ErrorComponent text={this.state.error} />
-        else
-            return (
-                <div className='PageContainer'>
-                    <NavComponent App={this.props.App} />
-                    <h1 className='ListTitle'>Groups:</h1>
-                    <ul className='ItemList'>
-                        {this.state.groups.map(group =>
-                            <li key={group.name} className='ListItemContainer'>
-                                <GroupListItemComponent group={group} App={this.props.App} history={this.props.history} delete={this.deleteGroup}/>
-                                <hr className='ListSeparator' />
-                            </li>
-                        )}
-                    </ul>
-                </div>
-            )
+        return (
+            <div className='PageContainer'>
+                <NavComponent App={this.props.App} history={this.props.history}/>
+                {this.state.loading ?
+                    <LoadingComponent />
+                    : this.state.error ?
+                        <ErrorComponent text={this.state.error} />
+                        :
+                        <div>
+                            <h1 className='ListTitle'>Groups:</h1>
+                            <div className='ItemListContainer'>
+                                <div className='ItemListContainerInner'>
+                                    <ul className='ItemList'>
+                                        {this.state.groups.map(group =>
+                                            <li key={group.name} className='ListItemContainer'>
+                                                <GroupListItemComponent group={group} App={this.props.App} history={this.props.history} delete={this.deleteGroup} />
+                                                <hr className='ListSeparator' />
+                                            </li>
+                                        )}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                }
+                <FooterComponent/>
+            </div>
+        )
+
     }
 }
 

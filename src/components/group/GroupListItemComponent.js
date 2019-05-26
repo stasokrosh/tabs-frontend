@@ -45,7 +45,7 @@ class GroupListItemComponent extends Component {
                 <div className='GroupListItemNameContainer'>
                     <Link className='GroupListItemName' to={getSingleGroupPath(group.name)}>{group.name}</Link>
                     {
-                        this.ownGroup() ? <button onClick={this.deleteGroup}>Delete</button>
+                        this.ownGroup() ? <button className='Cancel' onClick={this.deleteGroup}>Delete</button>
                         : <ParticipationButtonComponent checked={auth.user && auth.user.groups.indexOf(group.name) !== -1} name={group.name} onClick={this.handleParticipateClick} />
                     }
                 </div>

@@ -5,7 +5,7 @@ function ErrorComponent(props) {
         return (
             <div className='PageContainer'>
                 <p className='ErrorText'>{props.text}</p>
-            </div>            
+            </div>        
         );
 }
 

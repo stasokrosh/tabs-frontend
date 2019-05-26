@@ -16,8 +16,10 @@ class GroupCreateComponent extends Component {
         this.handleChangePublic = this.handleChangePublic.bind(this);
     }
 
-    handleOkButtonClick() {
-        this.props.createGroup(this.state.group);
+    async handleOkButtonClick() {
+        let res = await this.props.createGroup(this.state.group);
+        if (!res.success)
+            this.setState({error : res.message});
     }
 
     handleCancelButtonClick() {
@@ -27,7 +29,7 @@ class GroupCreateComponent extends Component {
     handleChangeName(e) {
         let group = this.state.group;
         group.name = e.target.value;
-        this.setState({ group });
+        this.setState({ group, error: null });
     }
 
     handleChangePublic() {
@@ -40,10 +42,11 @@ class GroupCreateComponent extends Component {
         return (
             <div className='GroupCreatePanel'>
                 <input type='text' value={this.state.group.name} onChange={this.handleChangeName} />
+                <span className='Error'>{this.state.error}</span>;
                 <button onClick={this.handleChangePublic}>{this.state.group.public ? "public" : "private"}</button>
                 <div className='GroupCreateSubmitPanel'>
-                    <button className='GroupCreateCancelButton' onClick={this.handleCancelButtonClick}>Cancel</button>
-                    <button className='GroupCreateOkButton' onClick={this.handleOkButtonClick}>Ok</button>
+                    <button className='Cancel' onClick={this.handleCancelButtonClick}>Cancel</button>
+                    <button className='Submit' onClick={this.handleOkButtonClick}>Ok</button>
                 </div>
             </div>
         );

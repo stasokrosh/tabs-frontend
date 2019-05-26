@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import './SignUpComponent.css'
 import { NavigateHome } from '../../util/navigation';
 import NavComponent from '../common/NavComponent';
+import FooterComponent from '../common/FooterComponent';
 
 class SignUpComponent extends Component {
     constructor(props) {
@@ -33,30 +34,31 @@ class SignUpComponent extends Component {
 
     render() {
         return (
-            <div className='PageContainer'>
+            <div className='PageContainer Auth'>
                 <NavComponent App={this.props.App} />
-                <div className='SignUpForm'>
+                <div className='AuthForm'>
                     <h1>Sign up</h1>
                     <div>
                         <label>Name:</label>
                     </div>
                     <div>
-                        <input type="text" name='name' className='SignUpInput' value={this.state.name} onChange={this.handleInputChange} />
+                        <input type="text" name='name' className='AuthInput' value={this.state.name} onChange={this.handleInputChange} />
                     </div>
                     <div>
                         <label>Password:</label>
                     </div>
                     <div>
-                        <input type="password" name='password' className='SignUpInput' value={this.state.password} onChange={this.handleInputChange} />
+                        <input type="password" name='password' className='AuthInput' value={this.state.password} onChange={this.handleInputChange} />
                     </div>
                     {this.state.error &&
                         <div>
-                            <span className='SignInError'>
+                            <span className='AuthError Error'>
                                 {this.state.error}
                             </span>
                         </div>}
-                    <button onClick={this.handleSubmit}>Sign up</button>
+                    <button className='AuthButton Submit'onClick={this.handleSubmit}>Sign up</button>
                 </div>
+                <FooterComponent/>
             </div>
         )
     }

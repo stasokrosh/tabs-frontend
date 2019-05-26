@@ -44,8 +44,8 @@ class TabCreateComponent extends Component {
                 <input type='text' value={this.state.tab.name} onChange={this.handleChangeName} />
                 <button onClick={this.handleChangePublic}>{this.state.tab.public ? "public" : "private"}</button>
                 <div className='TabCreateSubmitPanel'>
-                    <button className='TabCreateCancelButton' onClick={this.handleCancelButtonClick}>Cancel</button>
-                    <button className='TabCreateOkButton' onClick={this.handleOkButtonClick}>Ok</button>
+                    <button className='Cancel' onClick={this.handleCancelButtonClick}>Cancel</button>
+                    <button className='Submit' onClick={this.handleOkButtonClick}>Ok</button>
                 </div>
             </div>
         );

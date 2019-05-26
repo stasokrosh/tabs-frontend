@@ -1,4 +1,13 @@
+.InfoPanel {
+    display: flex;
+    padding: 2px;
+}
 
 .CompositionInfo {
-    float: right;
+    width: 100%;
+}
+
+.CompositionName {
+    font-size: 18px;
+    width: 177px;
 }

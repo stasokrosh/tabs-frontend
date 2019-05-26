@@ -2,7 +2,10 @@ import { getRequest, getUrl, createHeaders, deleteRequest, putRequest, postReque
 
 export async function postGroupRequest(group, token) {
     let res = await postRequest(group, getUrl('/group'), createHeaders({token}));
-    return parseResponse(res);
+    return parseResponse(res, (res) => {
+        if (res.status === HTTP_STATUSES.ENTITY_EXISTS)
+            return getErrorResponse('Group with this name already exists');
+    });
 }
 
 export async function getGroupsRequest(token) {
@@ -39,7 +42,7 @@ export async function removeGroupRequest(name, token) {
 }
 
 export async function updateGroupRequest(name, token, group) {
-    let res = await putRequest(group, getUrl('/user/' + name), createHeaders({token}));
+    let res = await putRequest(group, getUrl('/group/' + name), createHeaders({token}));
     return parseResponse(res, (res) => {
         if (res.status === HTTP_STATUSES.NOT_FOUND)
             return getErrorResponse('Group was not found');

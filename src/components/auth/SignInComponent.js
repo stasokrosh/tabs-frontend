@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
-import './SignInComponent.css'
+import './AuthComponent.css'
 import { NavigateHome, APP_PAGES } from '../../util/navigation';
 import NavComponent from '../common/NavComponent';
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import FooterComponent from '../common/FooterComponent';
 
 class SignInComponent extends Component {
     constructor(props) {
@@ -33,34 +34,36 @@ class SignInComponent extends Component {
 
     render() {
         return (
-            <div className='PageContainer'>
-                <NavComponent App={this.props.App} />
-                <div className='SignInForm'>
-                    <h1>Sign in</h1>
-                    <div>
-                        <label>Name:</label>
-                    </div>
-                    <div>
-                        <input type="text" name='name' className='SignInInput' value={this.state.name} onChange={this.handleInputChange} />
-                    </div>
-                    <div>
-                        <label>Password:</label>
-                    </div>
-                    <div>
-                        <input type="password" name='password' className='SignInInput' value={this.state.password} onChange={this.handleInputChange} />
-                    </div>
-                    <div>
-                        <span>Dont have an account? <Link to={APP_PAGES.SIGNUP}>Register now</Link></span>
-                    </div>
-                    {this.state.error &&
+                <div className='PageContainer Auth'>
+                    <NavComponent App={this.props.App} />
+                    <div className='AuthForm'>
+                        <h1>Sign in</h1>
                         <div>
-                            <span className='SignInError'>
-                                {this.state.error}
-                            </span>
-                        </div>}
-                    <button onClick={this.handleSubmit}>Sign in</button>
+                            <label>Name:</label>
+                        </div>
+                        <div>
+                            <input type="text" name='name' className='AuthInput' value={this.state.name} onChange={this.handleInputChange} />
+                        </div>
+                        <div>
+                            <label>Password:</label>
+                        </div>
+                        <div>
+                            <input type="password" name='password' className='AuthInput' value={this.state.password} onChange={this.handleInputChange} />
+                        </div>
+                        <div className='RegisterLink'>
+                            <span>Dont have an account? <Link to={APP_PAGES.SIGNUP}>Register now</Link></span>
+                        </div>
+                        {this.state.error &&
+                            <div>
+                                <span className='AuthError Error'>
+                                    {this.state.error}
+                                </span>
+                            </div>}
+                        <button className='AuthButton Submit'onClick={this.handleSubmit}>Sign in</button>
+                    </div>
+                    <FooterComponent />
                 </div>
-            </div>
+                
         )
     }
 }

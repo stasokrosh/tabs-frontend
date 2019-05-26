@@ -8,8 +8,6 @@ import EditorPosition from './editor-position';
 class Editor {
     constructor(props) {
         assert(() => props);
-        assert(() => props.composition);
-        this._composition = props.composition;
         this._settings = {
             isVertical: true,
             zoom: 3,
@@ -19,6 +17,7 @@ class Editor {
         this._drawContext.addEventListener(this);
         this._eventDispatcher = EditorEventDispatcher.Create({ editor: this });
         this._editorPosition = EditorPosition.Create({ editor: this });
+        this.initialized = false;
     }
 
     static Create(props) {
@@ -33,7 +32,10 @@ class Editor {
             containerID: props.containerID,
             workspaceID: props.workspaceID
         });
-        this.selectedTrack = this._composition.getTrack(0);
+        assert(() => props.compositionProvider);
+        this._compositionProvider = props.compositionProvider;
+        this.selectedTrack = this._compositionProvider.composition.getTrack(0);
+        this.initialized = true;
     }
 
     _refreshTact(tact) {
@@ -63,7 +65,8 @@ class Editor {
     }
 
     redraw() {
-        this._drawContext.renderTrack(this._trackView);
+        if (this.initialized)
+            this._drawContext.renderTrack(this._trackView);
     }
 
     prepare(forceCalculate) {
@@ -82,11 +85,19 @@ class Editor {
         return this._selectedTrack;
     }
 
+    get composition() {
+        return this._compositionProvider.composition;
+    }
+
+    get tab() {
+        return this._compositionProvider.tab;
+    }
+
     set selectedTrack(value) {
         this._selectedTrack = value;
         this._trackView = TrackView.Create({
             track: this._selectedTrack,
-            composition: this._composition,
+            composition: this._compositionProvider.composition,
             drawContext: this._drawContext,
             settings: this._settings
         });

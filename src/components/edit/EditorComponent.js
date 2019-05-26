@@ -6,69 +6,94 @@ import ControlPanelComponent from './components/ControlPanelComponent';
 import TrackPanelComponent from './components/TrackPanelComponent';
 import WorkspaceComponent from './components/WorkspaceComponent';
 import InfoPanelComponent from './components/InfoPanelComponent';
+import NavComponent from '../common/NavComponent';
+import ErrorComponent from '../common/ErrorComponent';
+import CompositionProvider from './editor/provider/provider';
 
 class EditorComponent extends Component {
     constructor(props) {
         super(props);
-        this.editor = Editor.Create({
-            composition: this.props.composition
-        });
         this.onResize = this.onResize.bind(this);
         window.onresize = this.onResize;
         this.state = {
-            loading: true
+            loading: true,
+            editor: Editor.Create({})
         };
     }
 
     render() {
         if (!this.state.loading)
-            this.editor.prepare();
+            this.state.editor.prepare();
         return (
-            <div className='Editor'>
-                <div className='InfoPanelContainer'>
-                    <InfoPanelComponent />
-                </div>
-                <div className='InstrumentPanelContainer'>
-                    <InstrumentPanelComponent editor={this.editor} />
-                </div>
-                <div className='WorkspaceContainer'>
-                    <div className='TrackPanelContainer'>
-                        <TrackPanelComponent />
-                    </div>
-                    <WorkspaceComponent editor={this.editor} />
-                </div>
-                <div className='ControlPanelContainer' id='ControlPanelContainer'>
-                    <ControlPanelComponent />
-                </div>
+            <div className='PageContainer Editor'>
+                <NavComponent App={this.props.App} history={this.props.history}/>
+                {
+                    this.state.error
+                        ? <ErrorComponent text={this.state.error} />
+                        :
+                        <div>
+                            {this.state.editor.initialized &&
+                                <div>
+                                    <div className='InfoPanelContainer'>
+                                        <InfoPanelComponent editor={this.state.editor} App={this.props.App}/>
+                                    </div>
+                                    <div className='InstrumentPanelContainer'>
+                                        <InstrumentPanelComponent editor={this.state.editor} />
+                                    </div>
+                                </div>
+                            }
+                            <div className='WorkspaceContainer'>
+                                {this.state.editor.initialized && <div className='TrackPanelContainer'>
+                                    <TrackPanelComponent editor={this.state.editor} />
+                                </div>
+                                }
+                                <WorkspaceComponent editor={this.state.editor} />
+                            </div>
+                            <div className='ControlPanelContainer' id='ControlPanelContainer'>
+                                <ControlPanelComponent />
+                            </div>
+                        </div>
+                }
             </div>
         )
     }
 
     onResize() {
-        this.updateWorkspaceHeight();
-        this.editor.prepare();
-        this.editor.redraw();
+        this.state.editor.prepare();
+        this.state.editor.redraw();
     }
 
     componentDidUpdate() {
-        this.editor.redraw();
+        this.state.editor.redraw();
+        this.updateWorkspaceHeight();
     }
 
     updateWorkspaceHeight() {
         let workspace = document.getElementById('Workspace');
         let controlPanel = document.getElementById('ControlPanelContainer');
-        let height = controlPanel.offsetTop - workspace.offsetTop - 8;
+        let height = controlPanel.offsetTop - workspace.offsetTop;
         workspace.style.height = height + 'px';
     }
 
-    componentDidMount() {
-        this.editor.init({
-            containerID: "WorkspacePages",
-            workspaceID: "Workspace"
+    async componentDidMount() {
+        let state = { loading: false };
+        state.compositionProvider = CompositionProvider.Create({
+            tabId: this.props.match.params.id,
+            App: this.props.App
         });
-        this.updateWorkspaceHeight();
-        let state = this.state;
-        state.loading = false;
+
+        let initRes = await state.compositionProvider.init();
+
+        if (initRes.success) {
+            this.state.editor.init({
+                containerID: "WorkspacePages",
+                workspaceID: "Workspace",
+                compositionProvider: state.compositionProvider
+            });
+            this.updateWorkspaceHeight();
+        } else {
+            state.error = initRes.message;
+        }
         this.setState(state);
     }
 }

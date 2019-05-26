@@ -133,7 +133,6 @@ class InstrumentPanelComponent extends Component {
     render() {
         return (
             <div className='InstrumentPanel'>
-                <button className="InstrumentPanelButton Settings">Settings</button>
                 <div className='InstrumentButtonList'>
                     {DURATION_FRACTIONS.map(this.getFractionButton.bind(this))}
                     {this.getDotButton()}
