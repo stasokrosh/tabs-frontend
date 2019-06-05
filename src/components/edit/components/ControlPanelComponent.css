@@ -5,6 +5,7 @@
     width: 100%;
     padding: 3px;
     padding-left: 5px;
+    padding-right: 5px;
 }
 
 .ControlPanelInner {
@@ -28,4 +29,9 @@
     height: 20px;
     margin-bottom: 7px;
     margin-top: 7px;
+}
+
+.ControlVolume {
+    margin-right: 10px;
+    width: 80px;
 }

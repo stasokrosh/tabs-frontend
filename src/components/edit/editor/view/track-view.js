@@ -232,6 +232,10 @@ class TrackView {
         return this._needDraw;
     }
 
+    set needDraw(value) {
+        this._needDraw = value;
+    }
+
     get settings() {
         return this._settings;
     }

@@ -9,6 +9,7 @@ import InfoPanelComponent from './components/InfoPanelComponent';
 import NavComponent from '../common/NavComponent';
 import ErrorComponent from '../common/ErrorComponent';
 import CompositionProvider from './editor/provider/provider';
+import LoadingComponent from '../common/LoadingComponent';
 
 class EditorComponent extends Component {
     constructor(props) {
@@ -26,7 +27,7 @@ class EditorComponent extends Component {
             this.state.editor.prepare();
         return (
             <div className='PageContainer Editor'>
-                <NavComponent App={this.props.App} history={this.props.history}/>
+                <NavComponent App={this.props.App} history={this.props.history} />
                 {
                     this.state.error
                         ? <ErrorComponent text={this.state.error} />
@@ -35,16 +36,17 @@ class EditorComponent extends Component {
                             {this.state.editor.initialized &&
                                 <div>
                                     <div className='InfoPanelContainer'>
-                                        <InfoPanelComponent editor={this.state.editor} App={this.props.App}/>
+                                        <InfoPanelComponent editor={this.state.editor} App={this.props.App} />
                                     </div>
                                     <div className='InstrumentPanelContainer'>
                                         <InstrumentPanelComponent editor={this.state.editor} />
                                     </div>
                                 </div>
                             }
+                            {this.state.loading && <LoadingComponent />}
                             <div className='WorkspaceContainer'>
                                 {this.state.editor.initialized && <div className='TrackPanelContainer'>
-                                    <TrackPanelComponent editor={this.state.editor} />
+                                    <TrackPanelComponent editor={this.state.editor} App={this.props.App}/>
                                 </div>
                                 }
                                 <WorkspaceComponent editor={this.state.editor} />

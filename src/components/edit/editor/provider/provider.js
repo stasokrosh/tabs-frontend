@@ -1,6 +1,6 @@
 import { assert } from "../util";
-import { getTabRequest } from "../../../../api/tab-api";
-import { getCompositionRequest } from "../../../../api/tab-edit-api";
+import { getTabRequest, updateTabRequest } from "../../../../api/tab-api";
+import { getCompositionRequest, sendAddTrackMessage, sendDeleteTrackMessage, sendUpdateTrackMessage } from "../../../../api/tab-edit-api";
 import Composition from "../model/composition";
 
 class CompositionProvider {
@@ -11,8 +11,8 @@ class CompositionProvider {
         this._tabId = props.tabId;
         this._receivers = [];
         this._app = props.App;
-        this._trackMap = new Map();
         this._tactMap = new Map();
+        this._trackMap = new Map();
         this._trackTactMap = new Map();
     }
 
@@ -30,9 +30,9 @@ class CompositionProvider {
         if (!res.success)
             return res;
         this.tab = res.body;
-        res = await getCompositionRequest(this._tabId, this._app.auth.token);
+        res = await getCompositionRequest(this.tab.compositionId, this._app.auth.token);
         if (res.success)
-            this.composition = this.parseCompositionData(res.body);
+            this.setComposition(res.body);
         return res;
     }
 
@@ -55,31 +55,67 @@ class CompositionProvider {
         }
     }
 
-    parseCompositionData(compositionData) {
-        this._trackMap.clear();
+    async addTrackRequest(trackData) {
+        let res = await sendAddTrackMessage(this.composition.id, this._app.auth.token, trackData);
+        if (!res.success)
+            return res;
+        this.addTrack(res.body);
+        return res;
+    }
+
+    async updateTrackRequest(trackData) {
+        let res = await sendUpdateTrackMessage(this.composition.id, this._app.auth.token, trackData);
+        if (!res.success)
+            return res;
+        this._trackMap.get(trackData.id).copy(trackData);
+        return res;
+    }
+
+    async deleteTrackRequest(track) {
+        let res = await sendDeleteTrackMessage(this.composition.id, this._app.auth.token, track.id);
+        if (!res.success)
+            return res;
+        this.composition.deleteTrack(track);
+        return res;
+    }
+
+    async updateTabRequest(tab) {
+        let res = await updateTabRequest(this.tab.id, this._app.auth.token, tab);
+        if (!res.success)
+            return res;
+        this.tab = res.body;
+        return res;
+    }
+
+    setComposition(compositionData) {
         this._tactMap.clear();
-        this._trackTactMap.clear();
-        let tactInvMap = new Map();
-        let composition = Composition.Create(compositionData);
+        this.composition = Composition.Create(compositionData);
+        this.composition.id = compositionData.id;
         for (let index = 0; index < compositionData.tacts.length; index++) {
             let tactData = compositionData.tacts[index];
-            let tact = composition.addTact(tactData);
-            this._tactMap.set(tact, tactData.id);
-            tactInvMap.set(tactData.id, index + 1);
+            let tact = this.composition.addTact(tactData);
+            tact.id = tactData.id;
+            this._tactMap.set(tactData.id, tact);
         }
         for (let trackData of compositionData.tracks) {
-            let track = composition.addTrack(trackData);
-            this._trackMap.set(track, trackData.id);
-            for (let trackTactData of trackData.tacts) {
-                let index = tactInvMap[trackTactData.tact];
-                if (index) {
-                    let trackTact = track.getTact(index - 1);
-                    this._trackTactMap.set(trackTact, trackTactData.id);
-                    trackTact.copy(trackTactData);
-                }
+            this.addTrack(trackData);
+        }
+    }
+
+    addTrack(trackData) {
+        let track = this.composition.addTrack(trackData);
+        track.id = trackData.id;
+        this._trackMap.set(trackData.id, track);
+        for (let trackTactData of trackData.tacts) {
+            let tact = this._tactMap.get(trackTactData.tact);
+            let index = this.composition.getTactNum(tact);
+            if (index) {
+                let trackTact = track.getTact(index - 1);
+                trackTact.copy(trackTactData);
+                trackTact.id = trackTactData.id;
+                this._trackTactMap.set(trackTactData.id, trackTact);
             }
         }
-        return composition;
     }
 }
 

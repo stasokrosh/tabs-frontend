@@ -1,6 +1,6 @@
 .TrackPanel {
     display: flex;
-    background: rgb(148, 163, 233);
+    background: rgb(114, 127, 182);
 }
 
 .TrackList {
@@ -24,6 +24,10 @@
 
 .TrackInfo {
     width: 100%;
+}
+
+.Selected .TrackInfo {
+    background: rgb(148, 163, 233);
 }
 
 .ExpandButton {
@@ -50,6 +54,10 @@
     height: 50px;
     padding: 5px;
     border-radius: 10%;
+    background: rgb(148, 152, 173);
+}
+
+.Selected .TrackIcon {
     background: rgb(188, 193, 219);
 }
 
@@ -57,6 +65,7 @@
     width: 25px;
     height: 25px;
     padding: 2px;
+    background: rgb(188, 193, 219);
 }
 
 .TrackControlContainer.Create {

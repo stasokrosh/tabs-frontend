@@ -14,7 +14,7 @@ class TabListComponent extends Component {
             loading: true,
             tabs: []
         };
-        this.deleteTab = this.deleteTab.bind();
+        this.deleteTab = this.deleteTab.bind(this);
     }
 
     async componentDidMount() {

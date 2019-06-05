@@ -11,6 +11,7 @@ class ControlPanelComponent extends Component {
                     <button><img className='ControlButtonImage' src={getPublicImageUrl('play.png')} alt='' /></button>
                     <button><img className='ControlButtonImage Track' src={getPublicImageUrl('next.png')} alt='' /></button>
                 </div>
+                <input className='ControlVolume' type="range" id="start" min="0" max="100"></input>
             </div>
         )
     }

@@ -9,6 +9,11 @@ class InfoPanelComponent extends Component {
         super(props);
         this.favouriteButtonClick = this.favouriteButtonClick.bind(this);
         this.ownTab = this.ownTab.bind(this);
+        this.changeTabName = this.changeTabName.bind(this);
+        this.submitNameChange = this.submitNameChange.bind(this);
+        this.state = {
+            name: props.editor.tab.name
+        }
     }
 
     async favouriteButtonClick(checked, id) {
@@ -29,7 +34,23 @@ class InfoPanelComponent extends Component {
     }
 
     changeTabName(e) {
+        this.props.editor.name = e.target.value;
+        this.props.editor.redraw();
+        this.forceUpdate();
+    }
 
+    async submitNameChange() {
+        if (!this.props.editor.name) {
+            this.props.editor.name = this.state.name;
+            this.props.editor.redraw();
+            this.forceUpdate();
+        } else {
+            await this.props.editor.provider.updateTabRequest({
+                id: this.props.editor.tab.id,
+                name : this.props.editor.name
+            })
+            this.setState({name : this.props.editor.tab.name});
+        }
     }
 
     render() {
@@ -38,7 +59,7 @@ class InfoPanelComponent extends Component {
         return (
             <div className='InfoPanel'>
                 <div className='CompositionInfo'>
-                    <input className='CompositionName' value={tab.name} onChange={this.changeTabName} />
+                    <input className='CompositionName' value={this.props.editor.name} onChange={this.changeTabName} onBlur={this.submitNameChange} />
                 </div>
                 {!this.ownTab() &&
                     <FavouriteButtonComponent checked={auth.user && auth.user.favouriteTabs.indexOf(tab.id) !== -1} id={tab.id} onClick={this.favouriteButtonClick} />

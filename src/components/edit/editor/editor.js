@@ -1,7 +1,7 @@
 import { assert } from './util'
 import DrawContext from './view/context/draw-context'
 import TrackView from './view/track-view'
-import { EditorEventDispatcher } from './editor-event';
+import { EditorEventDispatcher, EditorEvent } from './editor-event';
 import { DEFAULT_EXCEPTION_FRET } from './model/note';
 import EditorPosition from './editor-position';
 
@@ -85,6 +85,10 @@ class Editor {
         return this._selectedTrack;
     }
 
+    get provider() {
+        return this._compositionProvider;
+    }
+
     get composition() {
         return this._compositionProvider.composition;
     }
@@ -93,7 +97,23 @@ class Editor {
         return this._compositionProvider.tab;
     }
 
+    set name(value) {
+        this.composition.name = value;
+        this._trackView.needDraw = true;
+    }
+
+    get name() {
+        return this.composition.name;
+    }
+
+    changeTrackName(track, name) {
+        track.name = name;
+        this._trackView.needDraw = true;
+    }
+
     set selectedTrack(value) {
+        this._clearSelectedAll();
+        this._clearPrevSelectedAll();
         this._selectedTrack = value;
         this._trackView = TrackView.Create({
             track: this._selectedTrack,
@@ -101,7 +121,7 @@ class Editor {
             drawContext: this._drawContext,
             settings: this._settings
         });
-        this._clearSelectedAll();
+        this._drawContext.invokeEvent(EditorEvent.CreateClearSelectedEvent());
     }
 
     get settings() {

@@ -46,7 +46,7 @@ export async function removeTabRequest(id, token) {
     });
 }
 
-export async function updateGroupRequest(id, token, tab) {
+export async function updateTabRequest(id, token, tab) {
     let res = await putRequest(tab, getUrl('/tab/' + id), createHeaders({token}));
     return parseResponse(res, (res) => {
         if (res.status === HTTP_STATUSES.NOT_FOUND)

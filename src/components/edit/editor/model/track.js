@@ -17,6 +17,10 @@ class Track {
         return new Track(props);
     }
 
+    copy(track) {
+        this._name = track.name;
+    }
+
     getTrackTactByTact(tact) {
         return this._tactsToTrackTacts.get(tact);
     }

@@ -16,20 +16,55 @@ function getImageSrcByInstrumentCode(code) {
     }
 }
 
-function TrackControlComponent(props) {
-    return (
-        <div>
-            <div className='TrackControl'>
-                <img className='TrackIcon' src={getImageSrcByInstrumentCode(props.track.instrument.code)} alt='' onClick={() => props.selectTrack(props.track)} />
-                {props.expanded &&
-                    <div className='TrackInfo'>
-                        <input type='text' value={props.track.name} />
-                        <button className='Cancel'>Delete</button>
-                    </div>
-                }
+class TrackControlComponent extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { name: props.track.name }
+        this.selectTrack = this.selectTrack.bind(this);
+        this.deleteTrack = this.deleteTrack.bind(this);
+        this.changeTrackName = this.changeTrackName.bind(this);
+        this.submitTrackName = this.submitTrackName.bind(this);
+    }
+
+    selectTrack() {
+        this.props.selectTrack(this.props.track);
+    }
+
+    deleteTrack() {
+        this.props.deleteTrack(this.props.track);
+    }
+
+    changeTrackName(e) {
+        this.props.changeTrackName(this.props.track, e.target.value);
+        this.forceUpdate();
+    }
+
+    submitTrackName() {
+        if (!this.props.track.name) {
+            this.props.changeTrackName(this.props.track, this.state.name);
+            this.forceUpdate();
+        } else {
+            this.props.updateTrack({ id: this.props.track.id, name: this.props.track.name });
+            this.setState({ name: this.props.track.name });
+        }
+    }
+
+    render() {
+        return (
+            <div>
+                <div className={'TrackControl' + (this.props.selected ? ' Selected' : '')} onClick={this.selectTrack}>
+                    <img className='TrackIcon' src={getImageSrcByInstrumentCode(this.props.track.instrument.code)} alt=''/>
+                    {this.props.expanded &&
+                        <div className='TrackInfo'>
+                            <input type='text' value={this.props.track.name} onChange={this.changeTrackName} onBlur={this.submitTrackName} 
+                            onClick={(e)=>{e.stopPropagation();}}/>
+                            <button className='Cancel' onClick={this.deleteTrack}>Delete</button>
+                        </div>
+                    }
+                </div>
             </div>
-        </div>
-    );
+        );
+    }
 }
 
 const DEFAULT_TRACK_NAME = 'New track';
@@ -94,25 +129,36 @@ class TrackPanelComponent extends Component {
         this.expand = this.expand.bind(this);
         this.deleteTrack = this.deleteTrack.bind(this);
         this.changeTrackName = this.changeTrackName.bind(this);
+        this.updateTrack = this.updateTrack.bind(this);
         this.addTrackButtonClick = this.addTrackButtonClick.bind(this);
         this.cancelTrackCreate = this.cancelTrackCreate.bind(this);
         this.submitTrackCreate = this.submitTrackCreate.bind(this);
     }
 
     selectTrack(track) {
-
+        this.props.editor.selectedTrack = track;
+        this.props.editor.update(true);
+        this.forceUpdate();
     }
 
     expand() {
         this.setState({ expanded: !this.state.expanded });
     }
 
-    deleteTrack(track) {
-
+    async deleteTrack(track) {
+        if (track === this.props.editor.selectedTrack)
+            this.props.editor.selectedTrack = this.props.editor.composition.tracks[0];
+        await this.props.editor.provider.deleteTrackRequest(track);
+        this.forceUpdate();
     }
 
-    changeTrackName(name) {
+    changeTrackName(track, name) {
+        this.props.editor.changeTrackName(track, name);
+        this.props.editor.redraw();
+    }
 
+    async updateTrack(track) {
+        await this.props.editor.provider.updateTrackRequest(track);
     }
 
     addTrackButtonClick() {
@@ -123,8 +169,9 @@ class TrackPanelComponent extends Component {
         this.setState({ creation: false });
     }
 
-    submitTrackCreate(track) {
-
+    async submitTrackCreate(track) {
+        await this.props.editor.provider.addTrackRequest(track);
+        this.setState({ creation: false });
     }
 
     render() {
@@ -134,7 +181,11 @@ class TrackPanelComponent extends Component {
                     {
                         this.props.editor.composition.tracks.map(track =>
                             <li className='TrackControlContainer' key={this.props.editor.composition.tracks.indexOf(track)}>
-                                <TrackControlComponent track={track} expanded={this.state.expanded} selectTrack={this.selectTrack} />
+                                <TrackControlComponent track={track} expanded={this.state.expanded} selected={this.props.editor.selectedTrack === track}
+                                    selectTrack={this.selectTrack}
+                                    deleteTrack={this.deleteTrack} 
+                                    changeTrackName={this.changeTrackName}
+                                    updateTrack={this.updateTrack}/>
                             </li>)
                     }
                     {this.state.creation ?
