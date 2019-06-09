@@ -18,6 +18,9 @@ export const TAB_EDIT_COMMANDS = {
         ADD: "ADD_TACT",
         UPDATE: "UPDATE_TACT",
         DELETE: "DELETE_TACT"
+    },
+    TRACK_TACT: {
+        UPDATE: "UPDATE_TRACK_TACT"
     }
 }
 
@@ -47,3 +50,30 @@ export async function sendDeleteTrackMessage(id, token, trackId) {
     })
 }
 
+export async function sendAddTactMessage(id, token, tact) {
+    return await sendCompositionMessage(id, token, {
+        id: TAB_EDIT_COMMANDS.TACT.ADD,
+        data: tact
+    })
+}
+
+export async function sendUpdateTactMessage(id, token, tact) {
+    return await sendCompositionMessage(id, token, {
+        id: TAB_EDIT_COMMANDS.TACT.UPDATE,
+        data: tact
+    })
+}
+
+export async function sendDeleteTactMessage(id, token, tactId) {
+    return await sendCompositionMessage(id, token, {
+        id: TAB_EDIT_COMMANDS.TACT.DELETE,
+        tactId: tactId
+    })
+}
+
+export async function sendUpdateTrackTactMessage(id, token, trackTact) {
+    return await sendCompositionMessage(id, token, {
+        id: TAB_EDIT_COMMANDS.TRACK_TACT.UPDATE,
+        data: trackTact
+    })
+}

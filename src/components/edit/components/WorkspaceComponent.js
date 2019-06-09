@@ -7,7 +7,7 @@ class WorkspaceComponent extends Component {
         this.onKeyDown = this.onKeyDown.bind(this);
     }
 
-    onKeyDown(event) {
+    async onKeyDown(event) {
         let editor = this.props.editor;     
         switch (event.keyCode) {
             case 37: {
@@ -21,7 +21,7 @@ class WorkspaceComponent extends Component {
                 break;
             }
             case 39: {
-                editor.moveRight();
+                await editor.moveRight();
                 editor.update(true);
                 break;
             }
@@ -44,6 +44,7 @@ class WorkspaceComponent extends Component {
         }
         if (event.keyCode >= 37 && event.keyCode<= 40) {
             event.preventDefault();
+            event.stopPropagation()
         } 
     }
 

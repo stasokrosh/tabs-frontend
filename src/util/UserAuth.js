@@ -1,9 +1,10 @@
 import { signUpRequest, signInRequest, getAuthInfoRequest } from '../api/auth-api';
 import { updateUserRequest } from '../api/user-api';
+import Cookies from 'universal-cookie';
 
 class UserAuth {
     get isAuthorised() {
-        return this._token;
+        return this._token && this._user;
     }
 
     get user() {
@@ -15,6 +16,7 @@ class UserAuth {
     }
 
     async update() {
+        this.loadCookies();
         if (this._token) {
             let res = await getAuthInfoRequest(this._token)
             this._user = res.body;
@@ -65,7 +67,7 @@ class UserAuth {
 
     async changeImage(id) {
         if (this._token) {
-            let res = await updateUserRequest(this._user.name, this._token, {image : id});
+            let res = await updateUserRequest(this._user.name, this._token, { image: id });
             this._user = res.body;
         }
     }
@@ -83,6 +85,7 @@ class UserAuth {
         let res = await signInRequest(name, password);
         if (res.success) {
             this._token = res.body.token;
+            this.updateCookies();;
             await this.update();
         }
         return res;
@@ -91,6 +94,19 @@ class UserAuth {
     logout() {
         this._token = null;
         this._user = null;
+        this.updateCookies();
+    }
+
+    updateCookies() {
+        let cookies = new Cookies();
+        cookies.set('token', this._token);
+    }
+
+    loadCookies() {
+        let cookies = new Cookies();
+        this._token = cookies.get('token');
+        if (this._token === 'null')
+            this._token = null;
     }
 }
 

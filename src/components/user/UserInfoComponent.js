@@ -13,6 +13,8 @@ import ImageDropComponent from '../common/ImageDropComponent';
 import ImageComponent from '../common/ImageComponent';
 import NavComponent from '../common/NavComponent';
 import FooterComponent from '../common/FooterComponent';
+import {Link} from 'react-router-dom'
+import { getFavouriteTabsPath, getParticipantGroupsPath } from '../../util/navigation';
 
 const USER_LISTS = {
     TAB: "TAB",
@@ -157,8 +159,8 @@ class UserInfoComponent extends Component {
                                     <h3 className='UserInfoName'>{this.state.user.name}</h3>
                                     <div className='UserLinksContainer'>
                                         <div className='UserLinks'>
-                                            <button className='UserLinkItem'>{user.favouriteTabs.length}<br />Favourites</button>
-                                            <button className='UserLinkItem'>{user.groups.length}<br />Groups</button>
+                                            <Link to={getFavouriteTabsPath(user.name)}><button className='UserLinkItem'>{user.favouriteTabs.length}<br />Favourites</button></Link>
+                                            <Link to={getParticipantGroupsPath(user.name)}><button className='UserLinkItem'>{user.groups.length}<br />Groups</button></Link>
                                         </div>
                                     </div>
                                 </div>

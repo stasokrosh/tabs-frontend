@@ -40,6 +40,11 @@
     display: inline-block;
 }
 
+.UserLinks a {
+    color: black;
+    text-decoration: none;
+}
+
 .UserLinkItem {
     background: white;
     color: black;

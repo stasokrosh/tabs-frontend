@@ -68,7 +68,10 @@ class Chord {
         let notes = [];
         this._notes.forEach((item, index, arr) => {
             if (item)
-                this.setNote(index, item);
+                notes.push({
+                    index : index,
+                    item : item
+                })
         })
         return notes;
     }

@@ -1,6 +1,6 @@
 import { assert } from "../util";
 import { getTabRequest, updateTabRequest } from "../../../../api/tab-api";
-import { getCompositionRequest, sendAddTrackMessage, sendDeleteTrackMessage, sendUpdateTrackMessage } from "../../../../api/tab-edit-api";
+import { getCompositionRequest, sendAddTrackMessage, sendDeleteTrackMessage, sendUpdateTrackMessage, sendAddTactMessage, sendUpdateTactMessage, sendUpdateTrackTactMessage } from "../../../../api/tab-edit-api";
 import Composition from "../model/composition";
 
 class CompositionProvider {
@@ -8,12 +8,14 @@ class CompositionProvider {
         assert(() => props);
         assert(() => props.tabId);
         assert(() => props.App);
+        assert(() => props.editor);
         this._tabId = props.tabId;
         this._receivers = [];
         this._app = props.App;
         this._tactMap = new Map();
         this._trackMap = new Map();
         this._trackTactMap = new Map();
+        this._editor = props.editor;
     }
 
     static Create(props) {
@@ -49,7 +51,6 @@ class CompositionProvider {
     }
 
     onMessage(message) {
-
         for (let receiver of this._receivers) {
             receiver.receiveMessage(message);
         }
@@ -60,6 +61,7 @@ class CompositionProvider {
         if (!res.success)
             return res;
         this.addTrack(res.body);
+        await this._editor.updateInstruments();
         return res;
     }
 
@@ -76,6 +78,10 @@ class CompositionProvider {
         if (!res.success)
             return res;
         this.composition.deleteTrack(track);
+        if (this._editor.selectedTrack === track) {
+            this._editor.selectedTrack = this.composition.getTrack(0);
+        }
+        await this._editor.updateInstruments();
         return res;
     }
 
@@ -85,6 +91,34 @@ class CompositionProvider {
             return res;
         this.tab = res.body;
         return res;
+    }
+
+    async addTactRequest(tact) {
+        let res = await sendAddTactMessage(this.composition.id, this._app.auth.token, convertTact(tact));
+        if (!res.success)
+            return res;
+        tact = this.composition.addTact(tact);
+        tact.id = res.body.tact.id;
+        this._tactMap.set(tact.id, tact);
+        for (let trackTactData of res.body.trackTacts) {
+            let track = this._trackMap.get(trackTactData.track);
+            let trackTact = track.getTact(track.tactCount - 1);
+            trackTact.id = trackTactData.id;
+            this._trackTactMap.set(trackTactData.id, trackTact);
+        }
+        return res;
+    }
+
+    async updateTactRequest(tactData) {
+        let tact = this._tactMap.get(tactData.id);
+        tact.copy(tactData);
+        let res = await sendUpdateTactMessage(this.composition.id, this._app.auth.token, tactData);
+        return res;
+    }
+
+    updateTrackTactRequest(trackTactId) {
+        let trackTact = this._trackTactMap.get(trackTactId);
+        sendUpdateTrackTactMessage(this.composition.id, this._app.auth.token, convertTrackTact(trackTact));
     }
 
     setComposition(compositionData) {
@@ -109,12 +143,50 @@ class CompositionProvider {
         for (let trackTactData of trackData.tacts) {
             let tact = this._tactMap.get(trackTactData.tact);
             let index = this.composition.getTactNum(tact);
-            if (index) {
-                let trackTact = track.getTact(index - 1);
+            if (index !== -1) {
+                let trackTact = track.getTact(index);
                 trackTact.copy(trackTactData);
                 trackTact.id = trackTactData.id;
                 this._trackTactMap.set(trackTactData.id, trackTact);
             }
+        }
+    }
+}
+
+function convertTact(tact) {
+    return {
+        duration: {
+            count: tact.tactDuration.count,
+            fraction: tact.tactDuration.fraction
+        },
+        reprise: tact.reprise
+    }
+}
+
+function convertTrackTact(trackTact) {
+    return {
+        id : trackTact.id,
+        chords : trackTact.chords.map(chord => convertChord(chord))
+    }
+}
+
+function convertChord(chord) {
+    return {
+        duration: {
+            fraction: chord.duration.fraction,
+            quaterIs: chord.duration.quater,
+            dot : chord.duration.dot,
+        },
+        isPause : chord.isPause,
+        notes: chord.notes.map(note => convertNote(note))
+    }
+}
+
+function convertNote(note) {
+    return {
+        index : note.index,
+        item : {
+            fret : note.item.fret
         }
     }
 }

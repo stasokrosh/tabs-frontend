@@ -49,6 +49,10 @@ class Composition {
         return this._tacts.indexOf(tact);
     }
 
+    getTrackNum(track) {
+        return this._tracks.indexOf(track);
+    }
+
     addTact(tact, position = -1) {
         assert(() => position === -1 || (position >= 0 && position <= this.tactCount));
         let newTact = Tact.Create(tact);

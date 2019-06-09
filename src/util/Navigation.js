@@ -5,9 +5,11 @@ export const APP_PAGES = {
     SIGNUP : '/auth/signup',
     SIGNIN : '/auth/signin',
     TABS : '/tabs',
-    TABS_SINGLE : '/tabs/:id',
+    TABS_SINGLE : '/tabs/edit/:id',
+    TABS_FAVOURITE : '/tabs/favourite/:name',
     GROUPS : '/groups',
-    GROUPS_SINGLE : '/groups/:name',
+    GROUPS_SINGLE : '/groups/info/:name',
+    GROUPS_PARTICIPANT : '/groups/participant/:name',
     USERS : '/users',
     USERS_SINGLE : '/users/:name',
 }
@@ -22,6 +24,14 @@ export function getSingleGroupPath(name) {
 
 export function getSingleTabPath(id) {
     return APP_PAGES.TABS_SINGLE.replace(':id', id);
+}
+
+export function getFavouriteTabsPath(userName) {
+    return APP_PAGES.TABS_FAVOURITE.replace(':name', userName);
+}
+
+export function getParticipantGroupsPath(userName) {
+    return APP_PAGES.GROUPS_PARTICIPANT.replace(':name', userName);
 }
 
 export function NavigateHome(history) {
@@ -58,4 +68,12 @@ export function NavigateGroup(history, name) {
 
 export function NavigateUser(history, name) {
     history.push(getSingleUserPath(name));
+}
+
+export function NavigateFavouriteTabs(history, userName) {
+    history.push(getFavouriteTabsPath(userName));
+}
+
+export function NavigateParticipantGroups(history, userName) {
+    history.push(getParticipantGroupsPath(userName));
 }

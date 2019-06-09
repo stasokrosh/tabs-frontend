@@ -1,5 +1,6 @@
 import { assert } from '../util'
 import TactDuration from './tact-duration'
+import { isUndefined } from 'util';
 
 export const DEFAULT_NO_REPRISE = 0;
 
@@ -16,6 +17,13 @@ class Tact {
 
     static Create(props) {
         return new Tact(props);
+    }
+
+    copy(tact) {
+        if (!isUndefined(tact.reprise))
+            this.reprise = tact.reprise;
+        if (!isUndefined(tact.tactduration))
+            this.tactDuration = tact.tactDuration;
     }
 
     get tactDuration() {

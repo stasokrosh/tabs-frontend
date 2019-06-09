@@ -52,7 +52,7 @@ class EditorComponent extends Component {
                                 <WorkspaceComponent editor={this.state.editor} />
                             </div>
                             <div className='ControlPanelContainer' id='ControlPanelContainer'>
-                                <ControlPanelComponent />
+                                <ControlPanelComponent editor={this.state.editor}/>
                             </div>
                         </div>
                 }
@@ -78,16 +78,18 @@ class EditorComponent extends Component {
     }
 
     async componentDidMount() {
+        var context = new AudioContext();
+        context.resume();
         let state = { loading: false };
         state.compositionProvider = CompositionProvider.Create({
             tabId: this.props.match.params.id,
-            App: this.props.App
+            App: this.props.App,
+            editor: this.state.editor
         });
-
         let initRes = await state.compositionProvider.init();
 
         if (initRes.success) {
-            this.state.editor.init({
+            await this.state.editor.init({
                 containerID: "WorkspacePages",
                 workspaceID: "Workspace",
                 compositionProvider: state.compositionProvider

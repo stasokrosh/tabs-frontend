@@ -8,6 +8,9 @@ const EVENT_CODES = {
     SELECT_TACT: 3,
     CLEAR_SELECTED: 4,
     ADD_CHORD: 5,
+    SELECT_TRACK: 6,
+    PLAY: 7,
+    STOP: 8
 }
 
 export class EditorEvent {
@@ -43,6 +46,21 @@ export class EditorEvent {
 
     static CreateAddChordEvent(props) {
         props.code = EVENT_CODES.ADD_CHORD;
+        return EditorEvent.Create(props);
+    }
+
+    static CreateSelectTrackEvent(props) {
+        props.code = EVENT_CODES.SELECT_TRACK;
+        return EditorEvent.Create(props);
+    }
+
+    static CreatePlayEvent(props) {
+        props.code = EVENT_CODES.PLAY;
+        return EditorEvent.Create(props);
+    }
+
+    static CreateStopEvent(props) {
+        props.code = EVENT_CODES.STOP;
         return EditorEvent.Create(props);
     }
 
@@ -115,6 +133,21 @@ export class EditorEventDispatcher {
                     this._editor.selectedChord = event.object.tact.getChord(index);
                     this._editor.update(true);
                 }
+                break;
+            }
+            case EVENT_CODES.SELECT_TRACK: {
+                if (event.object.track) {
+                    this._editor.selectedTrack = event.object.track;
+                }
+                break;
+            }
+            case EVENT_CODES.PLAY: {
+                this._editor.play();
+                break;
+            }
+            case EVENT_CODES.STOP: {
+                this._editor.stop();
+                break;
             }
         }
     }

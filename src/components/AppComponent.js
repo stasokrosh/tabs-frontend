@@ -15,18 +15,18 @@ class AppComponent extends Component {
     this.state = {
       App: {
         auth: new UserAuth(),
-        needUpdate: true,
         update: this.update.bind(this)
       }
     };
   }
 
-  update(forced) {
-    let state = this.state;
-    if (state.App.needUpdate || forced) {
-      state.App.needUpdate = false;
-      this.setState(state);
-    }
+  update() {
+    this.forceUpdate();
+  }
+
+  async componentDidMount() {
+    await this.state.App.auth.update();
+    this.forceUpdate();
   }
 
   render() {

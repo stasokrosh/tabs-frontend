@@ -12,7 +12,7 @@ class EditorPosition {
         return new EditorPosition(props);
     }
 
-    moveRight() {
+    async moveRight() {
         let selectedTact = this._editor.selectedTact;
         let selectedNote = this._editor.selectedNote;
         let selectedChord = this._editor.selectedChord;
@@ -26,7 +26,7 @@ class EditorPosition {
             let nextTact = false;
             if (chordNum === selectedTact.chordCount - 1 && selectedChord.isEmptyExcept) {
                 if (tactNum === this._editor.selectedTrack.tactCount - 1) {
-                    this._editor._compositionProvider.composition.addTact(this._editor.createEmptyTact());
+                    await this._editor.provider.addTactRequest(this._editor.createEmptyTact());
                     this._editor.refresh();
                 }
                 selectedTact = this._editor.selectedTrack.getTact(tactNum + 1);

@@ -133,6 +133,7 @@ class TrackPanelComponent extends Component {
         this.addTrackButtonClick = this.addTrackButtonClick.bind(this);
         this.cancelTrackCreate = this.cancelTrackCreate.bind(this);
         this.submitTrackCreate = this.submitTrackCreate.bind(this);
+        props.editor.addEventListener(this);
     }
 
     selectTrack(track) {
@@ -172,6 +173,10 @@ class TrackPanelComponent extends Component {
     async submitTrackCreate(track) {
         await this.props.editor.provider.addTrackRequest(track);
         this.setState({ creation: false });
+    }
+
+    invokeEvent(event) {
+        this.forceUpdate();
     }
 
     render() {

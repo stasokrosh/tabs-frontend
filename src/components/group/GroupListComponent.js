@@ -1,11 +1,17 @@
 import React, { Component } from 'react'
 import './GroupListComponent.css'
 import GroupListItemComponent from './GroupListItemComponent';
-import { getGroupsRequest } from '../../api/group-api';
+import { getGroupsRequest, getGroupsByMemberRequest } from '../../api/group-api';
 import LoadingComponent from '../common/LoadingComponent';
 import ErrorComponent from '../common/ErrorComponent';
 import NavComponent from '../common/NavComponent';
 import FooterComponent from '../common/FooterComponent';
+import { Link } from 'react-router-dom';
+import { getSingleUserPath } from '../../util/navigation';
+
+export const GROUP_LIST_TYPES = {
+    PARTICIPANT: 'PARTICIPANT'
+}
 
 class GroupListComponent extends Component {
     constructor(props) {
@@ -17,15 +23,30 @@ class GroupListComponent extends Component {
         this.deleteGroup = this.deleteGroup.bind(this);
     }
 
-    async componentDidMount() {
+    componentDidMount() {
+        this.reload(this.props);
+    }
+
+    componentWillReceiveProps(props) {
+        this.reload(props);
+    }
+
+    async reload(props) {
         let state = { loading: false };
-        let res = await getGroupsRequest(this.props.App.auth.token);
+        let res = await this.getGroups(props);
         if (res.success) {
             state.groups = res.body;
         } else {
             state.error = res.message;
         }
         this.setState(state);
+    }
+
+    async getGroups(props) {
+        if (!props.type)
+            return await getGroupsRequest(props.App.auth.token);
+        if (props.type === GROUP_LIST_TYPES.PARTICIPANT)
+            return await getGroupsByMemberRequest(props.match.params.name, props.App.auth.token);
     }
 
     deleteGroup(name) {
@@ -39,14 +60,20 @@ class GroupListComponent extends Component {
     render() {
         return (
             <div className='PageContainer'>
-                <NavComponent App={this.props.App} history={this.props.history}/>
+                <NavComponent App={this.props.App} history={this.props.history} />
                 {this.state.loading ?
                     <LoadingComponent />
                     : this.state.error ?
                         <ErrorComponent text={this.state.error} />
                         :
                         <div>
-                            <h1 className='ListTitle'>Groups:</h1>
+                            {
+                                this.props.type === GROUP_LIST_TYPES.PARTICIPANT ?
+                                    <h2 className='ListTitle'>
+                                        Groups, where <Link to={getSingleUserPath(this.props.match.params.name)}>{this.props.match.params.name}</Link> participate in:
+                                    </h2>
+                                    : <h1 className='ListTitle'>Groups:</h1>
+                            }
                             <div className='ItemListContainer'>
                                 <div className='ItemListContainerInner'>
                                     <ul className='ItemList'>
@@ -56,12 +83,16 @@ class GroupListComponent extends Component {
                                                 <hr className='ListSeparator' />
                                             </li>
                                         )}
+                                        {!this.state.groups.length &&
+                                            <li className='ListItemContainerEmpty'>
+                                                No groups
+                                            </li>}
                                     </ul>
                                 </div>
                             </div>
                         </div>
                 }
-                <FooterComponent/>
+                <FooterComponent />
             </div>
         )
 

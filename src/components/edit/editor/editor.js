@@ -4,6 +4,7 @@ import TrackView from './view/track-view'
 import { EditorEventDispatcher, EditorEvent } from './editor-event';
 import { DEFAULT_EXCEPTION_FRET } from './model/note';
 import EditorPosition from './editor-position';
+import Player from './player/player';
 
 class Editor {
     constructor(props) {
@@ -18,13 +19,14 @@ class Editor {
         this._eventDispatcher = EditorEventDispatcher.Create({ editor: this });
         this._editorPosition = EditorPosition.Create({ editor: this });
         this.initialized = false;
+        this._player = Player.Create({ editor: this });
     }
 
     static Create(props) {
         return new Editor(props);
     }
 
-    init(props) {
+    async init(props) {
         assert(() => props);
         assert(() => props.containerID);
         assert(() => props.workspaceID);
@@ -35,7 +37,12 @@ class Editor {
         assert(() => props.compositionProvider);
         this._compositionProvider = props.compositionProvider;
         this.selectedTrack = this._compositionProvider.composition.getTrack(0);
+        await this._player.updateInstruments();
         this.initialized = true;
+    }
+
+    get drawContext() {
+        return this._drawContext;
     }
 
     _refreshTact(tact) {
@@ -228,6 +235,8 @@ class Editor {
         //     }
         //     this.prevSelectedChord = null;
         // }
+        if (this._prevSelectedTact && this._prevSelectedTact !== this.selectedTact)
+            this.provider.updateTrackTactRequest(this._prevSelectedTact.id);
     }
 
     _clearSelectedAll() {
@@ -279,7 +288,10 @@ class Editor {
     set selectedReprise(value) {
         let selectedTact = this.selectedTact;
         if (selectedTact)
-            selectedTact.tact.reprise = value;
+            this.provider.updateTactRequest({
+                id: selectedTact.tact.id,
+                reprise: value
+            });
     }
 
     createEmptyChord() {
@@ -308,8 +320,8 @@ class Editor {
         return { fret: DEFAULT_EXCEPTION_FRET };
     }
 
-    moveRight() {
-        this._editorPosition.moveRight();
+    async moveRight() {
+        await this._editorPosition.moveRight();
     }
 
     moveLeft() {
@@ -350,6 +362,32 @@ class Editor {
 
     focus() {
         this._drawContext.focus();
+    }
+
+    play() {
+        let selectedTact = this.selectedTact;
+        this.clearSelected();
+        this._player.play(selectedTact);
+    }
+
+    stop() {
+        this._player.stop();
+    }
+
+    get isPlaying() {
+        return this._player.isPlaying;
+    }
+
+    get volume() {
+        return this._player.volume;
+    }
+
+    set volume(value) {
+        this._player.volume = value;
+    }
+
+    async updateInstruments() {
+        await this._player.updateInstruments();
     }
 }
 

@@ -25,7 +25,6 @@ class SignUpComponent extends Component {
     async handleSubmit(event) {
         let res = await this.props.App.auth.register(this.state.name, this.state.password);
         if (res.success) {
-            this.props.App.needUpdate = true;
             NavigateHome(this.props.history);
         } else {
             this.setState({ error: res.message });

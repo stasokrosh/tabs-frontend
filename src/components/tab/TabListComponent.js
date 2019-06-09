@@ -1,11 +1,17 @@
 import React, { Component } from 'react'
 import './TabListComponent.css'
 import TabListItemComponent from './TabListItemComponent';
-import { getTabsRequest } from '../../api/tab-api';
+import { getTabsRequest, getFavouriteTabsByUserRequest } from '../../api/tab-api';
 import LoadingComponent from '../common/LoadingComponent';
 import ErrorComponent from '../common/ErrorComponent';
 import NavComponent from '../common/NavComponent';
 import FooterComponent from '../common/FooterComponent';
+import { Link } from 'react-router-dom';
+import { getSingleUserPath } from '../../util/navigation';
+
+export const TAB_LIST_TYPES = {
+    FAVOURITE: 'FAVOURITE'
+}
 
 class TabListComponent extends Component {
     constructor(props) {
@@ -17,15 +23,30 @@ class TabListComponent extends Component {
         this.deleteTab = this.deleteTab.bind(this);
     }
 
-    async componentDidMount() {
+    componentDidMount() {
+        this.reload(this.props);
+    }
+
+    componentWillReceiveProps(props) {
+        this.reload(props);
+    }
+
+    async reload(props) {
         let state = { loading: false };
-        let res = await getTabsRequest(this.props.App.auth.token);
+        let res = await this.getTabs(props);
         if (res.success) {
             state.tabs = res.body;
         } else {
             state.error = res.message;
         }
         this.setState(state);
+    }
+
+    async getTabs(props) {
+        if (!props.type)
+            return await getTabsRequest(this.props.App.auth.token);
+        if (props.type === TAB_LIST_TYPES.FAVOURITE)
+            return await getFavouriteTabsByUserRequest(this.props.match.params.name, this.props.App.auth.token);
     }
 
     deleteTab(id) {
@@ -39,13 +60,16 @@ class TabListComponent extends Component {
     render() {
         return (
             <div className='PageContainer'>
-                <NavComponent App={this.props.App} history={this.props.history}/>
+                <NavComponent App={this.props.App} history={this.props.history} />
                 {
                     this.state.loading ?
                         <LoadingComponent />
                         : this.state.error ? <ErrorComponent text={this.state.error} /> :
                             <div>
-                                <h1 className='ListTitle'>Tabs:</h1>
+                                {!this.props.type ? <h1 className='ListTitle'>Tabs:</h1> :
+                                    <h2 className='ListTitle'>Favourite tabs of <Link to={getSingleUserPath(this.props.match.params.name)}>
+                                        {this.props.match.params.name}</Link>:</h2>
+                                }
                                 <div className='ItemListContainer'>
                                     <ul className='ItemList'>
                                         {this.state.tabs.map(tab =>
@@ -54,6 +78,9 @@ class TabListComponent extends Component {
                                                 <hr className='ListSeparator' />
                                             </li>
                                         )}
+                                        {
+                                            !this.state.tabs.length && <li className='ListItemContainerEmpty'>No tabs</li>
+                                        }
                                     </ul>
                                 </div>
                             </div>
