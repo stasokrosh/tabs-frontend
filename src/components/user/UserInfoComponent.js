@@ -88,10 +88,6 @@ class UserInfoComponent extends Component {
         this.setState(state);
     }
 
-    selfAccount() {
-        return this.props.App.auth.isAuthorised && this.props.App.auth.user.name === this.props.match.params.name;
-    }
-
     createButton() {
         this.setState({ creating: true });
     }
@@ -138,6 +134,8 @@ class UserInfoComponent extends Component {
         let user = this.state.user;
         let tabs = this.state.tabs;
         let groups = this.state.groups;
+        let auth = this.props.App.auth;
+        let selfAccount = auth.selfAccount(user.name);
         return (
             <div className='PageContainer'>
                 <NavComponent App={this.props.App} history={this.props.history} />
@@ -150,7 +148,7 @@ class UserInfoComponent extends Component {
                                 <div className='UserImageContainer'>
                                     <div className='UserImage'>
                                         {
-                                            this.selfAccount() ? <ImageDropComponent id={user.image} folder='users' imageChanged={this.imageChanged} />
+                                            selfAccount ? <ImageDropComponent id={user.image} folder='users' imageChanged={this.imageChanged} />
                                                 : <ImageComponent id={user.image} />
                                         }
                                     </div>
@@ -172,12 +170,12 @@ class UserInfoComponent extends Component {
                                 <button className={'ListHeaderItem' + ((this.state.selectedList === USER_LISTS.GROUP) ? ' Active' : '')} onClick={() => { this.switchList(USER_LISTS.GROUP) }}>
                                     Created Groups {groups.length}
                                 </button>
-                                {this.selfAccount() && !this.state.creating &&
+                                {selfAccount && !this.state.creating &&
                                     <button className='ListHeaderItem Submit' onClick={this.createButton}>Create</button>}
                             </div>
                             <div className='ItemListContainer User'>
                                 <ul className='ItemList'>
-                                    {this.selfAccount() && this.state.creating && (this.state.selectedList === USER_LISTS.TAB ?
+                                    {selfAccount && this.state.creating && (this.state.selectedList === USER_LISTS.TAB ?
                                         (
                                             <li className='ListItemContainer'>
                                                 <TabCreateComponent createTab={this.createTab} cancel={this.cancelCreate} />

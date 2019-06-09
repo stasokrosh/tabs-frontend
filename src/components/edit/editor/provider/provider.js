@@ -32,7 +32,7 @@ class CompositionProvider {
         if (!res.success)
             return res;
         this.tab = res.body;
-        res = await getCompositionRequest(this.tab.compositionId, this._app.auth.token);
+        res = await getCompositionRequest(this.tab.id, this._app.auth.token);
         if (res.success)
             this.setComposition(res.body);
         return res;
@@ -57,7 +57,7 @@ class CompositionProvider {
     }
 
     async addTrackRequest(trackData) {
-        let res = await sendAddTrackMessage(this.composition.id, this._app.auth.token, trackData);
+        let res = await sendAddTrackMessage(this.tab.id, this._app.auth.token, trackData);
         if (!res.success)
             return res;
         this.addTrack(res.body);
@@ -66,7 +66,7 @@ class CompositionProvider {
     }
 
     async updateTrackRequest(trackData) {
-        let res = await sendUpdateTrackMessage(this.composition.id, this._app.auth.token, trackData);
+        let res = await sendUpdateTrackMessage(this.tab.id, this._app.auth.token, trackData);
         if (!res.success)
             return res;
         this._trackMap.get(trackData.id).copy(trackData);
@@ -74,7 +74,7 @@ class CompositionProvider {
     }
 
     async deleteTrackRequest(track) {
-        let res = await sendDeleteTrackMessage(this.composition.id, this._app.auth.token, track.id);
+        let res = await sendDeleteTrackMessage(this.tab.id, this._app.auth.token, track.id);
         if (!res.success)
             return res;
         this.composition.deleteTrack(track);
@@ -94,7 +94,7 @@ class CompositionProvider {
     }
 
     async addTactRequest(tact) {
-        let res = await sendAddTactMessage(this.composition.id, this._app.auth.token, convertTact(tact));
+        let res = await sendAddTactMessage(this.tab.id, this._app.auth.token, convertTact(tact));
         if (!res.success)
             return res;
         tact = this.composition.addTact(tact);
@@ -112,13 +112,13 @@ class CompositionProvider {
     async updateTactRequest(tactData) {
         let tact = this._tactMap.get(tactData.id);
         tact.copy(tactData);
-        let res = await sendUpdateTactMessage(this.composition.id, this._app.auth.token, tactData);
+        let res = await sendUpdateTactMessage(this.tab.id, this._app.auth.token, tactData);
         return res;
     }
 
     updateTrackTactRequest(trackTactId) {
         let trackTact = this._trackTactMap.get(trackTactId);
-        sendUpdateTrackTactMessage(this.composition.id, this._app.auth.token, convertTrackTact(trackTact));
+        sendUpdateTrackTactMessage(this.tab.id, this._app.auth.token, convertTrackTact(trackTact));
     }
 
     setComposition(compositionData) {
@@ -151,6 +151,10 @@ class CompositionProvider {
             }
         }
     }
+
+    get hasEditRights() {
+        return this._app.auth.hasEditRights(this.tab);
+    }
 }
 
 function convertTact(tact) {
@@ -165,8 +169,8 @@ function convertTact(tact) {
 
 function convertTrackTact(trackTact) {
     return {
-        id : trackTact.id,
-        chords : trackTact.chords.map(chord => convertChord(chord))
+        id: trackTact.id,
+        chords: trackTact.chords.map(chord => convertChord(chord))
     }
 }
 
@@ -175,20 +179,21 @@ function convertChord(chord) {
         duration: {
             fraction: chord.duration.fraction,
             quaterIs: chord.duration.quater,
-            dot : chord.duration.dot,
+            dot: chord.duration.dot,
         },
-        isPause : chord.isPause,
+        isPause: chord.isPause,
         notes: chord.notes.map(note => convertNote(note))
     }
 }
 
 function convertNote(note) {
     return {
-        index : note.index,
-        item : {
-            fret : note.item.fret
+        index: note.index,
+        item: {
+            fret: note.item.fret
         }
     }
 }
+
 
 export default CompositionProvider;

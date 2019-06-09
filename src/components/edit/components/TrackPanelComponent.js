@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import './TrackPanelComponent.css'
 import { INSTRUMENT_CODES } from '../editor/model/instrument';
 import { getPublicImageUrl } from '../../../util';
+import { EVENT_CODES } from '../editor/editor-event';
 
 function getImageSrcByInstrumentCode(code) {
     switch (code) {
@@ -35,17 +36,21 @@ class TrackControlComponent extends Component {
     }
 
     changeTrackName(e) {
-        this.props.changeTrackName(this.props.track, e.target.value);
-        this.forceUpdate();
+        if (this.props.hasEditRights) {
+            this.props.changeTrackName(this.props.track, e.target.value);
+            this.forceUpdate();
+        }
     }
 
     submitTrackName() {
-        if (!this.props.track.name) {
-            this.props.changeTrackName(this.props.track, this.state.name);
-            this.forceUpdate();
-        } else {
-            this.props.updateTrack({ id: this.props.track.id, name: this.props.track.name });
-            this.setState({ name: this.props.track.name });
+        if (this.props.hasEditRights) {
+            if (!this.props.track.name) {
+                this.props.changeTrackName(this.props.track, this.state.name);
+                this.forceUpdate();
+            } else {
+                this.props.updateTrack({ id: this.props.track.id, name: this.props.track.name });
+                this.setState({ name: this.props.track.name });
+            }
         }
     }
 
@@ -53,12 +58,13 @@ class TrackControlComponent extends Component {
         return (
             <div>
                 <div className={'TrackControl' + (this.props.selected ? ' Selected' : '')} onClick={this.selectTrack}>
-                    <img className='TrackIcon' src={getImageSrcByInstrumentCode(this.props.track.instrument.code)} alt=''/>
+                    <img className='TrackIcon' src={getImageSrcByInstrumentCode(this.props.track.instrument.code)} alt='' />
                     {this.props.expanded &&
                         <div className='TrackInfo'>
-                            <input type='text' value={this.props.track.name} onChange={this.changeTrackName} onBlur={this.submitTrackName} 
-                            onClick={(e)=>{e.stopPropagation();}}/>
-                            <button className='Cancel' onClick={this.deleteTrack}>Delete</button>
+                            <input type='text' value={this.props.track.name} onChange={this.changeTrackName} onBlur={this.submitTrackName}
+                                onClick={(e) => { e.stopPropagation(); }} />
+                            {this.props.hasEditRights && !this.props.isPlaying && !this.props.lastTrack && 
+                            <button className='Cancel' onClick={this.deleteTrack}>Delete</button>}
                         </div>
                     }
                 </div>
@@ -147,10 +153,12 @@ class TrackPanelComponent extends Component {
     }
 
     async deleteTrack(track) {
-        if (track === this.props.editor.selectedTrack)
-            this.props.editor.selectedTrack = this.props.editor.composition.tracks[0];
-        await this.props.editor.provider.deleteTrackRequest(track);
-        this.forceUpdate();
+        if (!this.props.editor.isPlaying) {
+            if (track === this.props.editor.selectedTrack)
+                this.props.editor.selectedTrack = this.props.editor.composition.tracks[0];
+            await this.props.editor.provider.deleteTrackRequest(track);
+            this.forceUpdate();
+        }
     }
 
     changeTrackName(track, name) {
@@ -163,7 +171,8 @@ class TrackPanelComponent extends Component {
     }
 
     addTrackButtonClick() {
-        this.setState({ creation: true });
+        if (!this.props.editor.isPlaying)
+            this.setState({ creation: true });
     }
 
     cancelTrackCreate() {
@@ -176,10 +185,14 @@ class TrackPanelComponent extends Component {
     }
 
     invokeEvent(event) {
-        this.forceUpdate();
+        if (event.code === EVENT_CODES.PLAY)
+            this.setState({ creation: false });
+        else
+            this.forceUpdate();
     }
 
     render() {
+        let hasEditRights = this.props.App.auth.hasEditRights(this.props.editor.tab);
         return (
             <div className='TrackPanel'>
                 <ul className='TrackList'>
@@ -188,21 +201,26 @@ class TrackPanelComponent extends Component {
                             <li className='TrackControlContainer' key={this.props.editor.composition.tracks.indexOf(track)}>
                                 <TrackControlComponent track={track} expanded={this.state.expanded} selected={this.props.editor.selectedTrack === track}
                                     selectTrack={this.selectTrack}
-                                    deleteTrack={this.deleteTrack} 
+                                    deleteTrack={this.deleteTrack}
                                     changeTrackName={this.changeTrackName}
-                                    updateTrack={this.updateTrack}/>
+                                    updateTrack={this.updateTrack}
+                                    hasEditRights={hasEditRights} 
+                                    lastTrack={this.props.editor.composition.trackCount === 1}
+                                    isPlaying={this.props.editor.isPlaying}/>
                             </li>)
                     }
-                    {this.state.creation ?
-                        <li className='TrackControlContainer Create'>
-                            <TrackAddComponent cancelCreation={this.cancelTrackCreate} submitCreation={this.submitTrackCreate} />
-                        </li>
-                        :
-                        <li className='TrackControlContainer'>
-                            <div className='TrackControl'>
-                                <button className='TrackAddButton Submit' onClick={this.addTrackButtonClick}>Add</button>
-                            </div>
-                        </li>
+                    {
+                        hasEditRights && !this.props.editor.isPlaying &&
+                        (this.state.creation ?
+                            <li className='TrackControlContainer Create'>
+                                <TrackAddComponent cancelCreation={this.cancelTrackCreate} submitCreation={this.submitTrackCreate} />
+                            </li>
+                            :
+                            <li className='TrackControlContainer'>
+                                <div className='TrackControl'>
+                                    <button className='TrackAddButton Submit' onClick={this.addTrackButtonClick}>Add</button>
+                                </div>
+                            </li>)
                     }
                 </ul>
                 <button className='ExpandButton' onClick={this.expand}>{this.state.expanded ? '<' : '>'}</button>

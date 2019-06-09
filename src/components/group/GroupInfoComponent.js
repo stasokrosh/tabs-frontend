@@ -130,14 +130,6 @@ class GroupInfoComponent extends Component {
         }
     }
 
-    ownGroup() {
-        return this.props.App.auth.isAuthorised && this.props.App.auth.user.name === this.state.group.creator;
-    }
-
-    partOfGroup() {
-        return this.props.App.auth.isAuthorised && this.props.App.auth.user.groups.indexOf(this.state.group.name) !== -1;
-    }
-
     async deleteGroup() {
         await removeGroupRequest(this.state.group.name, this.props.App.auth.token);
         NavigateGroupList(this.props.history);
@@ -152,6 +144,8 @@ class GroupInfoComponent extends Component {
         let group = this.state.group;
         let tabs = this.state.tabs;
         let users = this.state.users;
+        let auth = this.props.App.auth;
+        let isCreator = auth.isGroupCreator(group);
         return (
             <div className='PageContainer'>
                 <NavComponent App={this.props.App} history={this.props.history}/>
@@ -166,15 +160,15 @@ class GroupInfoComponent extends Component {
                                     <div className='GroupImageContainer'>
                                         <div className='GroupImage'>
                                             {
-                                                this.ownGroup() ? <ImageDropComponent id={group.image} folder='users' imageChanged={this.imageChanged} />
+                                                isCreator ? <ImageDropComponent id={group.image} folder='users' imageChanged={this.imageChanged} />
                                                     : <ImageComponent id={group.image} />
                                             }
                                         </div>
                                         <div className='GroupImageButton'>
                                             {
-                                                this.ownGroup() ?
+                                                (isCreator || this.props.App.auth.isAdmin) ?
                                                     <button className='Cancel' onClick={this.deleteGroup}>Delete</button>
-                                                    : <ParticipationButtonComponent checked={this.partOfGroup()} onClick={this.enterGroup} />
+                                                    : <ParticipationButtonComponent checked={auth.isParticipateInGroup(group.name)} onClick={this.enterGroup} />
                                             }
                                         </div>
                                     </div>
@@ -186,7 +180,7 @@ class GroupInfoComponent extends Component {
                                                     <tr>
                                                         <td>Creator:</td><td><Link className='GroupCreator' to={getSingleUserPath(group.creator)}>{group.creator}</Link></td>
                                                     </tr>
-                                                    {this.ownGroup &&
+                                                    {isCreator &&
                                                         <tr>
                                                             <td>Access:</td>
                                                             <td>
@@ -207,7 +201,7 @@ class GroupInfoComponent extends Component {
                                     <button className={'ListHeaderItem' + ((this.state.selectedList === GROUP_LISTS.USER) ? ' Active' : '')} onClick={() => { this.switchList(GROUP_LISTS.USER) }}>
                                         Users {users.length}
                                     </button>
-                                    {this.ownGroup() && this.state.selectedList === GROUP_LISTS.TAB && !this.state.creating
+                                    {isCreator && this.state.selectedList === GROUP_LISTS.TAB && !this.state.creating
                                         && <button className='ListHeaderItem Submit' onClick={this.createButton}>
                                             Create
                                             </button>}
@@ -215,7 +209,7 @@ class GroupInfoComponent extends Component {
                                 <div className='ItemListContainer Group'>
                                     <ul className='ItemList'>
                                         {
-                                            this.ownGroup() && this.state.selectedList === GROUP_LISTS.TAB && this.state.creating
+                                            isCreator && this.state.selectedList === GROUP_LISTS.TAB && this.state.creating
                                             && <li className='ListItemContainer'>
                                                 <TabCreateComponent createTab={this.createTab} cancel={this.cancelCreate} />
                                             </li>

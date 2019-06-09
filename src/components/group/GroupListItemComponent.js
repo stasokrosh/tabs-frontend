@@ -30,23 +30,20 @@ class GroupListItemComponent extends Component {
         await removeGroupRequest(this.props.group.name, this.props.App.auth.token);
         if (this.props.delete)
             this.props.delete(this.props.group.name);
-    }   
-
-    ownGroup() {
-        return this.props.App.auth.isAuthorised && this.props.group.creator === this.props.App.auth.user.name;
     }
 
     render() {
         let auth = this.props.App.auth;
         let group = this.props.group;
+        let isCreator = auth.isGroupCreator(group);
         return (
             <div className='ListItem Group'>
                 <ImageComponent id={group.image} />
                 <div className='GroupListItemNameContainer'>
                     <Link className='GroupListItemName' to={getSingleGroupPath(group.name)}>{group.name}</Link>
                     {
-                        this.ownGroup() ? <button className='Cancel' onClick={this.deleteGroup}>Delete</button>
-                        : <ParticipationButtonComponent checked={auth.user && auth.user.groups.indexOf(group.name) !== -1} name={group.name} onClick={this.handleParticipateClick} />
+                        (isCreator || auth.isAdmin) ? <button className='Cancel' onClick={this.deleteGroup}>Delete</button>
+                            : <ParticipationButtonComponent checked={auth.isParticipateInGroup(group.name)} name={group.name} onClick={this.handleParticipateClick} />
                     }
                 </div>
                 <Link className='GroupListItemCreator' to={getSingleUserPath(group.creator)}>{group.creator}</Link>

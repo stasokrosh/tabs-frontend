@@ -1,4 +1,4 @@
-import { SERVER_URL, IMAGE_UPLOAD_SERVER_URL, IMAGE_DOWNLOAD_SERVER_URL } from "../config";
+import { SERVER_URL, IMAGE_UPLOAD_SERVER_URL, IMAGE_DOWNLOAD_SERVER_URL, WS_SERVER_URL } from "../config";
 
 export const HTTP_STATUSES = {
     OK: 200,
@@ -66,6 +66,10 @@ export function createHeaders(props) {
 
 export function getUrl(path) {
     return SERVER_URL + path;
+}
+
+export function getWsUrl(path) {
+    return WS_SERVER_URL + path;
 }
 
 export function getImageUploadUrl() {

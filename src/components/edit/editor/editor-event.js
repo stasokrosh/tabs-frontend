@@ -2,7 +2,7 @@
 import { assert } from "./util";
 import Editor from "./editor";
 
-const EVENT_CODES = {
+export const EVENT_CODES = {
     SELECT_NOTE: 1,
     SELECT_CHORD: 2,
     SELECT_TACT: 3,
@@ -56,11 +56,13 @@ export class EditorEvent {
 
     static CreatePlayEvent(props) {
         props.code = EVENT_CODES.PLAY;
+        props.object = { animation : true };
         return EditorEvent.Create(props);
     }
 
     static CreateStopEvent(props) {
         props.code = EVENT_CODES.STOP;
+        props.object = { animation : true };
         return EditorEvent.Create(props);
     }
 
@@ -85,9 +87,11 @@ export class EditorEventDispatcher {
     }
 
     dispatch(event) {
+        if (this._editor.isPlaying && !event.object.animation)
+            return;
         switch (event.code) {
             case EVENT_CODES.SELECT_NOTE: {
-                if (event.object.note) {
+                if (event.object.note && this._editor.hasEditRights) {
                     if (this._editor.selectedNote === event.object.note)
                         this._editor.selectedNote = null;
                     else
@@ -126,7 +130,7 @@ export class EditorEventDispatcher {
                 break;
             }
             case EVENT_CODES.ADD_CHORD: {
-                if (event.object.tact) {
+                if (event.object.tact && this._editor.hasEditRights) {
                     event.object.tact.addChord(this._editor.createEmptyChord(), event.object.index);
                     this._editor._refreshTact(event.object.tact);
                     let index = ( event.object.index === -1 ? event.object.tact.chordCount - 1 : event.object.index );

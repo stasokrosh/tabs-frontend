@@ -5,7 +5,7 @@ import { DURATION_FRACTIONS } from '../editor/model/duration'
 
 function InstrumentButtonComponent(props) {
     return (
-        <button className={'InstrumentPanelButton Instrument' + (props.selected ? ' Selected' : '')} onClick={props.onClick} 
+        <button className={'InstrumentPanelButton Instrument' + (props.selected ? ' Selected' : '')} onClick={props.onClick}
             disabled={props.disabled}>
             {props.text}
         </button>
@@ -18,17 +18,23 @@ class InstrumentPanelComponent extends Component {
         props.editor.addEventListener(this);
     }
 
+    get hasEditRights() {
+        return this.props.App.auth.hasEditRights(this.props.editor.tab);
+    }
+
     chordFractionEqual(value) {
         let editor = this.props.editor;
         return editor.selectedChord && editor.selectedChord.duration.fraction === value;
     }
 
     setChordFraction(value) {
-        let editor = this.props.editor;
-        if (editor.selectedChord) {
-            editor.selectedFraction = value;
-            editor.update(true);
-            this.forceUpdate();
+        if (this.hasEditRights && !this.props.editor.isPlaying) {
+            let editor = this.props.editor;
+            if (editor.selectedChord) {
+                editor.selectedFraction = value;
+                editor.update(true);
+                this.forceUpdate();
+            }
         }
     }
 
@@ -38,12 +44,14 @@ class InstrumentPanelComponent extends Component {
     }
 
     changeChordDot() {
-        let editor = this.props.editor;
-        if (editor.selectedChord) {
-            editor.selectedDot = !this.props.editor.selectedChord.duration.dot;
-            editor.refresh();
-            editor.update();
-            this.forceUpdate();
+        if (this.hasEditRights && !this.props.editor.isPlaying) {
+            let editor = this.props.editor;
+            if (editor.selectedChord) {
+                editor.selectedDot = !this.props.editor.selectedChord.duration.dot;
+                editor.refresh();
+                editor.update();
+                this.forceUpdate();
+            }
         }
     }
 
@@ -53,14 +61,16 @@ class InstrumentPanelComponent extends Component {
     }
 
     changeChordTriol() {
-        let editor = this.props.editor;
-        if (editor.selectedChord) {
-            if (editor.selectedChord.duration.quaterIs === 2)
-                editor.selectedQuaterIs = 3;
-            else
-                editor.selectedQuaterIs = 2;
-            editor.update(true);
-            this.forceUpdate();
+        if (this.hasEditRights && !this.props.editor.isPlaying) {
+            let editor = this.props.editor;
+            if (editor.selectedChord) {
+                if (editor.selectedChord.duration.quaterIs === 2)
+                    editor.selectedQuaterIs = 3;
+                else
+                    editor.selectedQuaterIs = 2;
+                editor.update(true);
+                this.forceUpdate();
+            }
         }
     }
 
@@ -70,14 +80,16 @@ class InstrumentPanelComponent extends Component {
     }
 
     changeTactReprise() {
-        let editor = this.props.editor;
-        if (editor.selectedTact) {
-            if (editor.selectedTact.tact.reprise === 0)
-                editor.selectedReprise = 2;
-            else
-                editor.selectedReprise = 0;
-            editor.update(true);
-            this.forceUpdate();
+        if (this.hasEditRights && !this.props.editor.isPlaying) {
+            let editor = this.props.editor;
+            if (editor.selectedTact) {
+                if (editor.selectedTact.tact.reprise === 0)
+                    editor.selectedReprise = 2;
+                else
+                    editor.selectedReprise = 0;
+                editor.update(true);
+                this.forceUpdate();
+            }
         }
     }
 
@@ -87,18 +99,20 @@ class InstrumentPanelComponent extends Component {
     }
 
     changeChordPause() {
-        let editor = this.props.editor;
-        if (editor.selectedChord) {
-            editor.selectedIsPause = !editor.selectedChord.isPause;
-            editor.refreshChord();
-            editor.update();
-            this.forceUpdate();
+        if (this.hasEditRights && !this.props.editor.isPlaying) {
+            let editor = this.props.editor;
+            if (editor.selectedChord) {
+                editor.selectedIsPause = !editor.selectedChord.isPause;
+                editor.refreshChord();
+                editor.update();
+                this.forceUpdate();
+            }
         }
     }
 
     getFractionButton(fraction) {
         return <InstrumentButtonComponent text={'1/' + fraction} selected={this.chordFractionEqual(fraction)} disabled={!this.props.editor.selectedChord}
-            onClick={() => { this.setChordFraction(fraction) }} key={fraction}/>
+            onClick={() => { this.setChordFraction(fraction) }} key={fraction} />
     }
 
     getDotButton() {

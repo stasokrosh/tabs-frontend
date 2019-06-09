@@ -10,6 +10,7 @@
     "react-dropzone": "^10.1.4",
     "react-router-dom": "^5.0.0",
     "react-scripts": "2.1.8",
+    "react-websocket": "^2.0.1",
     "svg.js": "^2.7.1",
     "tone": "^13.4.9",
     "universal-cookie": "^4.0.0"

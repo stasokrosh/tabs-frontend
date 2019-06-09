@@ -2,6 +2,15 @@ import { signUpRequest, signInRequest, getAuthInfoRequest } from '../api/auth-ap
 import { updateUserRequest } from '../api/user-api';
 import Cookies from 'universal-cookie';
 
+const USER_TAB_RIGHTS = {
+    READ : "read",
+    WRITE : "write"
+} 
+
+const USER_ROLES = {
+    ADMIN : "admin"
+}
+
 class UserAuth {
     get isAuthorised() {
         return this._token && this._user;
@@ -42,6 +51,48 @@ class UserAuth {
                 this._user = res.body;
             }
         }
+    }
+
+    isTabFavourite(id) {
+        return this.isAuthorised && this._user.favouriteTabs.indexOf(id) !== -1;
+    }
+
+    isParticipateInGroup(name) {
+        return this.isAuthorised && this._user.groups.indexOf(name) !== -1;
+    }
+
+    isCreator(tab) {
+        if (this.isAuthorised)
+            return tab.creator === this._user.name;
+        else
+            return false;
+    }
+
+    isGroupCreator(group) {
+        if (this.isAuthorised)
+            return group.creator === this._user.name;
+        else
+            return false;
+    }
+
+    get isAdmin() {
+        return this.isAuthorised && this._user.role === USER_ROLES.ADMIN;
+    }
+
+    hasEditRights(tab) {
+        if (this.isCreator(tab)) {
+            return true;
+        } else if (this.isAuthorised && tab.users) {
+            let userIndex = tab.users.findIndex((el) => el.name === this._user.name);
+            if (userIndex !== -1) {
+                return tab.users[userIndex] === USER_TAB_RIGHTS.WRITE;
+            }
+        }
+        return false;
+    }
+
+    selfAccount(name) {
+        return this.isAuthorised && this._user.name === name;
     }
 
     async addGroup(name) {

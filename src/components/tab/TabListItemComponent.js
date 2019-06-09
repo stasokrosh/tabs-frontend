@@ -25,10 +25,6 @@ class TabListItemComponent extends Component {
         }
     }
 
-    ownTab() {
-        return this.props.App.auth.isAuthorised && this.props.tab.creator === this.props.App.auth.user.name;
-    }
-
     async deleteTab() {
         await removeTabRequest(this.props.tab.id, this.props.App.auth.token);
         if (this.props.delete)
@@ -38,11 +34,12 @@ class TabListItemComponent extends Component {
     render() {
         let auth = this.props.App.auth;
         let tab = this.props.tab;
+        let isCreator = auth.isCreator(tab);
         return (
             <div className='ListItem'>
                 {
-                    this.ownTab() ? <button className='Cancel' onClick={this.deleteTab}>Delete</button> 
-                    : <FavouriteButtonComponent checked={auth.user && auth.user.favouriteTabs.indexOf(tab.id) !== -1} onClick={this.handleFavouriteClick} id={tab.id} />
+                    (isCreator || auth.isAdmin) ? <button className='Cancel' onClick={this.deleteTab}>Delete</button>
+                        : <FavouriteButtonComponent checked={auth.isTabFavourite(tab.id)} onClick={this.handleFavouriteClick} id={tab.id} />
                 }
                 <Link className='TabListItemName' to={getSingleTabPath(tab.id)}>{tab.name}</Link>
                 {this.props.tab.group && <Link className='TabListItemGroup' to={getSingleGroupPath(tab.group)}>{tab.group}</Link>}

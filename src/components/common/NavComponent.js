@@ -15,17 +15,17 @@ class AuthUserButton extends Component {
 
     expand(e) {
         e.preventDefault();
-        this.setState({expanded : !this.state.expanded});
+        this.setState({ expanded: !this.state.expanded });
     }
 
     render() {
         return (
             <div className='UserButtonPanel'>
-                <ImageComponent id={this.props.image} />
+                {!this.props.isAdmin && <ImageComponent id={this.props.image} />}
                 <div>
                     <button className='UserButton' onClick={this.expand}>{this.props.name}</button>
                     <div className={"UserButtonDropdown" + (this.state.expanded ? ' Active' : '')}>
-                        <button onClick={this.props.account}>Account</button>
+                        {!this.props.isAdmin && <button onClick={this.props.account}>Account</button>}
                         <button onClick={this.props.logout}>Log out</button>
                     </div></div>
             </div>
@@ -58,7 +58,8 @@ class NavComponent extends Component {
                 <Link className='NavButton' to={APP_PAGES.USERS}>Users</Link>
                 <div className='AuthPanel'>
                     {this.props.App.auth.isAuthorised ? (
-                        <AuthUserButton image={this.props.App.auth.user.image} name={this.props.App.auth.user.name} logout={this.logout} account={this.account}/>
+                        <AuthUserButton image={this.props.App.auth.user.image} name={this.props.App.auth.user.name} logout={this.logout}
+                            account={this.account} isAdmin={this.props.App.auth.isAdmin} />
                     ) : (
                             <Link className='NavButton' to={APP_PAGES.SIGNIN}>Sign in</Link>
                         )}

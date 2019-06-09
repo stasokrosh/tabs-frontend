@@ -5,7 +5,7 @@ class EditorPosition {
     constructor(props) {
         assert(() => props);
         assert(() => props.editor instanceof Editor);
-        this._editor = props.editor; 
+        this._editor = props.editor;
     }
 
     static Create(props) {
@@ -61,6 +61,54 @@ class EditorPosition {
                 } else {
                     this._editor.selectedChord = selectedTact.getChord(chordNum);
                 }
+            }
+        }
+    }
+
+    moveRightNoEdit() {
+        let selectedTact = this._editor.selectedTact;
+        let selectedChord = this._editor.selectedChord;
+        if (selectedTact && !selectedChord) {
+            let tactNum = this._editor.selectedTrack.getTactNum(selectedTact);
+            if (tactNum !== this._editor.selectedTrack.tactCount - 1)
+                this._editor.selectedTact = this._editor.selectedTrack.getTact(tactNum + 1);
+        } else if (selectedChord) {
+            let chordNum = selectedTact.getChordNum(selectedChord);
+            if (chordNum === selectedTact.chordCount - 1) {
+                let tactNum = this._editor.selectedTrack.getTactNum(selectedTact);
+                if (tactNum !== this._editor.selectedTrack.tactCount - 1) {
+                    let nextTact = this._editor.selectedTrack.getTact(tactNum + 1);
+                    if (nextTact.chordCount === 0)
+                        this._editor.selectedTact = nextTact;
+                    else
+                        this._editor.selectedChord = nextTact.getChord(0);
+                }
+            } else {
+                this._editor.selectedChord = selectedTact.getChord(chordNum + 1);
+            }
+        }
+    }
+
+    moveLeftNoEdit() {
+        let selectedTact = this._editor.selectedTact;
+        let selectedChord = this._editor.selectedChord;
+        if (selectedTact && !selectedChord) {
+            let tactNum = this._editor.selectedTrack.getTactNum(selectedTact);
+            if (tactNum !== 0)
+                this._editor.selectedTact = this._editor.selectedTrack.getTact(tactNum - 1);
+        } else if (selectedChord) {
+            let chordNum = selectedTact.getChordNum(selectedChord);
+            if (chordNum === 0) {
+                let tactNum = this._editor.selectedTrack.getTactNum(selectedTact);
+                if (tactNum !== 0) {
+                    let prevTact = this._editor.selectedTrack.getTact(tactNum - 1);
+                    if (prevTact.chordCount === 0)
+                        this._editor.selectedTact = prevTact;
+                    else
+                        this._editor.selectedChord = prevTact.getChord(prevTact.chordCount - 1);
+                }
+            } else {
+                this._editor.selectedChord = selectedTact.getChord(chordNum - 1);
             }
         }
     }

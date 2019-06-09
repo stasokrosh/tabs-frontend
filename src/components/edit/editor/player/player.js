@@ -125,7 +125,8 @@ class Player {
         if (this._editor.selectedTrack === track) {
             this._editor.drawContext.invokeEvent(EditorEvent.CreateSelectChordEvent({
                 object: {
-                    chord: chord
+                    chord: chord,
+                    animation: true
                 }
             }));
         }

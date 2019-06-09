@@ -10,6 +10,8 @@ import NavComponent from '../common/NavComponent';
 import ErrorComponent from '../common/ErrorComponent';
 import CompositionProvider from './editor/provider/provider';
 import LoadingComponent from '../common/LoadingComponent';
+import Websocket from 'react-websocket';
+import { getEditWsUrl } from './editor/util';
 
 class EditorComponent extends Component {
     constructor(props) {
@@ -20,6 +22,7 @@ class EditorComponent extends Component {
             loading: true,
             editor: Editor.Create({})
         };
+        this.handleWsMessage = this.handleWsMessage.bind(this);
     }
 
     render() {
@@ -36,26 +39,28 @@ class EditorComponent extends Component {
                             {this.state.editor.initialized &&
                                 <div>
                                     <div className='InfoPanelContainer'>
-                                        <InfoPanelComponent editor={this.state.editor} App={this.props.App} />
+                                        <InfoPanelComponent editor={this.state.editor} App={this.props.App} history={this.props.history} />
                                     </div>
                                     <div className='InstrumentPanelContainer'>
-                                        <InstrumentPanelComponent editor={this.state.editor} />
+                                        <InstrumentPanelComponent editor={this.state.editor} App={this.props.App} />
                                     </div>
                                 </div>
                             }
                             {this.state.loading && <LoadingComponent />}
                             <div className='WorkspaceContainer'>
                                 {this.state.editor.initialized && <div className='TrackPanelContainer'>
-                                    <TrackPanelComponent editor={this.state.editor} App={this.props.App}/>
+                                    <TrackPanelComponent editor={this.state.editor} App={this.props.App} />
                                 </div>
                                 }
                                 <WorkspaceComponent editor={this.state.editor} />
                             </div>
                             <div className='ControlPanelContainer' id='ControlPanelContainer'>
-                                <ControlPanelComponent editor={this.state.editor}/>
+                                <ControlPanelComponent editor={this.state.editor} />
                             </div>
                         </div>
                 }
+                {!this.state.loading && this.state.editor.hasEditRights && 
+                <Websocket url={getEditWsUrl(this.state.editor.tab.id, this.props.App.auth.user.name)} onMessage={this.handleWsMessage}></Websocket>}
             </div>
         )
     }
@@ -75,6 +80,10 @@ class EditorComponent extends Component {
         let controlPanel = document.getElementById('ControlPanelContainer');
         let height = controlPanel.offsetTop - workspace.offsetTop;
         workspace.style.height = height + 'px';
+    }
+
+    handleWsMessage(message) {
+        console.log(message);
     }
 
     async componentDidMount() {

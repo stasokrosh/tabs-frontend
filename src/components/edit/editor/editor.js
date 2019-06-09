@@ -146,11 +146,13 @@ class Editor {
     }
 
     set selectedNote(value) {
-        this._clearSelectedAll();
-        this._selectedNote = value;
-        if (this._selectedNote)
-            this._selectedNote.selected = true;
-        this._clearPrevSelectedAll();
+        if (this.hasEditRights) {
+            this._clearSelectedAll();
+            this._selectedNote = value;
+            if (this._selectedNote)
+                this._selectedNote.selected = true;
+            this._clearPrevSelectedAll();
+        }
     }
 
     _clearSelectedNote() {
@@ -321,19 +323,27 @@ class Editor {
     }
 
     async moveRight() {
-        await this._editorPosition.moveRight();
+        if (this.hasEditRights)
+            await this._editorPosition.moveRight();
+        else
+            this._editorPosition.moveRightNoEdit();
     }
 
     moveLeft() {
-        this._editorPosition.moveLeft();
+        if (this.hasEditRights)
+            this._editorPosition.moveLeft();
+        else
+            this._editorPosition.moveLeftNoEdit();
     }
 
     moveUp() {
-        this._editorPosition.moveUp();
+        if (this.hasEditRights)
+            this._editorPosition.moveUp();
     }
 
     moveDown() {
-        this._editorPosition.moveDown();
+        if (this.hasEditRights)
+            this._editorPosition.moveDown();
     }
 
     changeSelectedNote(value) {
@@ -388,6 +398,10 @@ class Editor {
 
     async updateInstruments() {
         await this._player.updateInstruments();
+    }
+
+    get hasEditRights() {
+        return this.provider.hasEditRights;
     }
 }
 
