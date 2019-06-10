@@ -5,6 +5,8 @@ export async function getCompositionRequest(id, token) {
     return parseResponse(res, (res) => {
         if (res.status === HTTP_STATUSES.NOT_FOUND)
             return getErrorResponse('Tab was not found');
+        if (res.status === HTTP_STATUSES.ENTITY_EXISTS)
+            return getErrorResponse('Another editor with this tab is already open');
     });
 }
 

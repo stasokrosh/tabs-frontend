@@ -26,7 +26,7 @@ class EditorComponent extends Component {
     }
 
     render() {
-        if (!this.state.loading)
+        if (!this.state.loading && !this.state.error)
             this.state.editor.prepare();
         return (
             <div className='PageContainer Editor'>
@@ -57,22 +57,26 @@ class EditorComponent extends Component {
                             <div className='ControlPanelContainer' id='ControlPanelContainer'>
                                 <ControlPanelComponent editor={this.state.editor} />
                             </div>
+                            {!this.state.loading && this.state.editor.hasEditRights &&
+                                <Websocket url={getEditWsUrl(this.state.editor.tab.id, this.props.App.auth.user.name)} onMessage={this.handleWsMessage}></Websocket>}
                         </div>
                 }
-                {!this.state.loading && this.state.editor.hasEditRights && 
-                <Websocket url={getEditWsUrl(this.state.editor.tab.id, this.props.App.auth.user.name)} onMessage={this.handleWsMessage}></Websocket>}
             </div>
         )
     }
 
     onResize() {
-        this.state.editor.prepare();
-        this.state.editor.redraw();
+        if (this.state.editor.initialized) {
+            this.state.editor.prepare();
+            this.state.editor.redraw();
+        }
     }
 
     componentDidUpdate() {
-        this.state.editor.redraw();
-        this.updateWorkspaceHeight();
+        if (this.state.editor.initialized) {
+            this.state.editor.redraw();
+            this.updateWorkspaceHeight();
+        }
     }
 
     updateWorkspaceHeight() {
