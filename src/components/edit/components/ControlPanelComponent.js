@@ -12,6 +12,7 @@ class ControlPanelComponent extends Component {
         this.selectNextTrack = this.selectNextTrack.bind(this);
         this.selectPrevTrack = this.selectPrevTrack.bind(this);
         this.changeVolume = this.changeVolume.bind(this);
+        this.changeLoop = this.changeLoop.bind(this);
     }
 
     play() {
@@ -51,6 +52,11 @@ class ControlPanelComponent extends Component {
         this.forceUpdate();
     }
 
+    changeLoop() {
+        this.props.editor.loop = !this.props.editor.loop;
+        this.forceUpdate();
+    }   
+
     render() {
         let editor = this.props.editor;
         return (
@@ -66,6 +72,7 @@ class ControlPanelComponent extends Component {
                         <img className='ControlButtonImage Track' src={getPublicImageUrl('next.png')} alt='' />
                     </button>
                 </div>
+                <button className={"LoopButton" + (editor.loop ? " Selected" : "")} onClick={this.changeLoop}>Loop</button>
                 <input className='ControlVolume' type="range" id="start" min="0" max="1000" value={this.props.editor.volume}
                 onChange={this.changeVolume}></input>
             </div>

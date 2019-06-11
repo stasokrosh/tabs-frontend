@@ -56,6 +56,8 @@ class Player {
         this._instrumentMap = new Map();
         this._instruments = [];
         this._volume = DEFAULT_VOLUME;
+        this._loop = false;
+        Tone.Transport.loopEnd = '1m'
     }
 
     static Create(props) {
@@ -71,6 +73,15 @@ class Player {
         for (let instrument of this._instruments) {
             instrument.volume = convertVolumeToTone(this._volume);
         }
+    }
+
+    get loop() {
+        return this._loop;
+    }
+
+    set loop(value) {
+        this._loop = value;
+        Tone.Transport.loop = value;
     }
 
     play(fromTact) {

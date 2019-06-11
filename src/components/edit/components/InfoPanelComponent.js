@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import './InfoPanelComponent.css'
 import FavouriteButtonComponent from '../../common/FavouriteButtonComponent';
 import { Link } from 'react-router-dom'
-import { getSingleGroupPath, NavigateSignIn, getSingleUserPath } from '../../../util/navigation';
+import { getSingleGroupPath, NavigateSignIn, getSingleUserPath, getRightsUsersPath } from '../../../util/navigation';
 
 class InfoPanelComponent extends Component {
     constructor(props) {
@@ -77,6 +77,9 @@ class InfoPanelComponent extends Component {
                 {tab.group && <Link to={getSingleGroupPath(tab.group)}>{tab.group}</Link>}
                 {!isCreator &&
                     <Link to={getSingleUserPath(tab.creator)}>{tab.creator}</Link>
+                }
+                {isCreator &&
+                    <Link to={getRightsUsersPath(tab.id)}>Users</Link>
                 }
             </div>
         )

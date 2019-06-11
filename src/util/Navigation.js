@@ -11,7 +11,8 @@ export const APP_PAGES = {
     GROUPS_SINGLE : '/groups/info/:name',
     GROUPS_PARTICIPANT : '/groups/participant/:name',
     USERS : '/users',
-    USERS_SINGLE : '/users/:name',
+    USERS_SINGLE : '/users/info/:name',
+    USERS_TAB_RIGHTS : '/users/rights/:id'
 }
 
 export function getSingleUserPath(name) {
@@ -32,6 +33,10 @@ export function getFavouriteTabsPath(userName) {
 
 export function getParticipantGroupsPath(userName) {
     return APP_PAGES.GROUPS_PARTICIPANT.replace(':name', userName);
+}
+
+export function getRightsUsersPath(tabId) {
+    return APP_PAGES.USERS_TAB_RIGHTS.replace(':id', tabId);
 }
 
 export function NavigateHome(history) {
@@ -76,4 +81,8 @@ export function NavigateFavouriteTabs(history, userName) {
 
 export function NavigateParticipantGroups(history, userName) {
     history.push(getParticipantGroupsPath(userName));
+}
+
+export function NavigateRightsUsers(history, tabId) {
+    history.push(getRightsUsersPath(tabId));
 }

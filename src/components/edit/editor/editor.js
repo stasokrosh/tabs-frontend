@@ -396,6 +396,14 @@ class Editor {
         this._player.volume = value;
     }
 
+    get loop() {
+        return this._player.loop;
+    }
+
+    set loop(value) {
+        this._player.loop = value;
+    }
+
     async updateInstruments() {
         await this._player.updateInstruments();
     }

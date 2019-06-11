@@ -35,3 +35,7 @@
     margin-right: 10px;
     width: 80px;
 }
+
+.LoopButton.Selected {
+    color: yellow;
+}
